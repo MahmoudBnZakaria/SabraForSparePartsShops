@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36327.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sabra.DataLayer", "Sabra_DataLayer\Sabra.DataLayer.csproj", "{37C1506A-85DB-48CA-92C5-5587D2847976}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sabra.LogicLayer", "Sabra_LogicLayer\Sabra.LogicLayer.csproj", "{D208F4D0-15AB-4F41-B31E-98C843D77E17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SabraForSpareParts", "SabraForSpareParts\SabraForSpareParts.csproj", "{22596B19-27AB-4576-B4BE-E3E2276690E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SabraUI", "SabraUI", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fonts", "Fonts", "{1F544C6E-DD19-464E-A1C5-069BDCD30B7F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CustomConrols", "CustomConrols", "{F26F3C9B-9D4F-47B5-A7CE-6383040C51FB}"
+	ProjectSection(SolutionItems) = preProject
+		SabraForSpareParts\SabraCustomControl.cs = SabraForSpareParts\SabraCustomControl.cs
+		SabraForSpareParts\SabraCustomControl.Designer.cs = SabraForSpareParts\SabraCustomControl.Designer.cs
+		SabraForSpareParts\SabraCustomControl.resx = SabraForSpareParts\SabraCustomControl.resx
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37C1506A-85DB-48CA-92C5-5587D2847976}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37C1506A-85DB-48CA-92C5-5587D2847976}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37C1506A-85DB-48CA-92C5-5587D2847976}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37C1506A-85DB-48CA-92C5-5587D2847976}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D208F4D0-15AB-4F41-B31E-98C843D77E17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D208F4D0-15AB-4F41-B31E-98C843D77E17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D208F4D0-15AB-4F41-B31E-98C843D77E17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D208F4D0-15AB-4F41-B31E-98C843D77E17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22596B19-27AB-4576-B4BE-E3E2276690E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22596B19-27AB-4576-B4BE-E3E2276690E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22596B19-27AB-4576-B4BE-E3E2276690E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22596B19-27AB-4576-B4BE-E3E2276690E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1F544C6E-DD19-464E-A1C5-069BDCD30B7F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{F26F3C9B-9D4F-47B5-A7CE-6383040C51FB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6A5379B3-B245-48F0-902A-250BE5C28788}
+	EndGlobalSection
+EndGlobal
