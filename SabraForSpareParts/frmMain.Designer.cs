@@ -14,11 +14,13 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             splitContainer2 = new SplitContainer();
+            ucMain1 = new SabraForSpareParts.Screens.usDashboard();
             ucTopBar1 = new ucTopBar();
             ucBottomBar1 = new ucBottomBar();
-            ucMain1 = new SabraForSpareParts.Screens.usDashboard();
+            sabraButton1 = new SabraButton();
             ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
             splitContainer2.Panel1.SuspendLayout();
+            splitContainer2.Panel2.SuspendLayout();
             splitContainer2.SuspendLayout();
             SuspendLayout();
             // 
@@ -36,6 +38,15 @@
             // 
             resources.ApplyResources(splitContainer2.Panel2, "splitContainer2.Panel2");
             splitContainer2.Panel2.BackColor = Color.FromArgb(15, 23, 42);
+            splitContainer2.Panel2.Controls.Add(sabraButton1);
+            // 
+            // ucMain1
+            // 
+            resources.ApplyResources(ucMain1, "ucMain1");
+            ucMain1.BackColor = Color.WhiteSmoke;
+            ucMain1.BorderColor = Color.Transparent;
+            ucMain1.ForeColor = Color.FromArgb(40, 40, 40);
+            ucMain1.Name = "ucMain1";
             // 
             // ucTopBar1
             // 
@@ -50,13 +61,23 @@
             ucBottomBar1.BackColor = Color.FromArgb(15, 23, 42);
             ucBottomBar1.Name = "ucBottomBar1";
             // 
-            // ucMain1
+            // sabraButton1
             // 
-            resources.ApplyResources(ucMain1, "ucMain1");
-            ucMain1.BackColor = Color.WhiteSmoke;
-            ucMain1.BorderColor = Color.Transparent;
-            ucMain1.ForeColor = Color.FromArgb(40, 40, 40);
-            ucMain1.Name = "ucMain1";
+            resources.ApplyResources(sabraButton1, "sabraButton1");
+            sabraButton1.BackColor = Color.RoyalBlue;
+            sabraButton1.BorderColor = Color.DodgerBlue;
+            sabraButton1.BorderRadius = 20;
+            sabraButton1.BorderSize = 0;
+            sabraButton1.FlatAppearance.BorderSize = 0;
+            sabraButton1.ForeColor = Color.White;
+            sabraButton1.HoverColor = Color.CornflowerBlue;
+            sabraButton1.IconChar = FontAwesome.Sharp.IconChar.None;
+            sabraButton1.IconColor = Color.Black;
+            sabraButton1.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sabraButton1.Name = "sabraButton1";
+            sabraButton1.NormalColor = Color.RoyalBlue;
+            sabraButton1.UseVisualStyleBackColor = false;
+            sabraButton1.Click += sabraButton1_Click;
             // 
             // frmMain
             // 
@@ -69,6 +90,7 @@
             ShowIcon = false;
             ShowInTaskbar = false;
             splitContainer2.Panel1.ResumeLayout(false);
+            splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
             splitContainer2.ResumeLayout(false);
             ResumeLayout(false);
@@ -78,5 +100,6 @@
         private ucTopBar ucTopBar1;
         private ucBottomBar ucBottomBar1;
         private Screens.usDashboard ucMain1;
+        private SabraButton sabraButton1;
     }
 }

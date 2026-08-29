@@ -35,9 +35,10 @@ namespace SabraForSpareParts
                 AnchorStyles.Right;
         }
 
-        private void sabraLabel1_Click(object sender, EventArgs e)
+        private void sabraButton1_Click(object sender, EventArgs e)
         {
-
+            test testForm = new test(); 
+            testForm.ShowDialog();
         }
     }
 }

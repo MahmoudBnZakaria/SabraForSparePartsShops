@@ -19,11 +19,20 @@
     <Compile Update="Screens\Dashboard\ucPendingPORow.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Screens\InventoryAlerts\ucInventoryAlertRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\InventoryAlerts\ucInventoryAlerts.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Screens\ucAddPart.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Screens\ucInventory.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="test.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="ucBottomBar.cs">
       <SubType>UserControl</SubType>
