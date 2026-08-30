@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             sabraTableLayoutPanel1 = new SabraTableLayoutPanel();
+            spnSave = new SabraPanel();
+            sbtnSave = new SabraButton();
+            sbtnSaveAndAdd = new SabraButton();
+            stbnCancel = new SabraButton();
             spnlTopPanel = new SabraPanel();
             sabraButton1 = new SabraButton();
             slblTitleOfTopPanel = new SabraLabel();
@@ -52,6 +56,13 @@
             panel1 = new Panel();
             slblBasicInfoTitle = new SabraLabel();
             sabraPanel2 = new SabraPanel();
+            sabraButton2 = new SabraButton();
+            sabraLabel15 = new SabraLabel();
+            stbxNotes = new SabraTextBox();
+            sabraLabel16 = new SabraLabel();
+            stbxAlternativePart = new SabraTextBox();
+            panel3 = new Panel();
+            sabraLabel14 = new SabraLabel();
             sabraLabel13 = new SabraLabel();
             stbxMiniAmount = new SabraTextBox();
             sabraLabel12 = new SabraLabel();
@@ -64,22 +75,11 @@
             stbxPurchasePrice = new SabraTextBox();
             panel2 = new Panel();
             sabraLabel8 = new SabraLabel();
-            spnSave = new SabraPanel();
-            stbnCancel = new SabraButton();
-            sbtnSave = new SabraButton();
-            sbtnSaveAndAdd = new SabraButton();
-            panel3 = new Panel();
-            sabraLabel14 = new SabraLabel();
-            sabraLabel15 = new SabraLabel();
-            stbxNotes = new SabraTextBox();
-            sabraLabel16 = new SabraLabel();
-            stbxAlternativePart = new SabraTextBox();
-            sabraButton2 = new SabraButton();
             sabraTableLayoutPanel1.SuspendLayout();
+            spnSave.SuspendLayout();
             spnlTopPanel.SuspendLayout();
             sabraPanel1.SuspendLayout();
             sabraPanel2.SuspendLayout();
-            spnSave.SuspendLayout();
             SuspendLayout();
             // 
             // sabraTableLayoutPanel1
@@ -87,6 +87,18 @@
             sabraTableLayoutPanel1.AutoScroll = true;
             sabraTableLayoutPanel1.BackColor = Color.Transparent;
             sabraTableLayoutPanel1.ColumnCount = 12;
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
@@ -138,11 +150,120 @@
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 18.4455967F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 1.76165807F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 1.96891189F));
             sabraTableLayoutPanel1.Size = new Size(1502, 1025);
             sabraTableLayoutPanel1.TabIndex = 0;
+            // 
+            // spnSave
+            // 
+            spnSave.BackColor = Color.White;
+            spnSave.BorderColor = Color.LightGray;
+            spnSave.BorderRadius = 15;
+            spnSave.BorderSize = 0;
+            sabraTableLayoutPanel1.SetColumnSpan(spnSave, 12);
+            spnSave.Controls.Add(sbtnSave);
+            spnSave.Controls.Add(sbtnSaveAndAdd);
+            spnSave.Controls.Add(stbnCancel);
+            spnSave.Dock = DockStyle.Bottom;
+            spnSave.EnableHover = true;
+            spnSave.ForeColor = Color.Black;
+            spnSave.GradientAngle = 90F;
+            spnSave.GradientBottomColor = Color.White;
+            spnSave.GradientTopColor = Color.White;
+            spnSave.HoverBackColor = Color.FromArgb(245, 248, 255);
+            spnSave.HoverBorderColor = Color.FromArgb(37, 99, 235);
+            spnSave.HoverBorderSize = 2;
+            spnSave.Location = new Point(30, 870);
+            spnSave.Margin = new Padding(0);
+            spnSave.Name = "spnSave";
+            spnSave.Size = new Size(1442, 125);
+            spnSave.TabIndex = 5;
+            // 
+            // sbtnSave
+            // 
+            sbtnSave.BackColor = Color.Green;
+            sbtnSave.BorderColor = Color.DodgerBlue;
+            sbtnSave.BorderRadius = 20;
+            sbtnSave.BorderSize = 0;
+            sbtnSave.FlatAppearance.BorderSize = 0;
+            sbtnSave.FlatStyle = FlatStyle.Flat;
+            sbtnSave.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sbtnSave.ForeColor = Color.White;
+            sbtnSave.HoverColor = Color.CornflowerBlue;
+            sbtnSave.IconChar = FontAwesome.Sharp.IconChar.Save;
+            sbtnSave.IconColor = Color.Beige;
+            sbtnSave.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sbtnSave.IconSize = 30;
+            sbtnSave.ImageAlign = ContentAlignment.MiddleRight;
+            sbtnSave.Location = new Point(1247, 21);
+            sbtnSave.Name = "sbtnSave";
+            sbtnSave.NormalColor = Color.Green;
+            sbtnSave.Padding = new Padding(10, 0, 10, 0);
+            sbtnSave.Size = new Size(175, 82);
+            sbtnSave.TabIndex = 9;
+            sbtnSave.Text = "حفظ القطعة";
+            sbtnSave.TextAlign = ContentAlignment.MiddleLeft;
+            sbtnSave.UseVisualStyleBackColor = false;
+            // 
+            // sbtnSaveAndAdd
+            // 
+            sbtnSaveAndAdd.BackColor = Color.RoyalBlue;
+            sbtnSaveAndAdd.BorderColor = Color.DodgerBlue;
+            sbtnSaveAndAdd.BorderRadius = 20;
+            sbtnSaveAndAdd.BorderSize = 0;
+            sbtnSaveAndAdd.FlatAppearance.BorderSize = 0;
+            sbtnSaveAndAdd.FlatStyle = FlatStyle.Flat;
+            sbtnSaveAndAdd.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sbtnSaveAndAdd.ForeColor = Color.White;
+            sbtnSaveAndAdd.HoverColor = Color.CornflowerBlue;
+            sbtnSaveAndAdd.IconChar = FontAwesome.Sharp.IconChar.ArrowRotateLeft;
+            sbtnSaveAndAdd.IconColor = Color.White;
+            sbtnSaveAndAdd.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sbtnSaveAndAdd.ImageAlign = ContentAlignment.MiddleRight;
+            sbtnSaveAndAdd.Location = new Point(1013, 21);
+            sbtnSaveAndAdd.Name = "sbtnSaveAndAdd";
+            sbtnSaveAndAdd.NormalColor = Color.RoyalBlue;
+            sbtnSaveAndAdd.Size = new Size(220, 82);
+            sbtnSaveAndAdd.TabIndex = 8;
+            sbtnSaveAndAdd.Text = "حفظ و إضافة أخرى";
+            sbtnSaveAndAdd.TextAlign = ContentAlignment.MiddleLeft;
+            sbtnSaveAndAdd.UseVisualStyleBackColor = false;
+            // 
+            // stbnCancel
+            // 
+            stbnCancel.BackColor = Color.DimGray;
+            stbnCancel.BorderColor = Color.DodgerBlue;
+            stbnCancel.BorderRadius = 20;
+            stbnCancel.BorderSize = 0;
+            stbnCancel.FlatAppearance.BorderSize = 0;
+            stbnCancel.FlatStyle = FlatStyle.Flat;
+            stbnCancel.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            stbnCancel.ForeColor = Color.White;
+            stbnCancel.HoverColor = Color.CornflowerBlue;
+            stbnCancel.IconChar = FontAwesome.Sharp.IconChar.DeleteLeft;
+            stbnCancel.IconColor = Color.Beige;
+            stbnCancel.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            stbnCancel.IconSize = 30;
+            stbnCancel.ImageAlign = ContentAlignment.MiddleRight;
+            stbnCancel.Location = new Point(880, 42);
+            stbnCancel.Name = "stbnCancel";
+            stbnCancel.NormalColor = Color.DimGray;
+            stbnCancel.Padding = new Padding(10, 0, 10, 0);
+            stbnCancel.Size = new Size(127, 41);
+            stbnCancel.TabIndex = 7;
+            stbnCancel.Text = "مسح";
+            stbnCancel.TextAlign = ContentAlignment.MiddleLeft;
+            stbnCancel.UseVisualStyleBackColor = false;
             // 
             // spnlTopPanel
             // 
@@ -561,6 +682,113 @@
             sabraPanel2.Size = new Size(1402, 320);
             sabraPanel2.TabIndex = 4;
             // 
+            // sabraButton2
+            // 
+            sabraButton2.BackColor = Color.DimGray;
+            sabraButton2.BorderColor = Color.DodgerBlue;
+            sabraButton2.BorderRadius = 20;
+            sabraButton2.BorderSize = 0;
+            sabraButton2.FlatAppearance.BorderSize = 0;
+            sabraButton2.FlatStyle = FlatStyle.Flat;
+            sabraButton2.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sabraButton2.ForeColor = Color.White;
+            sabraButton2.HoverColor = Color.CornflowerBlue;
+            sabraButton2.IconChar = FontAwesome.Sharp.IconChar.Search;
+            sabraButton2.IconColor = SystemColors.Desktop;
+            sabraButton2.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sabraButton2.IconSize = 30;
+            sabraButton2.ImageAlign = ContentAlignment.MiddleRight;
+            sabraButton2.Location = new Point(993, 260);
+            sabraButton2.Name = "sabraButton2";
+            sabraButton2.NormalColor = Color.DimGray;
+            sabraButton2.Padding = new Padding(10, 0, 10, 0);
+            sabraButton2.Size = new Size(58, 39);
+            sabraButton2.TabIndex = 31;
+            sabraButton2.TextAlign = ContentAlignment.MiddleLeft;
+            sabraButton2.UseVisualStyleBackColor = false;
+            // 
+            // sabraLabel15
+            // 
+            sabraLabel15.AutoSize = true;
+            sabraLabel15.BackColor = Color.Transparent;
+            sabraLabel15.BorderColor = Color.DodgerBlue;
+            sabraLabel15.BorderRadius = 8;
+            sabraLabel15.BorderSize = 0;
+            sabraLabel15.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel15.Location = new Point(824, 225);
+            sabraLabel15.Name = "sabraLabel15";
+            sabraLabel15.Size = new Size(78, 32);
+            sabraLabel15.TabIndex = 30;
+            sabraLabel15.Text = "ملاحظات";
+            sabraLabel15.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // stbxNotes
+            // 
+            stbxNotes.BackColor = SystemColors.Window;
+            stbxNotes.BorderSize = 2;
+            stbxNotes.Font = new Font("Cairo", 10F);
+            stbxNotes.ForeColor = Color.FromArgb(64, 64, 64);
+            stbxNotes.Location = new Point(419, 260);
+            stbxNotes.Name = "stbxNotes";
+            stbxNotes.PlaceholderText = "لا تصرف إلا لورشة كذا كذا";
+            stbxNotes.RightToLeft = RightToLeft.Yes;
+            stbxNotes.Size = new Size(499, 39);
+            stbxNotes.TabIndex = 29;
+            stbxNotes.Texts = "";
+            // 
+            // sabraLabel16
+            // 
+            sabraLabel16.AutoSize = true;
+            sabraLabel16.BackColor = Color.Transparent;
+            sabraLabel16.BorderColor = Color.DodgerBlue;
+            sabraLabel16.BorderRadius = 8;
+            sabraLabel16.BorderSize = 0;
+            sabraLabel16.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel16.Location = new Point(1286, 226);
+            sabraLabel16.Name = "sabraLabel16";
+            sabraLabel16.Size = new Size(96, 32);
+            sabraLabel16.TabIndex = 28;
+            sabraLabel16.Text = "قطعة بديلة";
+            sabraLabel16.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // stbxAlternativePart
+            // 
+            stbxAlternativePart.BackColor = SystemColors.Window;
+            stbxAlternativePart.BorderSize = 2;
+            stbxAlternativePart.Font = new Font("Cairo", 10F);
+            stbxAlternativePart.ForeColor = Color.FromArgb(64, 64, 64);
+            stbxAlternativePart.Location = new Point(1065, 260);
+            stbxAlternativePart.Name = "stbxAlternativePart";
+            stbxAlternativePart.PlaceholderText = "بحث باسم أو باركود ";
+            stbxAlternativePart.RightToLeft = RightToLeft.Yes;
+            stbxAlternativePart.Size = new Size(315, 39);
+            stbxAlternativePart.TabIndex = 27;
+            stbxAlternativePart.Texts = "";
+            // 
+            // panel3
+            // 
+            panel3.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            panel3.BackColor = Color.LightGray;
+            panel3.Location = new Point(3, 222);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(1396, 1);
+            panel3.TabIndex = 26;
+            // 
+            // sabraLabel14
+            // 
+            sabraLabel14.AutoSize = true;
+            sabraLabel14.BackColor = Color.Transparent;
+            sabraLabel14.BorderColor = Color.DodgerBlue;
+            sabraLabel14.BorderRadius = 8;
+            sabraLabel14.BorderSize = 0;
+            sabraLabel14.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sabraLabel14.Location = new Point(1240, 176);
+            sabraLabel14.Name = "sabraLabel14";
+            sabraLabel14.Size = new Size(142, 32);
+            sabraLabel14.TabIndex = 25;
+            sabraLabel14.Text = "معلومات إضافية";
+            sabraLabel14.TextAlign = ContentAlignment.MiddleRight;
+            // 
             // sabraLabel13
             // 
             sabraLabel13.AutoSize = true;
@@ -732,214 +960,6 @@
             sabraLabel8.Text = "التسعير والمخزون";
             sabraLabel8.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // spnSave
-            // 
-            spnSave.BackColor = Color.White;
-            spnSave.BorderColor = Color.LightGray;
-            spnSave.BorderRadius = 15;
-            spnSave.BorderSize = 0;
-            sabraTableLayoutPanel1.SetColumnSpan(spnSave, 12);
-            spnSave.Controls.Add(sbtnSave);
-            spnSave.Controls.Add(sbtnSaveAndAdd);
-            spnSave.Controls.Add(stbnCancel);
-            spnSave.Dock = DockStyle.Bottom;
-            spnSave.EnableHover = true;
-            spnSave.ForeColor = Color.Black;
-            spnSave.GradientAngle = 90F;
-            spnSave.GradientBottomColor = Color.White;
-            spnSave.GradientTopColor = Color.White;
-            spnSave.HoverBackColor = Color.FromArgb(245, 248, 255);
-            spnSave.HoverBorderColor = Color.FromArgb(37, 99, 235);
-            spnSave.HoverBorderSize = 2;
-            spnSave.Location = new Point(30, 870);
-            spnSave.Margin = new Padding(0);
-            spnSave.Name = "spnSave";
-            spnSave.Size = new Size(1442, 125);
-            spnSave.TabIndex = 5;
-            // 
-            // stbnCancel
-            // 
-            stbnCancel.BackColor = Color.DimGray;
-            stbnCancel.BorderColor = Color.DodgerBlue;
-            stbnCancel.BorderRadius = 20;
-            stbnCancel.BorderSize = 0;
-            stbnCancel.FlatAppearance.BorderSize = 0;
-            stbnCancel.FlatStyle = FlatStyle.Flat;
-            stbnCancel.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            stbnCancel.ForeColor = Color.White;
-            stbnCancel.HoverColor = Color.CornflowerBlue;
-            stbnCancel.IconChar = FontAwesome.Sharp.IconChar.DeleteLeft;
-            stbnCancel.IconColor = Color.Beige;
-            stbnCancel.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            stbnCancel.IconSize = 30;
-            stbnCancel.ImageAlign = ContentAlignment.MiddleRight;
-            stbnCancel.Location = new Point(880, 42);
-            stbnCancel.Name = "stbnCancel";
-            stbnCancel.NormalColor = Color.DimGray;
-            stbnCancel.Padding = new Padding(10, 0, 10, 0);
-            stbnCancel.Size = new Size(127, 41);
-            stbnCancel.TabIndex = 7;
-            stbnCancel.Text = "مسح";
-            stbnCancel.TextAlign = ContentAlignment.MiddleLeft;
-            stbnCancel.UseVisualStyleBackColor = false;
-            // 
-            // sbtnSave
-            // 
-            sbtnSave.BackColor = Color.Green;
-            sbtnSave.BorderColor = Color.DodgerBlue;
-            sbtnSave.BorderRadius = 20;
-            sbtnSave.BorderSize = 0;
-            sbtnSave.FlatAppearance.BorderSize = 0;
-            sbtnSave.FlatStyle = FlatStyle.Flat;
-            sbtnSave.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            sbtnSave.ForeColor = Color.White;
-            sbtnSave.HoverColor = Color.CornflowerBlue;
-            sbtnSave.IconChar = FontAwesome.Sharp.IconChar.Save;
-            sbtnSave.IconColor = Color.Beige;
-            sbtnSave.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sbtnSave.IconSize = 30;
-            sbtnSave.ImageAlign = ContentAlignment.MiddleRight;
-            sbtnSave.Location = new Point(1247, 21);
-            sbtnSave.Name = "sbtnSave";
-            sbtnSave.NormalColor = Color.Green;
-            sbtnSave.Padding = new Padding(10, 0, 10, 0);
-            sbtnSave.Size = new Size(175, 82);
-            sbtnSave.TabIndex = 9;
-            sbtnSave.Text = "حفظ القطعة";
-            sbtnSave.TextAlign = ContentAlignment.MiddleLeft;
-            sbtnSave.UseVisualStyleBackColor = false;
-            // 
-            // sbtnSaveAndAdd
-            // 
-            sbtnSaveAndAdd.BackColor = Color.RoyalBlue;
-            sbtnSaveAndAdd.BorderColor = Color.DodgerBlue;
-            sbtnSaveAndAdd.BorderRadius = 20;
-            sbtnSaveAndAdd.BorderSize = 0;
-            sbtnSaveAndAdd.FlatAppearance.BorderSize = 0;
-            sbtnSaveAndAdd.FlatStyle = FlatStyle.Flat;
-            sbtnSaveAndAdd.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            sbtnSaveAndAdd.ForeColor = Color.White;
-            sbtnSaveAndAdd.HoverColor = Color.CornflowerBlue;
-            sbtnSaveAndAdd.IconChar = FontAwesome.Sharp.IconChar.ArrowRotateLeft;
-            sbtnSaveAndAdd.IconColor = Color.White;
-            sbtnSaveAndAdd.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sbtnSaveAndAdd.ImageAlign = ContentAlignment.MiddleRight;
-            sbtnSaveAndAdd.Location = new Point(1013, 21);
-            sbtnSaveAndAdd.Name = "sbtnSaveAndAdd";
-            sbtnSaveAndAdd.NormalColor = Color.RoyalBlue;
-            sbtnSaveAndAdd.Size = new Size(220, 82);
-            sbtnSaveAndAdd.TabIndex = 8;
-            sbtnSaveAndAdd.Text = "حفظ و إضافة أخرى";
-            sbtnSaveAndAdd.TextAlign = ContentAlignment.MiddleLeft;
-            sbtnSaveAndAdd.UseVisualStyleBackColor = false;
-            // 
-            // panel3
-            // 
-            panel3.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            panel3.BackColor = Color.LightGray;
-            panel3.Location = new Point(3, 222);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(1396, 1);
-            panel3.TabIndex = 26;
-            // 
-            // sabraLabel14
-            // 
-            sabraLabel14.AutoSize = true;
-            sabraLabel14.BackColor = Color.Transparent;
-            sabraLabel14.BorderColor = Color.DodgerBlue;
-            sabraLabel14.BorderRadius = 8;
-            sabraLabel14.BorderSize = 0;
-            sabraLabel14.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            sabraLabel14.Location = new Point(1240, 176);
-            sabraLabel14.Name = "sabraLabel14";
-            sabraLabel14.Size = new Size(142, 32);
-            sabraLabel14.TabIndex = 25;
-            sabraLabel14.Text = "معلومات إضافية";
-            sabraLabel14.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // sabraLabel15
-            // 
-            sabraLabel15.AutoSize = true;
-            sabraLabel15.BackColor = Color.Transparent;
-            sabraLabel15.BorderColor = Color.DodgerBlue;
-            sabraLabel15.BorderRadius = 8;
-            sabraLabel15.BorderSize = 0;
-            sabraLabel15.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            sabraLabel15.Location = new Point(824, 225);
-            sabraLabel15.Name = "sabraLabel15";
-            sabraLabel15.Size = new Size(78, 32);
-            sabraLabel15.TabIndex = 30;
-            sabraLabel15.Text = "ملاحظات";
-            sabraLabel15.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // stbxNotes
-            // 
-            stbxNotes.BackColor = SystemColors.Window;
-            stbxNotes.BorderSize = 2;
-            stbxNotes.Font = new Font("Cairo", 10F);
-            stbxNotes.ForeColor = Color.FromArgb(64, 64, 64);
-            stbxNotes.Location = new Point(419, 260);
-            stbxNotes.Name = "stbxNotes";
-            stbxNotes.PlaceholderText = "لا تصرف إلا لورشة كذا كذا";
-            stbxNotes.RightToLeft = RightToLeft.Yes;
-            stbxNotes.Size = new Size(499, 39);
-            stbxNotes.TabIndex = 29;
-            stbxNotes.Texts = "";
-            // 
-            // sabraLabel16
-            // 
-            sabraLabel16.AutoSize = true;
-            sabraLabel16.BackColor = Color.Transparent;
-            sabraLabel16.BorderColor = Color.DodgerBlue;
-            sabraLabel16.BorderRadius = 8;
-            sabraLabel16.BorderSize = 0;
-            sabraLabel16.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            sabraLabel16.Location = new Point(1286, 226);
-            sabraLabel16.Name = "sabraLabel16";
-            sabraLabel16.Size = new Size(96, 32);
-            sabraLabel16.TabIndex = 28;
-            sabraLabel16.Text = "قطعة بديلة";
-            sabraLabel16.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // stbxAlternativePart
-            // 
-            stbxAlternativePart.BackColor = SystemColors.Window;
-            stbxAlternativePart.BorderSize = 2;
-            stbxAlternativePart.Font = new Font("Cairo", 10F);
-            stbxAlternativePart.ForeColor = Color.FromArgb(64, 64, 64);
-            stbxAlternativePart.Location = new Point(1065, 260);
-            stbxAlternativePart.Name = "stbxAlternativePart";
-            stbxAlternativePart.PlaceholderText = "بحث باسم أو باركود ";
-            stbxAlternativePart.RightToLeft = RightToLeft.Yes;
-            stbxAlternativePart.Size = new Size(315, 39);
-            stbxAlternativePart.TabIndex = 27;
-            stbxAlternativePart.Texts = "";
-            // 
-            // sabraButton2
-            // 
-            sabraButton2.BackColor = SystemColors.InactiveCaption;
-            sabraButton2.BorderColor = Color.DodgerBlue;
-            sabraButton2.BorderRadius = 20;
-            sabraButton2.BorderSize = 0;
-            sabraButton2.FlatAppearance.BorderSize = 0;
-            sabraButton2.FlatStyle = FlatStyle.Flat;
-            sabraButton2.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            sabraButton2.ForeColor = Color.White;
-            sabraButton2.HoverColor = Color.CornflowerBlue;
-            sabraButton2.IconChar = FontAwesome.Sharp.IconChar.Search;
-            sabraButton2.IconColor = SystemColors.Desktop;
-            sabraButton2.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sabraButton2.IconSize = 30;
-            sabraButton2.ImageAlign = ContentAlignment.MiddleRight;
-            sabraButton2.Location = new Point(993, 260);
-            sabraButton2.Name = "sabraButton2";
-            sabraButton2.NormalColor = Color.DimGray;
-            sabraButton2.Padding = new Padding(10, 0, 10, 0);
-            sabraButton2.Size = new Size(58, 39);
-            sabraButton2.TabIndex = 31;
-            sabraButton2.TextAlign = ContentAlignment.MiddleLeft;
-            sabraButton2.UseVisualStyleBackColor = false;
-            // 
             // ucAddPart
             // 
             AutoScaleDimensions = new SizeF(9F, 32F);
@@ -947,13 +967,13 @@
             Controls.Add(sabraTableLayoutPanel1);
             Name = "ucAddPart";
             sabraTableLayoutPanel1.ResumeLayout(false);
+            spnSave.ResumeLayout(false);
             spnlTopPanel.ResumeLayout(false);
             spnlTopPanel.PerformLayout();
             sabraPanel1.ResumeLayout(false);
             sabraPanel1.PerformLayout();
             sabraPanel2.ResumeLayout(false);
             sabraPanel2.PerformLayout();
-            spnSave.ResumeLayout(false);
             ResumeLayout(false);
         }
 

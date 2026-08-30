@@ -31,6 +31,12 @@
     <Compile Update="Screens\ucInventory.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Screens\ucInventoryTransactions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucVehicleCompatibility.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="test.cs">
       <SubType>Form</SubType>
     </Compile>

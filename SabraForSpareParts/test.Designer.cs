@@ -28,33 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            ucInventory1 = new SabraForSpareParts.Screens.ucInventory();
+            ucInventoryTransactions1 = new SabraForSpareParts.Screens.ucInventoryTransactions();
             SuspendLayout();
             // 
-            // ucInventory1
+            // ucInventoryTransactions1
             // 
-            ucInventory1.AutoScroll = true;
-            ucInventory1.AutoScrollMinSize = new Size(1502, 1000);
-            ucInventory1.BackColor = Color.WhiteSmoke;
-            ucInventory1.BorderColor = Color.Transparent;
-            ucInventory1.Dock = DockStyle.Fill;
-            ucInventory1.Font = new Font("Cairo", 10F);
-            ucInventory1.ForeColor = Color.FromArgb(40, 40, 40);
-            ucInventory1.Location = new Point(0, 0);
-            ucInventory1.Margin = new Padding(0);
-            ucInventory1.MinimumSize = new Size(900, 600);
-            ucInventory1.Name = "ucInventory1";
-            ucInventory1.Padding = new Padding(10);
-            ucInventory1.RightToLeft = RightToLeft.Yes;
-            ucInventory1.Size = new Size(1404, 670);
-            ucInventory1.TabIndex = 0;
+            ucInventoryTransactions1.Dock = DockStyle.Fill;
+            ucInventoryTransactions1.Location = new Point(0, 0);
+            ucInventoryTransactions1.Name = "ucInventoryTransactions1";
+            ucInventoryTransactions1.Size = new Size(1404, 670);
+            ucInventoryTransactions1.TabIndex = 0;
             // 
             // test
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1404, 670);
-            Controls.Add(ucInventory1);
+            Controls.Add(ucInventoryTransactions1);
             Name = "test";
             Text = "test";
             ResumeLayout(false);
@@ -62,6 +52,6 @@
 
         #endregion
 
-        private Screens.ucInventory ucInventory1;
+        private Screens.ucInventoryTransactions ucInventoryTransactions1;
     }
 }

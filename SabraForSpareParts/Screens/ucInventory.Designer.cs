@@ -554,7 +554,6 @@
             sabraDataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             sabraDataGridView1.Columns.AddRange(new DataGridViewColumn[] { dataGridViewButtonColumn1 });
             sabraTableLayoutPanel1.SetColumnSpan(sabraDataGridView1, 12);
-            sabraDataGridView1.CustomGridLineColor = Color.LightGray;
             dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = Color.White;
             dataGridViewCellStyle4.Font = new Font("Cairo", 10F);
@@ -574,12 +573,8 @@
             sabraDataGridView1.Name = "sabraDataGridView1";
             sabraDataGridView1.ReadOnly = true;
             sabraDataGridView1.RightToLeft = RightToLeft.Yes;
-            sabraDataGridView1.RowAlternateColor = Color.FromArgb(248, 248, 248);
             sabraDataGridView1.RowHeadersVisible = false;
             sabraDataGridView1.RowHeadersWidth = 51;
-            sabraDataGridView1.RowNormalColor = Color.White;
-            sabraDataGridView1.RowSelectionColor = Color.FromArgb(235, 245, 255);
-            sabraDataGridView1.RowSelectionForeColor = Color.Black;
             sabraTableLayoutPanel1.SetRowSpan(sabraDataGridView1, 5);
             sabraDataGridView1.RowTemplate.Height = 40;
             sabraDataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;

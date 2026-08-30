@@ -553,289 +553,30 @@ namespace SabraForSpareParts.Screens
 
         #endregion
 
-        #region Print
 
         private void sbtnPrint_Click(
-            object sender,
-            EventArgs e)
+    object sender,
+    EventArgs e)
         {
-            if (sabraDataGridView1.Rows.Count == 0)
-            {
-                MessageBox.Show(
-                    "لا توجد بيانات للطباعة.",
-
-                    "الطباعة",
-
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
-                return;
-            }
-
-            _printRowIndex = 0;
-
-            _printDocument ??= new PrintDocument();
-
-            _printDocument.PrintPage -= PrintDocument_PrintPage;
-            _printDocument.PrintPage += PrintDocument_PrintPage;
-
-            using PrintPreviewDialog preview =
-                new PrintPreviewDialog();
-
-            preview.Document = _printDocument;
-
-            preview.WindowState =
-                FormWindowState.Maximized;
-
-            preview.ShowDialog();
+            clsGlobalClass.PrintDataGridView(
+                sabraDataGridView1,
+                "تقرير المخزون");
         }
 
-        private void PrintDocument_PrintPage(
-            object sender,
-            PrintPageEventArgs e)
-        {
-            Font titleFont = new Font(
-                "Arial",
-                18,
-                FontStyle.Bold);
-
-            Font headerFont = new Font(
-                "Arial",
-                10,
-                FontStyle.Bold);
-
-            Font cellFont = new Font(
-                "Arial",
-                9);
-
-            int x = e.MarginBounds.Left;
-            int y = e.MarginBounds.Top;
-
-            e.Graphics.DrawString(
-                "تقرير المخزون",
-
-                titleFont,
-
-                Brushes.Black,
-
-                x,
-
-                y);
-
-            y += 50;
-
-            int rowHeight = 30;
-            int barcodeWidth = 120;
-            int nameWidth = 300;
-            int quantityWidth = 100;
-            int minLimitWidth = 100;
-            int priceWidth = 120;
-
-            e.Graphics.DrawString(
-                "الباركود",
-                headerFont,
-                Brushes.Black,
-                x,
-                y);
-
-            e.Graphics.DrawString(
-                "اسم القطعة",
-                headerFont,
-                Brushes.Black,
-                x + barcodeWidth,
-                y);
-
-            e.Graphics.DrawString(
-                "الكمية",
-                headerFont,
-                Brushes.Black,
-                x + barcodeWidth + nameWidth,
-                y);
-
-            e.Graphics.DrawString(
-                "الحد الأدنى",
-                headerFont,
-                Brushes.Black,
-                x + barcodeWidth + nameWidth + quantityWidth,
-                y);
-
-            e.Graphics.DrawString(
-                "السعر",
-                headerFont,
-                Brushes.Black,
-                x + barcodeWidth + nameWidth +
-                quantityWidth + minLimitWidth,
-                y);
-
-            y += rowHeight;
-
-            while (_printRowIndex <
-                   sabraDataGridView1.Rows.Count)
-            {
-                if (y + rowHeight >
-                    e.MarginBounds.Bottom)
-                {
-                    e.HasMorePages = true;
-                    return;
-                }
-
-                if (sabraDataGridView1.Rows[_printRowIndex]
-                    .DataBoundItem is SparePartMock part)
-                {
-                    e.Graphics.DrawString(
-                        part.Barcode,
-                        cellFont,
-                        Brushes.Black,
-                        x,
-                        y);
-
-                    e.Graphics.DrawString(
-                        part.Name,
-                        cellFont,
-                        Brushes.Black,
-                        x + barcodeWidth,
-                        y);
-
-                    e.Graphics.DrawString(
-                        part.Quantity.ToString(),
-                        cellFont,
-                        Brushes.Black,
-                        x + barcodeWidth + nameWidth,
-                        y);
-
-                    e.Graphics.DrawString(
-                        part.MinLimit.ToString(),
-                        cellFont,
-                        Brushes.Black,
-                        x + barcodeWidth + nameWidth +
-                        quantityWidth,
-                        y);
-
-                    e.Graphics.DrawString(
-                        part.PriceString,
-                        cellFont,
-                        Brushes.Black,
-                        x + barcodeWidth + nameWidth +
-                        quantityWidth + minLimitWidth,
-                        y);
-                }
-
-                y += rowHeight;
-                _printRowIndex++;
-            }
-
-            e.HasMorePages = false;
-            _printRowIndex = 0;
-        }
-
-        #endregion
 
         private void sabraTableLayoutPanel1_Paint(
             object sender,
             PaintEventArgs e)
         {
         }
-        private void sbtnExportAsExcel_Click(object sender, EventArgs e)
+        private void sbtnExportAsExcel_Click(
+    object sender,
+    EventArgs e)
         {
-            if (sabraDataGridView1.Rows.Count == 0)
-            {
-                MessageBox.Show(
-                    "لا توجد بيانات لتصديرها.",
-                    "تصدير Excel",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
-                return;
-            }
-
-            using SaveFileDialog saveFileDialog = new SaveFileDialog();
-
-            saveFileDialog.Filter = "Excel Files (*.xlsx)|*.xlsx";
-            saveFileDialog.Title = "حفظ ملف Excel";
-            saveFileDialog.FileName = $"Inventory_{DateTime.Now:yyyy-MM-dd_HH-mm}.xlsx";
-
-            if (saveFileDialog.ShowDialog() != DialogResult.OK)
-                return;
-
-            try
-            {
-                using XLWorkbook workbook = new XLWorkbook();
-
-                var worksheet = workbook.Worksheets.Add("المخزون");
-
-                int excelColumn = 1;
-
-                // إضافة عناوين الأعمدة
-                foreach (DataGridViewColumn column in sabraDataGridView1.Columns)
-                {
-                    // تجاهل أعمدة الأزرار
-                    if (column is DataGridViewButtonColumn)
-                        continue;
-
-                    worksheet.Cell(1, excelColumn).Value = column.HeaderText;
-
-                    worksheet.Cell(1, excelColumn).Style.Font.Bold = true;
-
-                    excelColumn++;
-                }
-
-                int excelRow = 2;
-
-                // إضافة الصفوف
-                foreach (DataGridViewRow row in sabraDataGridView1.Rows)
-                {
-                    if (row.IsNewRow)
-                        continue;
-
-                    excelColumn = 1;
-
-                    foreach (DataGridViewColumn column in sabraDataGridView1.Columns)
-                    {
-                        // تجاهل أعمدة الأزرار
-                        if (column is DataGridViewButtonColumn)
-                            continue;
-
-                        worksheet.Cell(excelRow, excelColumn).Value =
-                            row.Cells[column.Index].Value?.ToString() ?? "";
-
-                        excelColumn++;
-                    }
-
-                    excelRow++;
-                }
-
-                // ضبط اتجاه الشيت للعربي
-                worksheet.RightToLeft = true;
-
-                // ضبط عرض الأعمدة تلقائيًا
-                worksheet.Columns().AdjustToContents();
-
-                // تثبيت صف العناوين
-                worksheet.SheetView.FreezeRows(1);
-
-                workbook.SaveAs(saveFileDialog.FileName);
-
-                MessageBox.Show(
-                    "تم تصدير بيانات المخزون إلى Excel بنجاح.",
-                    "تم التصدير",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-
-                System.Diagnostics.Process.Start(
-                    new System.Diagnostics.ProcessStartInfo
-                    {
-                        FileName = saveFileDialog.FileName,
-                        UseShellExecute = true
-                    });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"حدث خطأ أثناء تصدير الملف:\n{ex.Message}",
-                    "خطأ",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
+            clsGlobalClass.ExportDataGridViewToExcel(
+                sabraDataGridView1,
+                "Inventory",
+                "المخزون");
         }
     }
 

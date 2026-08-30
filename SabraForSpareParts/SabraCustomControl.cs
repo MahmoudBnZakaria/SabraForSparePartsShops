@@ -1,14 +1,15 @@
-﻿using System;
+﻿using FontAwesome.Sharp;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using FontAwesome.Sharp;
 
 namespace SabraForSpareParts
 {
@@ -1225,238 +1226,880 @@ namespace SabraForSpareParts
         }
     }
 
-
     public class SabraDataGridView : DataGridView
     {
-        // --- خصائص الألوان القابلة للتخصيص ---
-        private Color headerBackColor = Color.White;
-        private Color headerForeColor = Color.FromArgb(64, 64, 64);
-        private Color rowNormalColor = Color.White;
-        private Color rowAlternateColor = Color.FromArgb(248, 248, 248); // رمادي أنعم من الكود الأصلي
-        private Color rowSelectionColor = Color.FromArgb(235, 245, 255); // أزرق فاتح جداً وناعم للتحديد
-        private Color rowSelectionForeColor = Color.Black;
-        private Color gridLineColor = Color.LightGray;
+        #region Colors
+        private Color _headerBackColor = Color.FromArgb(248, 250, 252);
+        private Color _headerForeColor = Color.FromArgb(30, 41, 59);
 
-        [Category("Custom Colors"), Description("لون خلفية رأس الجدول")]
+        private Color _rowBackColor = Color.White;
+        private Color _rowAlternateBackColor = Color.FromArgb(248, 250, 252);
+
+        private Color _rowForeColor = Color.FromArgb(51, 65, 85);
+
+        private Color _selectionBackColor = Color.FromArgb(30, 58, 138);
+        private Color _selectionForeColor = Color.White;
+
+        private Color _hoverBackColor = Color.FromArgb(241, 245, 249);
+        private Color _gridLineColor = Color.FromArgb(226, 232, 240);
+
+        private Color _buttonBackColor = Color.White;
+        private Color _buttonForeColor = Color.FromArgb(51, 65, 85);
+        private Color _buttonHoverColor = Color.FromArgb(238, 242, 255);
+        #endregion
+
+        #region Cached Fonts
+        // بدل ما نعمل new Font() جوه كل رسمة/كل ثيم (بيتكرر آلاف المرات وقت الـ scroll)
+        // بنعمل الخطوط دي مرة واحدة بس ونعيد استخدامها، وبنتخلص منها في Dispose.
+        private Font _regularFont;
+        private Font _boldFont;
+        private Font _smallFont;
+        #endregion
+
+        #region Appearance Properties
+
+        [Category("Sabra Appearance")]
+        [Description("لون خلفية رأس الجدول")]
         public Color HeaderBackColor
         {
-            get { return headerBackColor; }
-            set { headerBackColor = value; ApplyTheme(); }
+            get => _headerBackColor;
+            set
+            {
+                _headerBackColor = value;
+                ApplyTheme();
+            }
         }
 
-        [Category("Custom Colors"), Description("لون نص رأس الجدول")]
+        [Category("Sabra Appearance")]
+        [Description("لون نص رأس الجدول")]
         public Color HeaderForeColor
         {
-            get { return headerForeColor; }
-            set { headerForeColor = value; ApplyTheme(); }
+            get => _headerForeColor;
+            set
+            {
+                _headerForeColor = value;
+                ApplyTheme();
+            }
         }
 
-        [Category("Custom Colors"), Description("لون الصف العادي")]
-        public Color RowNormalColor
+        [Category("Sabra Appearance")]
+        [Description("لون الصفوف")]
+        public Color RowBackColor
         {
-            get { return rowNormalColor; }
-            set { rowNormalColor = value; ApplyTheme(); }
+            get => _rowBackColor;
+            set
+            {
+                _rowBackColor = value;
+                ApplyTheme();
+            }
         }
 
-        [Category("Custom Colors"), Description("لون الصف البديل")]
-        public Color RowAlternateColor
+        [Category("Sabra Appearance")]
+        [Description("لون الصفوف البديلة")]
+        public Color RowAlternateBackColor
         {
-            get { return rowAlternateColor; }
-            set { rowAlternateColor = value; ApplyTheme(); }
+            get => _rowAlternateBackColor;
+            set
+            {
+                _rowAlternateBackColor = value;
+                ApplyTheme();
+            }
         }
 
-        [Category("Custom Colors"), Description("لون خلفية الصف المحدد")]
-        public Color RowSelectionColor
+        [Category("Sabra Appearance")]
+        [Description("لون نص الصفوف")]
+        public Color RowForeColor
         {
-            get { return rowSelectionColor; }
-            set { rowSelectionColor = value; ApplyTheme(); }
+            get => _rowForeColor;
+            set
+            {
+                _rowForeColor = value;
+                ApplyTheme();
+            }
         }
 
-        [Category("Custom Colors"), Description("لون نص الصف المحدد")]
-        public Color RowSelectionForeColor
+        [Category("Sabra Appearance")]
+        [Description("لون خلفية الصف المحدد")]
+        public Color SelectionBackColor
         {
-            get { return rowSelectionForeColor; }
-            set { rowSelectionForeColor = value; ApplyTheme(); }
+            get => _selectionBackColor;
+            set
+            {
+                _selectionBackColor = value;
+                ApplyTheme();
+            }
         }
 
-        [Category("Custom Colors"), Description("لون خطوط الشبكة")]
-        public Color CustomGridLineColor
+        [Category("Sabra Appearance")]
+        [Description("لون نص الصف المحدد")]
+        public Color SelectionForeColor
         {
-            get { return gridLineColor; }
-            set { gridLineColor = value; ApplyTheme(); }
+            get => _selectionForeColor;
+            set
+            {
+                _selectionForeColor = value;
+                ApplyTheme();
+            }
         }
 
-        // منشئ الكلاس
+        [Category("Sabra Appearance")]
+        [Description("لون الصف عند مرور الماوس")]
+        public Color HoverBackColor
+        {
+            get => _hoverBackColor;
+            set
+            {
+                _hoverBackColor = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Appearance")]
+        [Description("لون خطوط الجدول")]
+        public Color GridLineCustomColor
+        {
+            get => _gridLineColor;
+            set
+            {
+                _gridLineColor = value;
+                ApplyTheme();
+            }
+        }
+
+        [Category("Sabra Appearance")]
+        [Description("لون خلفية أزرار الجدول")]
+        public Color ButtonBackColor
+        {
+            get => _buttonBackColor;
+            set
+            {
+                _buttonBackColor = value;
+                ApplyTheme();
+            }
+        }
+
+        [Category("Sabra Appearance")]
+        [Description("لون نص أزرار الجدول")]
+        public Color ButtonForeColor
+        {
+            get => _buttonForeColor;
+            set
+            {
+                _buttonForeColor = value;
+                ApplyTheme();
+            }
+        }
+
+        [Category("Sabra Appearance")]
+        [Description("لون الزر عند مرور الماوس")]
+        public Color ButtonHoverColor
+        {
+            get => _buttonHoverColor;
+            set
+            {
+                _buttonHoverColor = value;
+                Invalidate();
+            }
+        }
+
+        #endregion
+
+        #region Layout Properties
+
+        [Category("Sabra Layout")]
+        [DefaultValue(44)]
+        public int HeaderHeight
+        {
+            get => ColumnHeadersHeight;
+            set
+            {
+                ColumnHeadersHeight = Math.Max(30, value);
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Layout")]
+        [DefaultValue(42)]
+        public int RowHeight
+        {
+            get => RowTemplate.Height;
+            set
+            {
+                RowTemplate.Height = Math.Max(25, value);
+
+                foreach (DataGridViewRow row in Rows)
+                {
+                    if (!row.IsNewRow)
+                        row.Height = RowTemplate.Height;
+                }
+
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Layout")]
+        [DefaultValue(true)]
+        public bool EnableHoverEffect { get; set; } = true;
+
+        [Category("Sabra Layout")]
+        [DefaultValue(true)]
+        public bool ShowOuterBorder { get; set; } = true;
+
+        // كانت الخاصية دي معمولة بس مش متوصّلة بحاجة فعليًا (dead property) —
+        // الفاصل بين الصفوف كان جاي من قيمة CellBorderStyle المكتوبة تابت في InitializeGrid.
+        // دلوقتي هي فعليًا اللي بتتحكم في ظهور الخط الفاصل، والافتراضي False (من غير بوردرز).
+        private bool _showCellBorders = false;
+
+        [Category("Sabra Layout")]
+        [DefaultValue(false)]
+        [Description("إظهار خط فاصل بين الصفوف")]
+        public bool ShowCellBorders
+        {
+            get => _showCellBorders;
+            set
+            {
+                _showCellBorders = value;
+
+                CellBorderStyle =
+                    _showCellBorders
+                        ? DataGridViewCellBorderStyle.SingleHorizontal
+                        : DataGridViewCellBorderStyle.None;
+
+                Invalidate();
+            }
+        }
+
+        #endregion
+
+        #region Constructor
+
         public SabraDataGridView()
         {
-            // --- الإعدادات الأساسية للجدول ---
-            this.DoubleBuffered = true; // لمنع التقطيع أثناء التمرير
-            this.BorderStyle = BorderStyle.None;
-            this.BackgroundColor = Color.White;
-            this.EnableHeadersVisualStyles = false; // مهم لتغيير لون الهيدر
-            this.AllowUserToAddRows = false;
-            this.AllowUserToDeleteRows = false;
-            this.AllowUserToResizeRows = false;
-            this.ReadOnly = true;
+            InitializeFonts();
 
-            // --- إعدادات اللغة العربية ---
-            this.RightToLeft = RightToLeft.Yes;
-            this.Font = new Font("Cairo", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            InitializeGrid();
 
-            // --- إعدادات التحديد ---
-            this.SelectionMode = DataGridViewSelectionMode.FullRowSelect; // تحديد السطر بالكامل
-            this.MultiSelect = false; // إلغاء تحديد أكثر من سطر
-
-            // --- إعدادات الأعمدة ---
-            this.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // ملء المساحة
-            this.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal; // خطوط أفقية فقط
-
-            // --- إضافة مثال لعمود الإجراءات (كما في الصورة) ---
-            DataGridViewButtonColumn actionColumn = new DataGridViewButtonColumn();
-            actionColumn.Name = "Actions";
-            actionColumn.HeaderText = "الإجراءات";
-            actionColumn.UseColumnTextForButtonValue = true;
-            actionColumn.Text = "عرض  تعديل  حركة"; // نص الأزرار الثلاثة
-            actionColumn.FlatStyle = FlatStyle.Flat;
-            actionColumn.DefaultCellStyle.BackColor = Color.White;
-            actionColumn.DefaultCellStyle.ForeColor = Color.Black;
-            actionColumn.DefaultCellStyle.SelectionBackColor = Color.White; // لمنع تلوين الزر عند التحديد
-            actionColumn.DefaultCellStyle.SelectionForeColor = Color.Black;
-            this.Columns.Add(actionColumn);
-
-            // --- إضافة حدث لتلوين الخلايا الخاصة (الكمية والتسميات) ---
-            this.CellFormatting += SabraDataGridView_CellFormatting;
-            // --- إضافة حدث لرسم الأزرار وتسميات التصنيف بشكل مخصص ---
-            this.CellPainting += SabraDataGridView_CellPainting;
+            CellFormatting += SabraDataGridView_CellFormatting;
+            CellPainting += SabraDataGridView_CellPainting;
+            CellMouseEnter += SabraDataGridView_CellMouseEnter;
+            CellMouseLeave += SabraDataGridView_CellMouseLeave;
 
             ApplyTheme();
         }
 
-        // تطبيق الألوان والأنماط المحددة
+        #endregion
+
+        #region Fonts Init
+
+        private void InitializeFonts()
+        {
+            _regularFont =
+                new Font(
+                    "Cairo",
+                    10F,
+                    FontStyle.Regular,
+                    GraphicsUnit.Point);
+
+            _boldFont =
+                new Font(
+                    "Cairo",
+                    10F,
+                    FontStyle.Bold,
+                    GraphicsUnit.Point);
+
+            _smallFont =
+                new Font(
+                    "Cairo",
+                    9F,
+                    FontStyle.Regular,
+                    GraphicsUnit.Point);
+        }
+
+        #endregion
+
+        #region Initialization
+
+        private void InitializeGrid()
+        {
+            DoubleBuffered = true;
+
+            BorderStyle = BorderStyle.None;
+
+            BackgroundColor = Color.White;
+
+            EnableHeadersVisualStyles = false;
+
+            AllowUserToAddRows = false;
+            AllowUserToDeleteRows = false;
+            AllowUserToResizeRows = false;
+            AllowUserToOrderColumns = false;
+
+            ReadOnly = true;
+
+            MultiSelect = false;
+
+            SelectionMode =
+                DataGridViewSelectionMode.FullRowSelect;
+
+            AutoSizeRowsMode =
+                DataGridViewAutoSizeRowsMode.None;
+
+            AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.Fill;
+
+            RowHeadersVisible = false;
+
+            RightToLeft = RightToLeft.Yes;
+
+            Font = _regularFont;
+
+            // مفيش خطوط فاصلة بين الخلايا افتراضيًا (كانت رخمة الشكل).
+            // لو حد حابب يرجعها يقدر يفعّل ShowCellBorders = true.
+            CellBorderStyle =
+                _showCellBorders
+                    ? DataGridViewCellBorderStyle.SingleHorizontal
+                    : DataGridViewCellBorderStyle.None;
+
+            ColumnHeadersBorderStyle =
+                DataGridViewHeaderBorderStyle.None;
+
+            RowTemplate.Height = 42;
+
+            ColumnHeadersHeight = 44;
+
+            ColumnHeadersHeightSizeMode =
+                DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+
+            ScrollBars =
+                ScrollBars.Both;
+
+            ShowCellToolTips = true;
+
+            AllowUserToResizeColumns = true;
+
+            AllowUserToResizeRows = false;
+        }
+
+        #endregion
+
+        #region Theme
+
         private void ApplyTheme()
         {
-            // إعدادات الهيدر (رأس الجدول)
-            this.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            this.ColumnHeadersDefaultCellStyle.BackColor = headerBackColor;
-            this.ColumnHeadersDefaultCellStyle.ForeColor = headerForeColor;
-            this.ColumnHeadersDefaultCellStyle.Font = new Font("Cairo", 10F, FontStyle.Bold, GraphicsUnit.Point); // خط غامق قليلاً
-            this.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft; // محاذاة لليسار
-            this.ColumnHeadersHeight = 45; // ارتفاع مناسب للرأس
-            this.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            SuspendLayout();
 
-            // إعدادات السطور العادية
-            this.DefaultCellStyle.BackColor = rowNormalColor;
-            this.DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64);
-            this.DefaultCellStyle.SelectionBackColor = rowSelectionColor;
-            this.DefaultCellStyle.SelectionForeColor = rowSelectionForeColor;
-            this.DefaultCellStyle.Font = new Font("Cairo", 10F, FontStyle.Regular, GraphicsUnit.Point);
-            this.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft; // محاذاة لليسار
+            // Header
+            ColumnHeadersDefaultCellStyle.BackColor =
+                _headerBackColor;
 
-            // إعدادات السطور البديلة
-            this.AlternatingRowsDefaultCellStyle.BackColor = rowAlternateColor;
+            ColumnHeadersDefaultCellStyle.ForeColor =
+                _headerForeColor;
 
-            // إعدادات الهامش الجانبي للسطور (إخفاؤه لشكل أنظف)
-            this.RowHeadersVisible = false;
-            this.RowTemplate.Height = 40; // ارتفاع السطر
+            ColumnHeadersDefaultCellStyle.Font =
+                _boldFont;
 
-            // لون خطوط الشبكة
-            this.GridColor = gridLineColor;
+            ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                _headerBackColor;
+
+            ColumnHeadersDefaultCellStyle.SelectionForeColor =
+                _headerForeColor;
+
+            ColumnHeadersDefaultCellStyle.Padding =
+                new Padding(8, 0, 8, 0);
+
+            // Normal cells
+            DefaultCellStyle.BackColor =
+                _rowBackColor;
+
+            DefaultCellStyle.ForeColor =
+                _rowForeColor;
+
+            DefaultCellStyle.Font =
+                _regularFont;
+
+            DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            DefaultCellStyle.SelectionBackColor =
+                _selectionBackColor;
+
+            DefaultCellStyle.SelectionForeColor =
+                _selectionForeColor;
+
+            DefaultCellStyle.Padding =
+                new Padding(8, 0, 8, 0);
+
+            DefaultCellStyle.WrapMode =
+                DataGridViewTriState.False;
+
+            // Alternating rows
+            AlternatingRowsDefaultCellStyle.BackColor =
+                _rowAlternateBackColor;
+
+            AlternatingRowsDefaultCellStyle.ForeColor =
+                _rowForeColor;
+
+            AlternatingRowsDefaultCellStyle.SelectionBackColor =
+                _selectionBackColor;
+
+            AlternatingRowsDefaultCellStyle.SelectionForeColor =
+                _selectionForeColor;
+
+            // Grid
+            GridColor = _gridLineColor;
+
+            // Row headers
+            RowHeadersDefaultCellStyle.SelectionBackColor =
+                _selectionBackColor;
+
+            RowHeadersDefaultCellStyle.SelectionForeColor =
+                _selectionForeColor;
+
+            ResumeLayout();
         }
 
-        // حدث لتنسيق الخلايا الخاصة (الكمية وتلوين تسميات التصنيف)
-        private void SabraDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        #endregion
+
+        #region Cell Formatting
+
+        private void SabraDataGridView_CellFormatting(
+            object sender,
+            DataGridViewCellFormattingEventArgs e)
         {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            if (e.RowIndex < 0 ||
+                e.ColumnIndex < 0)
+                return;
 
-            string columnName = this.Columns[e.ColumnIndex].Name;
+            DataGridViewCell cell =
+                Rows[e.RowIndex].Cells[e.ColumnIndex];
 
-            // --- تلوين قيم الكمية ---
-            if (columnName == "الكمية") // افترض أن اسم العمود هو "الكمية"
+            string columnName =
+                Columns[e.ColumnIndex].Name;
+
+            // مهم جدًا:
+            // التحديد لازم يفضل بلون النص الواضح
+            // بدل ما الخلية تاخد لون نص باهت.
+
+            if (cell.Selected)
             {
-                if (e.Value != null && e.Value != DBNull.Value && decimal.TryParse(e.Value.ToString(), out decimal quantity))
-                {
-                    if (quantity < 5)
-                        e.CellStyle.ForeColor = Color.Red; // أحمر إذا كانت الكمية < 5
-                    else
-                        e.CellStyle.ForeColor = Color.LimeGreen; // أخضر إذا كانت الكمية >= 5
-                }
+                e.CellStyle.SelectionBackColor =
+                    _selectionBackColor;
+
+                e.CellStyle.SelectionForeColor =
+                    _selectionForeColor;
             }
-        }
 
-        // حدث لرسم الخلايا الخاصة (الأزرار وتسميات التصنيف الدائرية)
-        private void SabraDataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
-
-            string columnName = this.Columns[e.ColumnIndex].Name;
-
-            // --- رسم تسميات التصنيف (Chips) ---
-            if (columnName == "التصنيف") // افترض أن اسم العمود هو "التصنيف"
+            // Quantity
+            if (columnName == "Quantity" ||
+                columnName == "الكمية")
             {
-                e.Paint(e.CellBounds, DataGridViewPaintParts.All); // رسم الخلفية والحدود الافتراضية
-
-                if (e.Value != null && e.Value != DBNull.Value)
+                if (e.Value != null &&
+                    decimal.TryParse(
+                        e.Value.ToString(),
+                        out decimal quantity))
                 {
-                    string text = e.Value.ToString();
-                    Color chipColor = Color.FromArgb(230, 240, 255); // لون خلفية التسمية (أزرق فاتح)
-                    Color textColor = Color.Black; // لون نص التسمية
-
-                    // رسم خلفية دائرية للتسمية
-                    int cornerRadius = 15;
-                    Rectangle chipBounds = new Rectangle(e.CellBounds.X + 10, e.CellBounds.Y + 5, e.CellBounds.Width - 20, e.CellBounds.Height - 10);
-                    using (Brush chipBrush = new SolidBrush(chipColor))
-                    using (Brush textBrush = new SolidBrush(textColor))
-                    using (StringFormat sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                    using (Font chipFont = new Font("Cairo", 9F, FontStyle.Regular))
+                    if (quantity <= 0)
                     {
-                        using (var gp = new System.Drawing.Drawing2D.GraphicsPath())
-                        {
-                            gp.AddArc(chipBounds.X, chipBounds.Y, cornerRadius, cornerRadius, 180, 90);
-                            gp.AddArc(chipBounds.Right - cornerRadius, chipBounds.Y, cornerRadius, cornerRadius, 270, 90);
-                            gp.AddArc(chipBounds.Right - cornerRadius, chipBounds.Bottom - cornerRadius, cornerRadius, cornerRadius, 0, 90);
-                            gp.AddArc(chipBounds.X, chipBounds.Bottom - cornerRadius, cornerRadius, cornerRadius, 90, 90);
-                            gp.CloseAllFigures();
-                            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                            e.Graphics.FillPath(chipBrush, gp);
-                            e.Graphics.DrawString(text, chipFont, textBrush, chipBounds, sf);
-                            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
-                        }
+                        e.CellStyle.ForeColor =
+                            Color.FromArgb(220, 38, 38);
+                    }
+                    else if (quantity < 5)
+                    {
+                        e.CellStyle.ForeColor =
+                            Color.FromArgb(217, 119, 6);
+                    }
+                    else
+                    {
+                        e.CellStyle.ForeColor =
+                            Color.FromArgb(22, 163, 74);
+                    }
+
+                    // عند تحديد الصف:
+                    // نخلي النص غامق وواضح
+                    if (cell.Selected)
+                    {
+                        e.CellStyle.SelectionForeColor =
+                            _selectionForeColor;
                     }
                 }
-                e.Handled = true; // الإشارة إلى أننا قمنا برسم الخلية بالكامل
-            }
-
-            // --- تخصيص مظهر الأزرار في عمود الإجراءات ---
-            if (this.Columns[e.ColumnIndex] is DataGridViewButtonColumn)
-            {
-                e.Paint(e.CellBounds, DataGridViewPaintParts.Background | DataGridViewPaintParts.SelectionBackground); // رسم خلفية الخلية والتحديد
-
-                // رسم حدود خفيفة للأزرار البيضاء
-                Rectangle buttonBounds = e.CellBounds;
-                buttonBounds.Width -= 2; buttonBounds.Height -= 2;
-                buttonBounds.X += 1; buttonBounds.Y += 1;
-
-                using (Pen borderPen = new Pen(gridLineColor, 1))
-                using (Brush textBrush = new SolidBrush(e.CellStyle.ForeColor))
-                using (StringFormat sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                {
-                    // رسم خلفية الزر باللون الأبيض (كما هو محدد في DefaultCellStyle لعمود الإجراءات)
-                    e.Graphics.FillRectangle(new SolidBrush(e.CellStyle.BackColor), buttonBounds);
-                    // رسم حدود الزر
-                    e.Graphics.DrawRectangle(borderPen, buttonBounds);
-                    // رسم نص الأزرار
-                    e.Graphics.DrawString(this.Columns[e.ColumnIndex].DefaultCellStyle.NullValue.ToString(), e.CellStyle.Font, textBrush, e.CellBounds, sf);
-                }
-                e.Handled = true; // الإشارة إلى أننا قمنا برسم الخلية بالكامل
             }
         }
 
-        // رسم إطار خارجي رفيع حول الجدول
-        protected override void OnPaint(PaintEventArgs e)
+        #endregion
+
+        #region Cell Painting
+
+        private void SabraDataGridView_CellPainting(
+            object sender,
+            DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 ||
+                e.ColumnIndex < 0)
+                return;
+
+            string columnName =
+                Columns[e.ColumnIndex].Name;
+
+            // Category Chip
+            if (columnName == "Category" ||
+                columnName == "التصنيف")
+            {
+                PaintCategoryChip(e);
+
+                return;
+            }
+
+            // Button
+            if (Columns[e.ColumnIndex]
+                is DataGridViewButtonColumn)
+            {
+                PaintButtonCell(e);
+
+                return;
+            }
+        }
+
+        #endregion
+
+        #region Category Chip
+
+        private void PaintCategoryChip(
+            DataGridViewCellPaintingEventArgs e)
+        {
+            e.Paint(
+                e.CellBounds,
+                DataGridViewPaintParts.Background |
+                DataGridViewPaintParts.Border);
+
+            if (e.Value == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            string text = e.Value.ToString();
+
+            bool selected = e.RowIndex >= 0 &&
+                            Rows[e.RowIndex]
+                            .Cells[e.ColumnIndex]
+                            .Selected;
+
+            Color chipBackColor;
+            Color chipForeColor;
+
+            if (selected)
+            {
+                chipBackColor =
+                    Color.FromArgb(191, 219, 254);
+
+                chipForeColor =
+                    Color.FromArgb(30, 64, 175);
+            }
+            else
+            {
+                chipBackColor =
+                    Color.FromArgb(239, 246, 255);
+
+                chipForeColor =
+                    Color.FromArgb(30, 64, 175);
+            }
+
+            Rectangle bounds =
+                new Rectangle(
+                    e.CellBounds.X + 8,
+                    e.CellBounds.Y + 7,
+                    e.CellBounds.Width - 16,
+                    e.CellBounds.Height - 14);
+
+            using GraphicsPath path =
+                CreateRoundedRectangle(
+                    bounds,
+                    12);
+
+            using SolidBrush backBrush =
+                new SolidBrush(chipBackColor);
+
+            using SolidBrush textBrush =
+                new SolidBrush(chipForeColor);
+
+            using StringFormat format =
+                new StringFormat
+                {
+                    Alignment =
+                        StringAlignment.Center,
+
+                    LineAlignment =
+                        StringAlignment.Center
+                };
+
+            e.Graphics.SmoothingMode =
+                SmoothingMode.AntiAlias;
+
+            e.Graphics.FillPath(
+                backBrush,
+                path);
+
+            e.Graphics.DrawString(
+                text,
+                _smallFont,
+                textBrush,
+                bounds,
+                format);
+
+            e.Graphics.SmoothingMode =
+                SmoothingMode.Default;
+
+            e.Handled = true;
+        }
+
+        #endregion
+
+        #region Button Painting
+
+        private void PaintButtonCell(
+            DataGridViewCellPaintingEventArgs e)
+        {
+            bool selected =
+                Rows[e.RowIndex]
+                .Cells[e.ColumnIndex]
+                .Selected;
+
+            Color backgroundColor =
+                selected
+                    ? _buttonHoverColor
+                    : _buttonBackColor;
+
+            Color foregroundColor =
+                _buttonForeColor;
+
+            e.Paint(
+                e.CellBounds,
+                DataGridViewPaintParts.Border);
+
+            Rectangle buttonBounds =
+                new Rectangle(
+                    e.CellBounds.X + 5,
+                    e.CellBounds.Y + 5,
+                    e.CellBounds.Width - 10,
+                    e.CellBounds.Height - 10);
+
+            using SolidBrush backgroundBrush =
+                new SolidBrush(backgroundColor);
+
+            using Pen borderPen =
+                new Pen(
+                    _gridLineColor,
+                    1);
+
+            using SolidBrush textBrush =
+                new SolidBrush(foregroundColor);
+
+            using StringFormat format =
+                new StringFormat
+                {
+                    Alignment =
+                        StringAlignment.Center,
+
+                    LineAlignment =
+                        StringAlignment.Center
+                };
+
+            e.Graphics.SmoothingMode =
+                SmoothingMode.AntiAlias;
+
+            e.Graphics.FillRectangle(
+                backgroundBrush,
+                buttonBounds);
+
+            e.Graphics.DrawRectangle(
+                borderPen,
+                buttonBounds);
+
+            string text =
+                e.Value?.ToString() ??
+                Columns[e.ColumnIndex]
+                .HeaderText;
+
+            e.Graphics.DrawString(
+                text,
+                _smallFont,
+                textBrush,
+                buttonBounds,
+                format);
+
+            e.Graphics.SmoothingMode =
+                SmoothingMode.Default;
+
+            e.Handled = true;
+        }
+
+        #endregion
+
+        #region Hover
+
+        private void SabraDataGridView_CellMouseEnter(
+            object sender,
+            DataGridViewCellEventArgs e)
+        {
+            if (!EnableHoverEffect ||
+                e.RowIndex < 0)
+                return;
+
+            if (e.RowIndex >= Rows.Count)
+                return;
+
+            if (Rows[e.RowIndex].Selected)
+                return;
+
+            Rows[e.RowIndex].DefaultCellStyle.BackColor =
+                _hoverBackColor;
+        }
+
+        private void SabraDataGridView_CellMouseLeave(
+            object sender,
+            DataGridViewCellEventArgs e)
+        {
+            if (!EnableHoverEffect ||
+                e.RowIndex < 0)
+                return;
+
+            if (e.RowIndex >= Rows.Count)
+                return;
+
+            if (Rows[e.RowIndex].Selected)
+                return;
+
+            Rows[e.RowIndex].DefaultCellStyle.BackColor =
+                e.RowIndex % 2 == 0
+                    ? _rowBackColor
+                    : _rowAlternateBackColor;
+        }
+
+        #endregion
+
+        #region Selection Fix
+
+        protected override void OnSelectionChanged(
+            EventArgs e)
+        {
+            base.OnSelectionChanged(e);
+
+            foreach (DataGridViewRow row in Rows)
+            {
+                if (row.IsNewRow)
+                    continue;
+
+                if (row.Selected)
+                {
+                    row.DefaultCellStyle.SelectionBackColor =
+                        _selectionBackColor;
+
+                    row.DefaultCellStyle.SelectionForeColor =
+                        _selectionForeColor;
+                }
+            }
+
+            Invalidate();
+        }
+
+        #endregion
+
+        #region Rounded Rectangle
+
+        private GraphicsPath CreateRoundedRectangle(
+            Rectangle bounds,
+            int radius)
+        {
+            GraphicsPath path = new GraphicsPath();
+
+            int diameter = radius * 2;
+
+            path.AddArc(
+                bounds.X,
+                bounds.Y,
+                diameter,
+                diameter,
+                180,
+                90);
+
+            path.AddArc(
+                bounds.Right - diameter,
+                bounds.Y,
+                diameter,
+                diameter,
+                270,
+                90);
+
+            path.AddArc(
+                bounds.Right - diameter,
+                bounds.Bottom - diameter,
+                diameter,
+                diameter,
+                0,
+                90);
+
+            path.AddArc(
+                bounds.X,
+                bounds.Bottom - diameter,
+                diameter,
+                diameter,
+                90,
+                90);
+
+            path.CloseFigure();
+
+            return path;
+        }
+
+        #endregion
+
+        #region Outer Border
+
+        protected override void OnPaint(
+            PaintEventArgs e)
         {
             base.OnPaint(e);
-            e.Graphics.DrawRectangle(new Pen(gridLineColor, 1), 0, 0, this.Width - 1, this.Height - 1);
+
+            if (!ShowOuterBorder)
+                return;
+
+            using Pen pen =
+                new Pen(
+                    _gridLineColor,
+                    1);
+
+            Rectangle bounds =
+                new Rectangle(
+                    0,
+                    0,
+                    Width - 1,
+                    Height - 1);
+
+            e.Graphics.DrawRectangle(
+                pen,
+                bounds);
         }
+        #endregion
+
+        #region Dispose
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _regularFont?.Dispose();
+                _boldFont?.Dispose();
+                _smallFont?.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+
     }
 
     public class SabraPanel : Panel
@@ -2125,6 +2768,546 @@ namespace SabraForSpareParts
                 }
             }
         }
-    } 
+    }
+
+    public class SabraDateTimePicker : UserControl
+    {
+        #region Fields
+
+        private readonly DateTimePicker dateTimePicker;
+
+        private Color skinColor = Color.White;
+        private Color textColor = Color.Black;
+        private Color borderColor = Color.DodgerBlue;
+        private Color iconColor = Color.DodgerBlue;
+
+        private int borderSize = 1;
+        private int borderRadius = 15;
+
+        private bool isDroppedDown = false;
+
+        #endregion
+
+        #region Properties
+
+        [Category("Sabra Custom Properties")]
+        [Description("لون خلفية الكنترول")]
+        public Color SkinColor
+        {
+            get => skinColor;
+            set
+            {
+                skinColor = value;
+                dateTimePicker.BackColor = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Custom Properties")]
+        [Description("لون النص")]
+        public Color TextColor
+        {
+            get => textColor;
+            set
+            {
+                textColor = value;
+                dateTimePicker.ForeColor = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Custom Properties")]
+        [Description("لون الـ Border")]
+        public Color BorderColor
+        {
+            get => borderColor;
+            set
+            {
+                borderColor = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Custom Properties")]
+        [Description("سمك الـ Border")]
+        public int BorderSize
+        {
+            get => borderSize;
+            set
+            {
+                borderSize = Math.Max(0, value);
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Custom Properties")]
+        [Description("نصف قطر الحواف")]
+        public int BorderRadius
+        {
+            get => borderRadius;
+            set
+            {
+                borderRadius = Math.Max(0, value);
+                UpdateRegion();
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Custom Properties")]
+        [Description("لون أيقونة الـ Calendar")]
+        public Color IconColor
+        {
+            get => iconColor;
+            set
+            {
+                iconColor = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Custom Properties")]
+        [Description("قيمة التاريخ")]
+        public DateTime Value
+        {
+            get => dateTimePicker.Value;
+            set => dateTimePicker.Value = value;
+        }
+
+        [Category("Sabra Custom Properties")]
+        public DateTime MinDate
+        {
+            get => dateTimePicker.MinDate;
+            set => dateTimePicker.MinDate = value;
+        }
+
+        [Category("Sabra Custom Properties")]
+        public DateTime MaxDate
+        {
+            get => dateTimePicker.MaxDate;
+            set => dateTimePicker.MaxDate = value;
+        }
+
+        [Category("Sabra Custom Properties")]
+        public DateTimePickerFormat Format
+        {
+            get => dateTimePicker.Format;
+            set => dateTimePicker.Format = value;
+        }
+
+        [Category("Sabra Custom Properties")]
+        public string CustomFormat
+        {
+            get => dateTimePicker.CustomFormat;
+            set => dateTimePicker.CustomFormat = value;
+        }
+
+        [Category("Sabra Custom Properties")]
+        public bool ShowCheckBox
+        {
+            get => dateTimePicker.ShowCheckBox;
+            set => dateTimePicker.ShowCheckBox = value;
+        }
+
+        [Category("Sabra Custom Properties")]
+        public bool Checked
+        {
+            get => dateTimePicker.Checked;
+            set => dateTimePicker.Checked = value;
+        }
+
+        #endregion
+
+        #region Events
+
+        [Browsable(true)]
+        [Category("Action")]
+        public event EventHandler ValueChanged;
+
+        #endregion
+
+        #region Constructor
+
+        public SabraDateTimePicker()
+        {
+            SetStyle(
+                ControlStyles.UserPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.ResizeRedraw |
+                ControlStyles.AllPaintingInWmPaint,
+                true);
+
+            MinimumSize = new Size(0, 35);
+
+            Size = new Size(200, 40);
+
+            BackColor = Color.Transparent;
+
+            dateTimePicker = new DateTimePicker();
+
+            dateTimePicker.Format =
+                DateTimePickerFormat.Short;
+
+            dateTimePicker.Font =
+                new Font("Segoe UI", 10F);
+
+            dateTimePicker.BackColor =
+                skinColor;
+
+            dateTimePicker.ForeColor =
+                textColor;
+
+
+            dateTimePicker.ShowUpDown = false;
+
+            dateTimePicker.Dock =
+                DockStyle.Fill;
+
+            dateTimePicker.Padding =
+                new Padding(5, 0, 5, 0);
+
+            dateTimePicker.ValueChanged +=
+                DateTimePicker_ValueChanged;
+
+            dateTimePicker.DropDown +=
+                DateTimePicker_DropDown;
+
+            dateTimePicker.CloseUp +=
+                DateTimePicker_CloseUp;
+
+            Controls.Add(dateTimePicker);
+
+            UpdateRegion();
+        }
+
+        #endregion
+
+        #region DateTimePicker Events
+
+        private void DateTimePicker_ValueChanged(
+            object sender,
+            EventArgs e)
+        {
+            Invalidate();
+
+            ValueChanged?.Invoke(this, e);
+        }
+
+        private void DateTimePicker_DropDown(
+            object sender,
+            EventArgs e)
+        {
+            isDroppedDown = true;
+
+            Invalidate();
+        }
+
+        private void DateTimePicker_CloseUp(
+            object sender,
+            EventArgs e)
+        {
+            isDroppedDown = false;
+
+            Invalidate();
+        }
+
+        #endregion
+
+        #region Paint
+
+        protected override void OnPaint(
+            PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            Graphics g = e.Graphics;
+
+            g.SmoothingMode =
+                SmoothingMode.AntiAlias;
+
+            Rectangle rectSurface =
+                ClientRectangle;
+
+            rectSurface.Width--;
+            rectSurface.Height--;
+
+            int radius =
+                Math.Min(
+                    borderRadius,
+                    Math.Min(
+                        rectSurface.Width,
+                        rectSurface.Height) / 2);
+
+            using GraphicsPath path =
+                GetFigurePath(
+                    rectSurface,
+                    radius);
+
+            using SolidBrush backgroundBrush =
+                new SolidBrush(skinColor);
+
+            g.FillPath(
+                backgroundBrush,
+                path);
+
+            if (borderSize > 0)
+            {
+                using Pen borderPen =
+                    new Pen(
+                        isDroppedDown
+                            ? Color.DarkOrange
+                            : borderColor,
+                        borderSize);
+
+                borderPen.Alignment =
+                    PenAlignment.Inset;
+
+                g.DrawPath(
+                    borderPen,
+                    path);
+            }
+
+            DrawCalendarIcon(
+                g,
+                iconColor);
+        }
+
+        #endregion
+
+        #region Calendar Icon
+
+        private void DrawCalendarIcon(
+            Graphics g,
+            Color color)
+        {
+            int iconWidth = 16;
+            int iconHeight = 16;
+
+            int x;
+            int y =
+                (Height - iconHeight) / 2;
+
+            if (RightToLeft == RightToLeft.Yes)
+            {
+                x = 8;
+            }
+            else
+            {
+                x =
+                    Width -
+                    iconWidth -
+                    8;
+            }
+
+            using Pen pen =
+                new Pen(
+                    color,
+                    1.5f);
+
+            pen.StartCap =
+                LineCap.Round;
+
+            pen.EndCap =
+                LineCap.Round;
+
+            // جسم الـ Calendar
+            g.DrawRectangle(
+                pen,
+                x,
+                y + 2,
+                iconWidth,
+                iconHeight - 2);
+
+            // الخط العلوي
+            g.DrawLine(
+                pen,
+                x,
+                y + 6,
+                x + iconWidth,
+                y + 6);
+
+            // المسامير العلوية
+            g.DrawLine(
+                pen,
+                x + 4,
+                y,
+                x + 4,
+                y + 4);
+
+            g.DrawLine(
+                pen,
+                x + iconWidth - 4,
+                y,
+                x + iconWidth - 4,
+                y + 4);
+
+            // نقطة داخل الـ Calendar
+            using SolidBrush brush =
+                new SolidBrush(color);
+
+            g.FillEllipse(
+                brush,
+                x + 5,
+                y + 9,
+                3,
+                3);
+        }
+
+        #endregion
+
+        #region Rounded Region
+
+        private GraphicsPath GetFigurePath(
+            Rectangle rect,
+            int radius)
+        {
+            GraphicsPath path =
+                new GraphicsPath();
+
+            if (radius <= 1)
+            {
+                path.AddRectangle(rect);
+                return path;
+            }
+
+            float diameter =
+                radius * 2F;
+
+            path.StartFigure();
+
+            path.AddArc(
+                rect.X,
+                rect.Y,
+                diameter,
+                diameter,
+                180,
+                90);
+
+            path.AddArc(
+                rect.Right - diameter,
+                rect.Y,
+                diameter,
+                diameter,
+                270,
+                90);
+
+            path.AddArc(
+                rect.Right - diameter,
+                rect.Bottom - diameter,
+                diameter,
+                diameter,
+                0,
+                90);
+
+            path.AddArc(
+                rect.X,
+                rect.Bottom - diameter,
+                diameter,
+                diameter,
+                90,
+                90);
+
+            path.CloseFigure();
+
+            return path;
+        }
+
+        #endregion
+
+        #region Region
+
+        private void UpdateRegion()
+        {
+            if (Width <= 0 || Height <= 0)
+                return;
+
+            Rectangle rect =
+                new Rectangle(
+                    0,
+                    0,
+                    Width,
+                    Height);
+
+            int radius =
+                Math.Min(
+                    borderRadius,
+                    Math.Min(
+                        Width,
+                        Height) / 2);
+
+            using GraphicsPath path =
+                GetFigurePath(
+                    rect,
+                    radius);
+
+            Region?.Dispose();
+
+            Region =
+                new Region(path);
+        }
+
+        #endregion
+
+        #region Resize
+
+        protected override void OnResize(
+            EventArgs e)
+        {
+            base.OnResize(e);
+
+            UpdateRegion();
+
+            Invalidate();
+        }
+
+        #endregion
+
+        #region RightToLeft
+
+        protected override void OnRightToLeftChanged(
+            EventArgs e)
+        {
+            base.OnRightToLeftChanged(e);
+
+            dateTimePicker.RightToLeft =
+                RightToLeft;
+
+            Invalidate();
+        }
+
+        #endregion
+
+        #region Font
+
+        protected override void OnFontChanged(
+            EventArgs e)
+        {
+            base.OnFontChanged(e);
+
+            if (dateTimePicker != null)
+            {
+                dateTimePicker.Font =
+                    Font;
+            }
+        }
+
+        #endregion
+
+        #region Dispose
+
+        protected override void Dispose(
+            bool disposing)
+        {
+            if (disposing)
+            {
+                dateTimePicker?.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+    }
+
 }
+
 
