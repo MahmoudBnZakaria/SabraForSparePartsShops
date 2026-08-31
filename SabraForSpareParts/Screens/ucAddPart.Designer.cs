@@ -111,6 +111,18 @@
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
@@ -137,6 +149,14 @@
             sabraTableLayoutPanel1.RightToLeft = RightToLeft.Yes;
             sabraTableLayoutPanel1.RowCount = 8;
             sabraTableLayoutPanel1.Rows = 8;
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
@@ -684,7 +704,7 @@
             // 
             // sabraButton2
             // 
-            sabraButton2.BackColor = Color.DimGray;
+            sabraButton2.BackColor = Color.RoyalBlue;
             sabraButton2.BorderColor = Color.DodgerBlue;
             sabraButton2.BorderRadius = 20;
             sabraButton2.BorderSize = 0;
@@ -694,13 +714,13 @@
             sabraButton2.ForeColor = Color.White;
             sabraButton2.HoverColor = Color.CornflowerBlue;
             sabraButton2.IconChar = FontAwesome.Sharp.IconChar.Search;
-            sabraButton2.IconColor = SystemColors.Desktop;
+            sabraButton2.IconColor = Color.White;
             sabraButton2.IconFont = FontAwesome.Sharp.IconFont.Auto;
             sabraButton2.IconSize = 30;
             sabraButton2.ImageAlign = ContentAlignment.MiddleRight;
             sabraButton2.Location = new Point(993, 260);
             sabraButton2.Name = "sabraButton2";
-            sabraButton2.NormalColor = Color.DimGray;
+            sabraButton2.NormalColor = Color.RoyalBlue;
             sabraButton2.Padding = new Padding(10, 0, 10, 0);
             sabraButton2.Size = new Size(58, 39);
             sabraButton2.TabIndex = 31;

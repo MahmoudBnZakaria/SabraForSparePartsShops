@@ -28,23 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            ucInventoryTransactions1 = new SabraForSpareParts.Screens.ucInventoryTransactions();
+            ucNewInvoice1 = new SabraForSpareParts.Screens.ucNewInvoice();
             SuspendLayout();
             // 
-            // ucInventoryTransactions1
+            // ucNewInvoice1
             // 
-            ucInventoryTransactions1.Dock = DockStyle.Fill;
-            ucInventoryTransactions1.Location = new Point(0, 0);
-            ucInventoryTransactions1.Name = "ucInventoryTransactions1";
-            ucInventoryTransactions1.Size = new Size(1404, 670);
-            ucInventoryTransactions1.TabIndex = 0;
+            ucNewInvoice1.AutoScroll = true;
+            ucNewInvoice1.AutoScrollMinSize = new Size(1502, 1000);
+            ucNewInvoice1.BackColor = Color.WhiteSmoke;
+            ucNewInvoice1.BorderColor = Color.Transparent;
+            ucNewInvoice1.Dock = DockStyle.Fill;
+            ucNewInvoice1.Font = new Font("Cairo", 10F);
+            ucNewInvoice1.ForeColor = Color.FromArgb(40, 40, 40);
+            ucNewInvoice1.Location = new Point(0, 0);
+            ucNewInvoice1.Margin = new Padding(0);
+            ucNewInvoice1.MinimumSize = new Size(900, 600);
+            ucNewInvoice1.Name = "ucNewInvoice1";
+            ucNewInvoice1.Padding = new Padding(10);
+            ucNewInvoice1.RightToLeft = RightToLeft.Yes;
+            ucNewInvoice1.Size = new Size(1404, 670);
+            ucNewInvoice1.TabIndex = 0;
             // 
             // test
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1404, 670);
-            Controls.Add(ucInventoryTransactions1);
+            Controls.Add(ucNewInvoice1);
             Name = "test";
             Text = "test";
             ResumeLayout(false);
@@ -52,6 +62,6 @@
 
         #endregion
 
-        private Screens.ucInventoryTransactions ucInventoryTransactions1;
+        private Screens.ucNewInvoice ucNewInvoice1;
     }
 }

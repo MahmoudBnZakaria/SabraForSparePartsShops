@@ -308,6 +308,11 @@ namespace SabraForSpareParts.Screens
 
             dgvInventoryTransactions.CellFormatting +=
                 dgvInventoryTransactions_CellFormatting;
+
+            // *** BUGFIX: الجدول كان بيتفلتر من غير ما يتربط بأي DataSource خالص،
+            // فكانت الشاشة بتفضل فاضية مهما اتغيّرت الفلاتر. ***
+            dgvInventoryTransactions.DataSource =
+                _transactionsTable.DefaultView;
         }
 
         private void AddDateTimeColumn()
@@ -448,14 +453,11 @@ namespace SabraForSpareParts.Screens
 
         private void SetupDateFilter()
         {
-            sabraDateTimePicker1.ShowCheckBox =
-                true;
-
-            sabraDateTimePicker1.Checked =
-                false;
-
-            sabraDateTimePicker1.Value =
-                DateTime.Today;
+            // *** BUGFIX: SabraDateTimePicker بقى فيها Checked / ShowCheckBox فعليًا،
+            // فبقى ممكن نفعّل فلتر التاريخ الاختياري زي الـ DateTimePicker الأصلي. ***
+            sabraDateTimePicker1.ShowCheckBox = true;
+            sabraDateTimePicker1.Checked = false;
+            sabraDateTimePicker1.Value = DateTime.Today;
         }
 
         #endregion
@@ -495,108 +497,75 @@ namespace SabraForSpareParts.Screens
 
         private void ApplyFilters()
         {
-            if (_isInitializing ||
-                _transactionsTable == null)
+            if (_isInitializing || _transactionsTable == null)
             {
                 return;
             }
 
-            IEnumerable<DataRow> query =
-                _transactionsTable
-                .AsEnumerable();
+            List<string> filters = new List<string>();
 
-            query =
-                FilterByPartName(query);
-
-            query =
-                FilterByMovement(query);
-
-            query =
-                FilterByUser(query);
-
-            query =
-                FilterByDate(query);
-
-            DataTable result =
-                _transactionsTable.Clone();
-
-            foreach (DataRow row in query
-                .OrderByDescending(row =>
-                    row.Field<DateTime>("DateTime")))
+            // 1. فلتر اسم القطعة
+            string partName = stxbxPartName.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(partName))
             {
-                result.ImportRow(row);
+                filters.Add(
+                    $"[PartName] LIKE '%{EscapeForRowFilter(partName)}%'");
             }
 
-            dgvInventoryTransactions.DataSource =
-                result;
-        }
-
-        private IEnumerable<DataRow> FilterByPartName(
-            IEnumerable<DataRow> query)
-        {
-            string partName =
-                stxbxPartName.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(partName))
-                return query;
-
-            return query.Where(row =>
-                (row.Field<string>("PartName")
-                    ?? string.Empty)
-                .IndexOf(
-                    partName,
-                    StringComparison.OrdinalIgnoreCase)
-                >= 0);
-        }
-
-        private IEnumerable<DataRow> FilterByMovement(
-            IEnumerable<DataRow> query)
-        {
-            string movement =
-                cstbxMovements.SelectedItem?
-                .ToString();
-
-            if (string.IsNullOrWhiteSpace(movement) ||
-                movement == "كل الحركات")
+            // 2. فلتر نوع الحركة
+            string movement = cstbxMovements.SelectedItem?.ToString();
+            if (!string.IsNullOrWhiteSpace(movement) && movement != "كل الحركات")
             {
-                return query;
+                filters.Add(
+                    $"[MovementType] = '{EscapeForRowFilter(movement)}'");
             }
 
-            return query.Where(row =>
-                row.Field<string>(
-                    "MovementType") == movement);
-        }
-
-        private IEnumerable<DataRow> FilterByUser(
-            IEnumerable<DataRow> query)
-        {
-            string user =
-                smbxAllUsers.SelectedItem?
-                .ToString();
-
-            if (string.IsNullOrWhiteSpace(user) ||
-                user == "كل المستخدمين")
+            // 3. فلتر المستخدم
+            string user = smbxAllUsers.SelectedItem?.ToString();
+            if (!string.IsNullOrWhiteSpace(user) && user != "كل المستخدمين")
             {
-                return query;
+                filters.Add(
+                    $"[User] = '{EscapeForRowFilter(user)}'");
             }
 
-            return query.Where(row =>
-                row.Field<string>("User") == user);
+            // 4. فلتر التاريخ (اختياري - بيتفعّل بس لما يبقى محدد Checked)
+            if (sabraDateTimePicker1.Checked)
+            {
+                DateTime selectedDate = sabraDateTimePicker1.Value.Date;
+                DateTime nextDate = selectedDate.AddDays(1);
+
+                // صيغة التاريخ المدعومة في RowFilter (culture-invariant)
+                string filterStartDate = selectedDate.ToString("MM/dd/yyyy");
+                string filterEndDate = nextDate.ToString("MM/dd/yyyy");
+
+                filters.Add(
+                    $"[DateTime] >= #{filterStartDate}# AND [DateTime] < #{filterEndDate}#");
+            }
+
+            // تجميع الشروط وتطبيقها على الـ DefaultView
+            string finalFilter = string.Join(" AND ", filters);
+
+            try
+            {
+                _transactionsTable.DefaultView.RowFilter = finalFilter;
+            }
+            catch (Exception ex)
+            {
+                // حماية من أي خطأ غير متوقع في صياغة الفلتر بدل ما الشاشة تقفل فجأة
+                MessageBox.Show(
+                    $"تعذر تطبيق الفلتر:\n{ex.Message}",
+                    "خطأ",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
 
-        private IEnumerable<DataRow> FilterByDate(
-            IEnumerable<DataRow> query)
+        /// <summary>
+        /// يهرّب علامة التنصيص المفردة عشان تبقى آمنة داخل RowFilter.
+        /// </summary>
+        private static string EscapeForRowFilter(string value)
         {
-            if (!sabraDateTimePicker1.Checked)
-                return query;
-
-            DateTime selectedDate =
-                sabraDateTimePicker1.Value.Date;
-
-            return query.Where(row =>
-                row.Field<DateTime>(
-                    "DateTime").Date ==
-                selectedDate);
+            return value?.Replace("'", "''") ?? string.Empty;
         }
 
         #endregion
@@ -617,11 +586,8 @@ namespace SabraForSpareParts.Screens
                 if (cstbxMovements.Items.Count > 0)
                     cstbxMovements.SelectedIndex = 0;
 
-                sabraDateTimePicker1.Checked =
-                    false;
-
-                sabraDateTimePicker1.Value =
-                    DateTime.Today;
+                sabraDateTimePicker1.Checked = false;
+                sabraDateTimePicker1.Value = DateTime.Today;
             }
             finally
             {
@@ -804,4 +770,3 @@ namespace SabraForSpareParts.Screens
         #endregion
     }
 }
-

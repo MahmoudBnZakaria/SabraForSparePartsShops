@@ -2772,52 +2772,192 @@ namespace SabraForSpareParts
 
     public class SabraDateTimePicker : UserControl
     {
-        #region Fields
+        private DateTime selectedDate = DateTime.Today;
+        private readonly Label lblDate;
+        private readonly Button btnCalendar;
+        private readonly CheckBox chkEnable;
 
-        private readonly DateTimePicker dateTimePicker;
+        private SabraCalendarPopup calendarPopup;
 
+        private Color borderColor = Color.FromArgb(220, 225, 230);
+        private Color focusedBorderColor = Color.FromArgb(0, 120, 212);
         private Color skinColor = Color.White;
-        private Color textColor = Color.Black;
-        private Color borderColor = Color.DodgerBlue;
-        private Color iconColor = Color.DodgerBlue;
+        private Color textColor = Color.FromArgb(45, 45, 45);
+        private Color disabledTextColor = Color.FromArgb(190, 190, 190);
 
+        private int borderRadius = 12;
         private int borderSize = 1;
-        private int borderRadius = 15;
 
-        private bool isDroppedDown = false;
+        private bool isFocused = false;
 
-        #endregion
+        // *** إضافة: دعم Checked / ShowCheckBox زي الـ DateTimePicker الأصلي ***
+        private bool showCheckBox = false;
+        private bool isChecked = true;
 
-        #region Properties
+        public event EventHandler ValueChanged;
+
+        public SabraDateTimePicker()
+        {
+            DoubleBuffered = true;
+            ResizeRedraw = true;
+
+            Font = new Font("Cairo", 10F);
+            Size = new Size(250, 52);
+            MinimumSize = new Size(180, 45);
+
+            RightToLeft = RightToLeft.Yes;
+            BackColor = Color.Transparent;
+
+            lblDate = new Label
+            {
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleRight,
+                Dock = DockStyle.Fill,
+                Padding = new Padding(15, 0, 50, 0),
+                Cursor = Cursors.Hand,
+                Font = Font,
+                ForeColor = textColor,
+                RightToLeft = RightToLeft.Yes
+            };
+
+            btnCalendar = new Button
+            {
+                Dock = DockStyle.Left,
+                Width = 48,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance =
+            {
+                BorderSize = 0,
+                MouseDownBackColor = Color.Transparent,
+                MouseOverBackColor = Color.Transparent
+            },
+                Cursor = Cursors.Hand,
+                Text = "▾",
+                Font = new Font("Segoe UI", 16F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(80, 80, 80),
+                BackColor = Color.Transparent,
+                TabStop = false
+            };
+
+            chkEnable = new CheckBox
+            {
+                Dock = DockStyle.Right,
+                Width = 30,
+                Checked = true,
+                Visible = false,
+                Cursor = Cursors.Hand,
+                BackColor = Color.Transparent,
+                TabStop = false,
+                Text = string.Empty
+            };
+
+            lblDate.Click += (sender, e) => this.Focus();
+            btnCalendar.Click += Control_Click;
+            chkEnable.CheckedChanged += ChkEnable_CheckedChanged;
+
+            MouseEnter += Control_MouseEnter;
+            MouseLeave += Control_MouseLeave;
+
+            // ملحوظة على الترتيب: الكنترولز اللي بتتضاف بعد الـ Dock.Fill
+            // هي اللي بتاخد مساحتها الأول (الأحدث إضافة = أول حجز مساحة)،
+            // فلازم lblDate (Fill) يتضاف الأول عشان ياخد الباقي.
+            Controls.Add(lblDate);
+            Controls.Add(btnCalendar);
+            Controls.Add(chkEnable);
+
+            UpdateDateText();
+            UpdateEnabledState();
+        }
 
         [Category("Sabra Custom Properties")]
-        [Description("لون خلفية الكنترول")]
+        public DateTime Value
+        {
+            get => selectedDate;
+            set
+            {
+                if (selectedDate == value)
+                    return;
+
+                selectedDate = value;
+                UpdateDateText();
+
+                ValueChanged?.Invoke(this, EventArgs.Empty);
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Custom Properties")]
+        public string DateFormat { get; set; } = "dddd، dd MMMM yyyy";
+
+        /// <summary>
+        /// يظهر أو يخفي مربع الاختيار الخاص بتفعيل/تعطيل الفلتر (مثل DateTimePicker الأصلي).
+        /// </summary>
+        [Category("Sabra Custom Properties")]
+        public bool ShowCheckBox
+        {
+            get => showCheckBox;
+            set
+            {
+                if (showCheckBox == value)
+                    return;
+
+                showCheckBox = value;
+                chkEnable.Visible = value;
+                UpdateEnabledState();
+                Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// يحدد إذا كانت القيمة مفعّلة (سارية) أو لأ. مفيدة لعمل فلتر تاريخ اختياري.
+        /// لما ShowCheckBox = false هتبقى دايمًا true بمعنى القيمة سارية دايمًا.
+        /// </summary>
+        [Category("Sabra Custom Properties")]
+        public bool Checked
+        {
+            get => isChecked;
+            set
+            {
+                if (isChecked == value)
+                    return;
+
+                isChecked = value;
+
+                chkEnable.CheckedChanged -= ChkEnable_CheckedChanged;
+                chkEnable.Checked = value;
+                chkEnable.CheckedChanged += ChkEnable_CheckedChanged;
+
+                UpdateEnabledState();
+
+                ValueChanged?.Invoke(this, EventArgs.Empty);
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Custom Properties")]
         public Color SkinColor
         {
             get => skinColor;
             set
             {
                 skinColor = value;
-                dateTimePicker.BackColor = value;
                 Invalidate();
             }
         }
 
         [Category("Sabra Custom Properties")]
-        [Description("لون النص")]
         public Color TextColor
         {
             get => textColor;
             set
             {
                 textColor = value;
-                dateTimePicker.ForeColor = value;
+                UpdateEnabledState();
                 Invalidate();
             }
         }
 
         [Category("Sabra Custom Properties")]
-        [Description("لون الـ Border")]
         public Color BorderColor
         {
             get => borderColor;
@@ -2829,7 +2969,17 @@ namespace SabraForSpareParts
         }
 
         [Category("Sabra Custom Properties")]
-        [Description("سمك الـ Border")]
+        public Color FocusedBorderColor
+        {
+            get => focusedBorderColor;
+            set
+            {
+                focusedBorderColor = value;
+                Invalidate();
+            }
+        }
+
+        [Category("Sabra Custom Properties")]
         public int BorderSize
         {
             get => borderSize;
@@ -2841,338 +2991,292 @@ namespace SabraForSpareParts
         }
 
         [Category("Sabra Custom Properties")]
-        [Description("نصف قطر الحواف")]
         public int BorderRadius
         {
             get => borderRadius;
             set
             {
                 borderRadius = Math.Max(0, value);
-                UpdateRegion();
                 Invalidate();
             }
         }
 
-        [Category("Sabra Custom Properties")]
-        [Description("لون أيقونة الـ Calendar")]
-        public Color IconColor
+        private void ChkEnable_CheckedChanged(object sender, EventArgs e)
         {
-            get => iconColor;
-            set
+            isChecked = chkEnable.Checked;
+            UpdateEnabledState();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+            Invalidate();
+        }
+
+        /// <summary>
+        /// بيفعّل/يعطّل قابلية الضغط والقراءة الخاصة بالتاريخ حسب حالة الـ Checked.
+        /// </summary>
+        private void UpdateEnabledState()
+        {
+            bool isActive = !showCheckBox || isChecked;
+
+            lblDate.Enabled = isActive;
+            btnCalendar.Enabled = isActive;
+            lblDate.ForeColor = isActive ? textColor : disabledTextColor;
+        }
+
+        private void Control_Click(object sender, EventArgs e)
+        {
+            // لو الفلتر متعطّل (Checked = false) منمنعش فتح التقويم بالغلط
+            if (showCheckBox && !isChecked)
+                return;
+
+            ShowCalendar();
+        }
+
+        private void ShowCalendar()
+        {
+            if (calendarPopup != null && !calendarPopup.IsDisposed)
             {
-                iconColor = value;
+                calendarPopup.Close();
+                return;
+            }
+
+            calendarPopup = new SabraCalendarPopup(
+                selectedDate,
+                RightToLeft == RightToLeft.Yes
+            );
+
+            calendarPopup.DateSelected += CalendarPopup_DateSelected;
+            calendarPopup.FormClosed += CalendarPopup_FormClosed;
+
+            Point screenLocation = PointToScreen(
+                new Point(0, Height + 6)
+            );
+
+            Rectangle screenBounds = Screen.FromControl(this).WorkingArea;
+
+            if (screenLocation.X + calendarPopup.Width > screenBounds.Right)
+            {
+                screenLocation.X =
+                    screenBounds.Right - calendarPopup.Width - 10;
+            }
+
+            if (screenLocation.Y + calendarPopup.Height > screenBounds.Bottom)
+            {
+                screenLocation.Y =
+                    PointToScreen(new Point(0, 0)).Y
+                    - calendarPopup.Height
+                    - 6;
+            }
+
+            calendarPopup.Location = screenLocation;
+
+            isFocused = true;
+            Invalidate();
+
+            calendarPopup.Show();
+        }
+
+        private void CalendarPopup_DateSelected(
+            object sender,
+            DateTime date)
+        {
+            Value = date;
+        }
+
+        private void CalendarPopup_FormClosed(
+            object sender,
+            FormClosedEventArgs e)
+        {
+            isFocused = false;
+            Invalidate();
+
+            calendarPopup = null;
+        }
+
+        private void UpdateDateText()
+        {
+            lblDate.Text = selectedDate.ToString(
+                DateFormat,
+                new CultureInfo("ar-EG")
+            );
+        }
+
+        private void Control_MouseEnter(
+            object sender,
+            EventArgs e)
+        {
+            isFocused = true;
+            Invalidate();
+        }
+
+        private void Control_MouseLeave(
+            object sender,
+            EventArgs e)
+        {
+            if (calendarPopup == null)
+            {
+                isFocused = false;
                 Invalidate();
             }
         }
 
-        [Category("Sabra Custom Properties")]
-        [Description("قيمة التاريخ")]
-        public DateTime Value
-        {
-            get => dateTimePicker.Value;
-            set => dateTimePicker.Value = value;
-        }
-
-        [Category("Sabra Custom Properties")]
-        public DateTime MinDate
-        {
-            get => dateTimePicker.MinDate;
-            set => dateTimePicker.MinDate = value;
-        }
-
-        [Category("Sabra Custom Properties")]
-        public DateTime MaxDate
-        {
-            get => dateTimePicker.MaxDate;
-            set => dateTimePicker.MaxDate = value;
-        }
-
-        [Category("Sabra Custom Properties")]
-        public DateTimePickerFormat Format
-        {
-            get => dateTimePicker.Format;
-            set => dateTimePicker.Format = value;
-        }
-
-        [Category("Sabra Custom Properties")]
-        public string CustomFormat
-        {
-            get => dateTimePicker.CustomFormat;
-            set => dateTimePicker.CustomFormat = value;
-        }
-
-        [Category("Sabra Custom Properties")]
-        public bool ShowCheckBox
-        {
-            get => dateTimePicker.ShowCheckBox;
-            set => dateTimePicker.ShowCheckBox = value;
-        }
-
-        [Category("Sabra Custom Properties")]
-        public bool Checked
-        {
-            get => dateTimePicker.Checked;
-            set => dateTimePicker.Checked = value;
-        }
-
-        #endregion
-
-        #region Events
-
-        [Browsable(true)]
-        [Category("Action")]
-        public event EventHandler ValueChanged;
-
-        #endregion
-
-        #region Constructor
-
-        public SabraDateTimePicker()
-        {
-            SetStyle(
-                ControlStyles.UserPaint |
-                ControlStyles.OptimizedDoubleBuffer |
-                ControlStyles.ResizeRedraw |
-                ControlStyles.AllPaintingInWmPaint,
-                true);
-
-            MinimumSize = new Size(0, 35);
-
-            Size = new Size(200, 40);
-
-            BackColor = Color.Transparent;
-
-            dateTimePicker = new DateTimePicker();
-
-            dateTimePicker.Format =
-                DateTimePickerFormat.Short;
-
-            dateTimePicker.Font =
-                new Font("Segoe UI", 10F);
-
-            dateTimePicker.BackColor =
-                skinColor;
-
-            dateTimePicker.ForeColor =
-                textColor;
-
-
-            dateTimePicker.ShowUpDown = false;
-
-            dateTimePicker.Dock =
-                DockStyle.Fill;
-
-            dateTimePicker.Padding =
-                new Padding(5, 0, 5, 0);
-
-            dateTimePicker.ValueChanged +=
-                DateTimePicker_ValueChanged;
-
-            dateTimePicker.DropDown +=
-                DateTimePicker_DropDown;
-
-            dateTimePicker.CloseUp +=
-                DateTimePicker_CloseUp;
-
-            Controls.Add(dateTimePicker);
-
-            UpdateRegion();
-        }
-
-        #endregion
-
-        #region DateTimePicker Events
-
-        private void DateTimePicker_ValueChanged(
-            object sender,
-            EventArgs e)
-        {
-            Invalidate();
-
-            ValueChanged?.Invoke(this, e);
-        }
-
-        private void DateTimePicker_DropDown(
-            object sender,
-            EventArgs e)
-        {
-            isDroppedDown = true;
-
-            Invalidate();
-        }
-
-        private void DateTimePicker_CloseUp(
-            object sender,
-            EventArgs e)
-        {
-            isDroppedDown = false;
-
-            Invalidate();
-        }
-
-        #endregion
-
-        #region Paint
-
-        protected override void OnPaint(
-            PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
-            Graphics g = e.Graphics;
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-            g.SmoothingMode =
-                SmoothingMode.AntiAlias;
-
-            Rectangle rectSurface =
-                ClientRectangle;
-
-            rectSurface.Width--;
-            rectSurface.Height--;
-
-            int radius =
-                Math.Min(
-                    borderRadius,
-                    Math.Min(
-                        rectSurface.Width,
-                        rectSurface.Height) / 2);
+            Rectangle rect = ClientRectangle;
+            rect.Width--;
+            rect.Height--;
 
             using GraphicsPath path =
-                GetFigurePath(
-                    rectSurface,
-                    radius);
+                CreateRoundedPath(rect, borderRadius);
 
             using SolidBrush backgroundBrush =
                 new SolidBrush(skinColor);
 
-            g.FillPath(
-                backgroundBrush,
-                path);
+            e.Graphics.FillPath(backgroundBrush, path);
+
+            Color currentBorder =
+                isFocused
+                    ? focusedBorderColor
+                    : borderColor;
+
+            using Pen borderPen =
+                new Pen(currentBorder, borderSize);
+
+            borderPen.Alignment = PenAlignment.Inset;
 
             if (borderSize > 0)
             {
-                using Pen borderPen =
-                    new Pen(
-                        isDroppedDown
-                            ? Color.DarkOrange
-                            : borderColor,
-                        borderSize);
-
-                borderPen.Alignment =
-                    PenAlignment.Inset;
-
-                g.DrawPath(
-                    borderPen,
-                    path);
+                e.Graphics.DrawPath(borderPen, path);
             }
 
-            DrawCalendarIcon(
-                g,
-                iconColor);
+            // لو الـ CheckBox ظاهر، أيقونة الكالندر بتتحرك عشان متتصادمش معاه
+            DrawCalendarIcon(e.Graphics);
         }
 
-        #endregion
-
-        #region Calendar Icon
-
-        private void DrawCalendarIcon(
-            Graphics g,
-            Color color)
+        protected override void OnMouseWheel(MouseEventArgs e)
         {
-            int iconWidth = 16;
-            int iconHeight = 16;
+            base.OnMouseWheel(e);
 
-            int x;
-            int y =
-                (Height - iconHeight) / 2;
+            if (showCheckBox && !isChecked)
+                return;
 
-            if (RightToLeft == RightToLeft.Yes)
+            // إذا كانت حركة العجلة للأعلى، نضيف يوم. وإذا كانت للأسفل، نطرح يوم.
+            if (e.Delta > 0)
             {
-                x = 8;
+                Value = Value.AddDays(1);
             }
-            else
+            else if (e.Delta < 0)
             {
-                x =
-                    Width -
-                    iconWidth -
-                    8;
+                Value = Value.AddDays(-1);
             }
+        }
 
-            using Pen pen =
-                new Pen(
-                    color,
-                    1.5f);
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // التأكد من أن الأداة محددة (Focused) وسارية (Checked) قبل تغيير التاريخ
+            if (this.ContainsFocus && (!showCheckBox || isChecked))
+            {
+                if (keyData == Keys.Up || keyData == Keys.Right)
+                {
+                    Value = Value.AddDays(1);
+                    return true; // إخبار النظام أنه تم التعامل مع الزر لمنع تغيير الـ Focus
+                }
+                else if (keyData == Keys.Down || keyData == Keys.Left)
+                {
+                    Value = Value.AddDays(-1);
+                    return true;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
 
-            pen.StartCap =
-                LineCap.Round;
+        private void DrawCalendarIcon(Graphics g)
+        {
+            int size = 20;
 
-            pen.EndCap =
-                LineCap.Round;
+            // نحجز مساحة الـ CheckBox عشان الأيقونة متترسمش فوقه
+            int reservedForCheckBox = showCheckBox ? chkEnable.Width : 0;
 
-            // جسم الـ Calendar
+            int x = Width - size - 15 - reservedForCheckBox;
+            int y = (Height - size) / 2;
+
+            using Pen pen = new Pen(
+                focusedBorderColor,
+                1.8F
+            );
+
+            pen.StartCap = LineCap.Round;
+            pen.EndCap = LineCap.Round;
+            pen.LineJoin = LineJoin.Round;
+
             g.DrawRectangle(
                 pen,
                 x,
-                y + 2,
-                iconWidth,
-                iconHeight - 2);
+                y + 3,
+                size,
+                size - 3
+            );
 
-            // الخط العلوي
             g.DrawLine(
                 pen,
                 x,
-                y + 6,
-                x + iconWidth,
-                y + 6);
-
-            // المسامير العلوية
-            g.DrawLine(
-                pen,
-                x + 4,
-                y,
-                x + 4,
-                y + 4);
+                y + 8,
+                x + size,
+                y + 8
+            );
 
             g.DrawLine(
                 pen,
-                x + iconWidth - 4,
+                x + 5,
                 y,
-                x + iconWidth - 4,
-                y + 4);
+                x + 5,
+                y + 5
+            );
 
-            // نقطة داخل الـ Calendar
-            using SolidBrush brush =
-                new SolidBrush(color);
+            g.DrawLine(
+                pen,
+                x + size - 5,
+                y,
+                x + size - 5,
+                y + 5
+            );
+
+            using SolidBrush dotBrush =
+                new SolidBrush(focusedBorderColor);
 
             g.FillEllipse(
-                brush,
+                dotBrush,
                 x + 5,
-                y + 9,
+                y + 12,
                 3,
-                3);
+                3
+            );
+
+            g.FillEllipse(
+                dotBrush,
+                x + 12,
+                y + 12,
+                3,
+                3
+            );
         }
 
-        #endregion
-
-        #region Rounded Region
-
-        private GraphicsPath GetFigurePath(
+        private GraphicsPath CreateRoundedPath(
             Rectangle rect,
             int radius)
         {
-            GraphicsPath path =
-                new GraphicsPath();
+            GraphicsPath path = new GraphicsPath();
 
-            if (radius <= 1)
+            if (radius <= 0)
             {
                 path.AddRectangle(rect);
                 return path;
             }
 
-            float diameter =
-                radius * 2F;
-
-            path.StartFigure();
+            int diameter = radius * 2;
 
             path.AddArc(
                 rect.X,
@@ -3180,7 +3284,8 @@ namespace SabraForSpareParts
                 diameter,
                 diameter,
                 180,
-                90);
+                90
+            );
 
             path.AddArc(
                 rect.Right - diameter,
@@ -3188,7 +3293,8 @@ namespace SabraForSpareParts
                 diameter,
                 diameter,
                 270,
-                90);
+                90
+            );
 
             path.AddArc(
                 rect.Right - diameter,
@@ -3196,7 +3302,8 @@ namespace SabraForSpareParts
                 diameter,
                 diameter,
                 0,
-                90);
+                90
+            );
 
             path.AddArc(
                 rect.X,
@@ -3204,109 +3311,494 @@ namespace SabraForSpareParts
                 diameter,
                 diameter,
                 90,
-                90);
+                90
+            );
 
             path.CloseFigure();
 
             return path;
         }
-
-        #endregion
-
-        #region Region
-
-        private void UpdateRegion()
-        {
-            if (Width <= 0 || Height <= 0)
-                return;
-
-            Rectangle rect =
-                new Rectangle(
-                    0,
-                    0,
-                    Width,
-                    Height);
-
-            int radius =
-                Math.Min(
-                    borderRadius,
-                    Math.Min(
-                        Width,
-                        Height) / 2);
-
-            using GraphicsPath path =
-                GetFigurePath(
-                    rect,
-                    radius);
-
-            Region?.Dispose();
-
-            Region =
-                new Region(path);
-        }
-
-        #endregion
-
-        #region Resize
-
-        protected override void OnResize(
-            EventArgs e)
-        {
-            base.OnResize(e);
-
-            UpdateRegion();
-
-            Invalidate();
-        }
-
-        #endregion
-
-        #region RightToLeft
-
-        protected override void OnRightToLeftChanged(
-            EventArgs e)
-        {
-            base.OnRightToLeftChanged(e);
-
-            dateTimePicker.RightToLeft =
-                RightToLeft;
-
-            Invalidate();
-        }
-
-        #endregion
-
-        #region Font
-
-        protected override void OnFontChanged(
-            EventArgs e)
-        {
-            base.OnFontChanged(e);
-
-            if (dateTimePicker != null)
-            {
-                dateTimePicker.Font =
-                    Font;
-            }
-        }
-
-        #endregion
-
-        #region Dispose
-
-        protected override void Dispose(
-            bool disposing)
-        {
-            if (disposing)
-            {
-                dateTimePicker?.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
-        #endregion
     }
+
+    public class SabraCalendarPopup : Form
+    {
+        private enum CalendarView
+        {
+            Days,
+            Months,
+            Years
+        }
+
+        private DateTime selectedDate;
+        private DateTime displayedMonth;
+        private CalendarView currentView = CalendarView.Days;
+
+        private readonly CultureInfo arabicCulture = new CultureInfo("ar-EG");
+
+        private readonly Button btnHeaderTitle; // تحويل Label إلى Button للضغط عليه
+        private readonly Button btnNext;
+        private readonly Button btnPrevious;
+        private readonly Button btnToday;
+        private readonly Button btnClose;
+
+        private readonly TableLayoutPanel daysPanel;
+
+        private Color primaryColor = Color.FromArgb(0, 120, 212);
+        private Color hoverColor = Color.FromArgb(235, 242, 250);
+        private Color textColor = Color.FromArgb(45, 45, 45);
+
+        public event EventHandler<DateTime> DateSelected;
+
+        public SabraCalendarPopup(DateTime date, bool rtl = true)
+        {
+            selectedDate = date.Date;
+            displayedMonth = new DateTime(date.Year, date.Month, 1);
+
+            FormBorderStyle = FormBorderStyle.None;
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.Manual;
+            TopMost = true;
+
+            Width = 420;
+            Height = 470;
+            BackColor = Color.White;
+
+            RightToLeft = rtl ? RightToLeft.Yes : RightToLeft.No;
+            RightToLeftLayout = rtl;
+            Padding = new Padding(16);
+
+            // Header Title Button
+            btnHeaderTitle = new Button
+            {
+                Dock = DockStyle.Fill,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Cairo", 12F, FontStyle.Bold),
+                ForeColor = textColor,
+                BackColor = Color.White,
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnHeaderTitle.FlatAppearance.BorderSize = 0;
+            btnHeaderTitle.Click += BtnHeaderTitle_Click;
+
+            btnPrevious = CreateHeaderButton("‹");
+            btnNext = CreateHeaderButton("›");
+
+            btnPrevious.Click += (s, e) => Navigate(-1);
+            btnNext.Click += (s, e) => Navigate(1);
+
+            TableLayoutPanel header = new TableLayoutPanel
+            {
+                Dock = DockStyle.Top,
+                Height = 64,
+                ColumnCount = 3,
+                RowCount = 1
+            };
+
+            header.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 55));
+            header.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            header.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 55));
+
+            header.Controls.Add(btnPrevious, 0, 0);
+            header.Controls.Add(btnHeaderTitle, 1, 0);
+            header.Controls.Add(btnNext, 2, 0);
+
+            daysPanel = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 7,
+                RowCount = 7,
+                Padding = new Padding(2, 10, 2, 10)
+            };
+
+            btnToday = CreateFooterButton("اليوم");
+            btnClose = CreateFooterButton("إغلاق");
+
+            btnToday.Click += (s, e) =>
+            {
+                displayedMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                selectedDate = DateTime.Today;
+                currentView = CalendarView.Days;
+                RenderCalendar();
+            };
+
+            btnClose.Click += (s, e) => Close();
+
+            TableLayoutPanel footer = new TableLayoutPanel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 55,
+                ColumnCount = 2,
+                Padding = new Padding(0, 5, 0, 0)
+            };
+
+            footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+            footer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+
+            footer.Controls.Add(btnToday, 0, 0);
+            footer.Controls.Add(btnClose, 1, 0);
+
+            Controls.Add(daysPanel);
+            Controls.Add(footer);
+            Controls.Add(header);
+
+            Deactivate += (s, e) => BeginInvoke(new Action(Close));
+
+            RenderCalendar();
+        }
+
+        private void Navigate(int direction)
+        {
+            switch (currentView)
+            {
+                case CalendarView.Days:
+                    displayedMonth = displayedMonth.AddMonths(direction);
+                    break;
+                case CalendarView.Months:
+                    displayedMonth = displayedMonth.AddYears(direction);
+                    break;
+                case CalendarView.Years:
+                    displayedMonth = displayedMonth.AddYears(direction * 12);
+                    break;
+            }
+            RenderCalendar();
+        }
+
+        private void BtnHeaderTitle_Click(object sender, EventArgs e)
+        {
+            if (currentView == CalendarView.Days)
+                currentView = CalendarView.Months;
+            else if (currentView == CalendarView.Months)
+                currentView = CalendarView.Years;
+
+            RenderCalendar();
+        }
+
+        private void RenderCalendar()
+        {
+            daysPanel.SuspendLayout();
+            daysPanel.Controls.Clear();
+            daysPanel.ColumnStyles.Clear();
+            daysPanel.RowStyles.Clear();
+
+            switch (currentView)
+            {
+                case CalendarView.Days:
+                    RenderDaysView();
+                    break;
+                case CalendarView.Months:
+                    RenderMonthsView();
+                    break;
+                case CalendarView.Years:
+                    RenderYearsView();
+                    break;
+            }
+
+            daysPanel.ResumeLayout();
+        }
+
+        private void RenderDaysView()
+        {
+            btnHeaderTitle.Text = displayedMonth.ToString("MMMM yyyy", arabicCulture);
+
+            daysPanel.ColumnCount = 7;
+            daysPanel.RowCount = 7;
+
+            for (int i = 0; i < 7; i++)
+                daysPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857F));
+
+            for (int i = 0; i < 7; i++)
+                daysPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857F));
+
+            string[] dayNames = { "ح", "ن", "ث", "ر", "خ", "ج", "س" };
+            for (int i = 0; i < 7; i++)
+            {
+                Label dayLabel = new Label
+                {
+                    Text = dayNames[i],
+                    Dock = DockStyle.Fill,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Font = new Font("Cairo", 9F, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(130, 135, 145)
+                };
+                daysPanel.Controls.Add(dayLabel, i, 0);
+            }
+
+            int firstDayIndex = ((int)displayedMonth.DayOfWeek + 1) % 7;
+            int daysInMonth = DateTime.DaysInMonth(displayedMonth.Year, displayedMonth.Month);
+            int day = 1;
+
+            for (int row = 1; row <= 6; row++)
+            {
+                for (int col = 0; col < 7; col++)
+                {
+                    if (row == 1 && col < firstDayIndex) continue;
+                    if (day > daysInMonth) break;
+
+                    DateTime currentDate = new DateTime(displayedMonth.Year, displayedMonth.Month, day);
+                    Button dayButton = CreateDayButton(currentDate);
+                    daysPanel.Controls.Add(dayButton, col, row);
+                    day++;
+                }
+            }
+        }
+
+        private void RenderMonthsView()
+        {
+            btnHeaderTitle.Text = displayedMonth.ToString("yyyy", arabicCulture);
+
+            daysPanel.ColumnCount = 3;
+            daysPanel.RowCount = 4;
+
+            for (int i = 0; i < 3; i++)
+                daysPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33F));
+
+            for (int i = 0; i < 4; i++)
+                daysPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+
+            for (int m = 1; m <= 12; m++)
+            {
+                int monthIndex = m;
+                DateTime monthDate = new DateTime(displayedMonth.Year, monthIndex, 1);
+                Button btnMonth = new Button
+                {
+                    Text = monthDate.ToString("MMMM", arabicCulture),
+                    Dock = DockStyle.Fill,
+                    Font = new Font("Cairo", 10F, FontStyle.Regular),
+                    FlatStyle = FlatStyle.Flat,
+                    Margin = new Padding(3),
+                    Cursor = Cursors.Hand,
+                    BackColor = (monthIndex == displayedMonth.Month) ? primaryColor : Color.White,
+                    ForeColor = (monthIndex == displayedMonth.Month) ? Color.White : textColor
+                };
+                btnMonth.FlatAppearance.BorderSize = 0;
+
+                btnMonth.Click += (s, e) =>
+                {
+                    displayedMonth = new DateTime(displayedMonth.Year, monthIndex, 1);
+                    currentView = CalendarView.Days;
+                    RenderCalendar();
+                };
+
+                int row = (m - 1) / 3;
+                int col = (m - 1) % 3;
+                daysPanel.Controls.Add(btnMonth, col, row);
+            }
+        }
+
+        private void RenderYearsView()
+        {
+            int startYear = displayedMonth.Year - (displayedMonth.Year % 12);
+            int endYear = startYear + 11;
+
+            btnHeaderTitle.Text = $"{startYear} - {endYear}";
+
+            daysPanel.ColumnCount = 3;
+            daysPanel.RowCount = 4;
+
+            for (int i = 0; i < 3; i++)
+                daysPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33F));
+
+            for (int i = 0; i < 4; i++)
+                daysPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+
+            for (int i = 0; i < 12; i++)
+            {
+                int year = startYear + i;
+                Button btnYear = new Button
+                {
+                    Text = year.ToString(),
+                    Dock = DockStyle.Fill,
+                    Font = new Font("Cairo", 10F, FontStyle.Bold),
+                    FlatStyle = FlatStyle.Flat,
+                    Margin = new Padding(3),
+                    Cursor = Cursors.Hand,
+                    BackColor = (year == displayedMonth.Year) ? primaryColor : Color.White,
+                    ForeColor = (year == displayedMonth.Year) ? Color.White : textColor
+                };
+                btnYear.FlatAppearance.BorderSize = 0;
+
+                btnYear.Click += (s, e) =>
+                {
+                    displayedMonth = new DateTime(year, displayedMonth.Month, 1);
+                    currentView = CalendarView.Months;
+                    RenderCalendar();
+                };
+
+                int row = i / 3;
+                int col = i % 3;
+                daysPanel.Controls.Add(btnYear, col, row);
+            }
+        }
+
+        private Button CreateHeaderButton(string text)
+        {
+            return new Button
+            {
+                Text = text,
+                Font = new Font("Segoe UI", 20F, FontStyle.Regular),
+                Dock = DockStyle.Fill,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
+                BackColor = Color.White,
+                ForeColor = textColor,
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+        }
+
+        private Button CreateFooterButton(string text)
+        {
+            return new Button
+            {
+                Text = text,
+                Font = new Font("Cairo", 9.5F),
+                Dock = DockStyle.Fill,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
+                BackColor = text == "اليوم" ? primaryColor : Color.FromArgb(245, 247, 249),
+                ForeColor = text == "اليوم" ? Color.White : textColor,
+                Cursor = Cursors.Hand,
+                Margin = new Padding(5, 0, 5, 0)
+            };
+        }
+
+        private Button CreateDayButton(DateTime date)
+        {
+            bool isSelected = date.Date == selectedDate.Date;
+            bool isToday = date.Date == DateTime.Today;
+
+            Button button = new Button
+            {
+                Text = date.Day.ToString(),
+                Dock = DockStyle.Fill,
+                Font = new Font("Cairo", 9.5F, FontStyle.Regular),
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
+                Margin = new Padding(4),
+                Cursor = Cursors.Hand,
+                Tag = date,
+                BackColor = isSelected ? primaryColor : Color.White,
+                ForeColor = isSelected ? Color.White : textColor
+            };
+
+            if (isToday && !isSelected)
+            {
+                button.FlatAppearance.BorderSize = 1;
+                button.FlatAppearance.BorderColor = primaryColor;
+            }
+
+            button.MouseEnter += (s, e) => { if (!isSelected) button.BackColor = hoverColor; };
+            button.MouseLeave += (s, e) => { if (!isSelected) button.BackColor = Color.White; };
+            button.Click += DayButton_Click;
+
+            return button;
+        }
+
+        private void DayButton_Click(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.Tag is DateTime date)
+            {
+                selectedDate = date;
+                DateSelected?.Invoke(this, selectedDate);
+                Close();
+            }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+            Rectangle shadowRect = new Rectangle(3, 3, Width - 7, Height - 7);
+            using Pen shadowPen = new Pen(Color.FromArgb(35, 0, 0, 0), 3);
+            e.Graphics.DrawRectangle(shadowPen, shadowRect);
+
+            using Pen borderPen = new Pen(Color.FromArgb(225, 230, 235), 1);
+            e.Graphics.DrawRectangle(borderPen, 0, 0, Width - 1, Height - 1);
+        }
+    }
+    
+
+    public class SabraNumericUpDown : NumericUpDown
+        {
+            #region Fields
+
+            private Color _borderColor = Color.FromArgb(218, 222, 225);
+            private Color _borderFocusColor = Color.FromArgb(52, 152, 219);
+            private bool _isFocused = false;
+
+            #endregion
+
+            #region Properties
+
+            [Category("Sabra Properties")]
+            public Color BorderColor
+            {
+                get => _borderColor;
+                set { _borderColor = value; Invalidate(); }
+            }
+
+            [Category("Sabra Properties")]
+            public Color BorderFocusColor
+            {
+                get => _borderFocusColor;
+                set { _borderFocusColor = value; Invalidate(); }
+            }
+
+            #endregion
+
+            #region Constructor
+
+            public SabraNumericUpDown()
+            {
+                this.Font = new Font("Segoe UI", 10.5F, FontStyle.Regular);
+                this.ForeColor = Color.FromArgb(64, 64, 64);
+                this.BackColor = Color.White;
+            }
+
+            #endregion
+
+            #region Overrides & Painting
+
+            protected override void OnGotFocus(EventArgs e)
+            {
+                base.OnGotFocus(e);
+                _isFocused = true;
+                this.Invalidate();
+            }
+
+            protected override void OnLostFocus(EventArgs e)
+            {
+                base.OnLostFocus(e);
+                _isFocused = false;
+                this.Invalidate();
+            }
+
+            protected override void WndProc(ref Message m)
+            {
+                base.WndProc(ref m);
+
+                // رسم الإطار الخارجي المخصص فوق الأداة الأصلية عند حدوث إعادة رسم (WM_PAINT)
+                if (m.Msg == 0x000F)
+                {
+                    using (Graphics g = Graphics.FromHwnd(this.Handle))
+                    {
+                        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                        Color currentBorder = _isFocused ? _borderFocusColor : _borderColor;
+
+                        using (Pen pen = new Pen(currentBorder, 1.5f))
+                        {
+                            g.DrawRectangle(pen, 0, 0, this.Width - 1, this.Height - 1);
+                        }
+                    }
+                }
+            }
+
+            #endregion
+        }
+    
 
 }
 

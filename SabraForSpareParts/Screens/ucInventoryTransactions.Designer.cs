@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             sabraPanel1 = new SabraPanel();
             sbtnPrint = new SabraButton();
             sbtnExportAsExcel = new SabraButton();
@@ -40,6 +40,7 @@
             slblTitleOfTopPanel = new SabraLabel();
             lblAlertsCount = new SabraLabel();
             spnlDataGridViewOPtions = new SabraPanel();
+            sabraDateTimePicker1 = new SabraDateTimePicker();
             scbtnRestFilters = new SabraButton();
             btnSearch = new SabraButton();
             smbxAllUsers = new SabraComboBox();
@@ -47,7 +48,6 @@
             stxbxPartName = new SabraTextBox();
             dgvInventoryTransactions = new SabraDataGridView();
             dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
-            sabraDateTimePicker1 = new SabraDateTimePicker();
             sabraPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).BeginInit();
             spnlDataGridViewOPtions.SuspendLayout();
@@ -212,6 +212,28 @@
             spnlDataGridViewOPtions.Size = new Size(1479, 112);
             spnlDataGridViewOPtions.TabIndex = 13;
             // 
+            // sabraDateTimePicker1
+            // 
+            sabraDateTimePicker1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            sabraDateTimePicker1.BackColor = Color.Transparent;
+            sabraDateTimePicker1.BorderColor = Color.FromArgb(220, 225, 230);
+            sabraDateTimePicker1.BorderRadius = 12;
+            sabraDateTimePicker1.BorderSize = 1;
+            sabraDateTimePicker1.Checked = true;
+            sabraDateTimePicker1.DateFormat = "dddd، dd MMMM yyyy";
+            sabraDateTimePicker1.FocusedBorderColor = Color.FromArgb(0, 120, 212);
+            sabraDateTimePicker1.Font = new Font("Cairo", 10F);
+            sabraDateTimePicker1.Location = new Point(647, 33);
+            sabraDateTimePicker1.MinimumSize = new Size(180, 45);
+            sabraDateTimePicker1.Name = "sabraDateTimePicker1";
+            sabraDateTimePicker1.RightToLeft = RightToLeft.Yes;
+            sabraDateTimePicker1.ShowCheckBox = false;
+            sabraDateTimePicker1.Size = new Size(275, 45);
+            sabraDateTimePicker1.SkinColor = Color.White;
+            sabraDateTimePicker1.TabIndex = 15;
+            sabraDateTimePicker1.TextColor = Color.FromArgb(45, 45, 45);
+            sabraDateTimePicker1.Value = new DateTime(2026, 8, 30, 0, 0, 0, 0);
+            // 
             // scbtnRestFilters
             // 
             scbtnRestFilters.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -279,10 +301,10 @@
             smbxAllUsers.FormattingEnabled = true;
             smbxAllUsers.ItemHeight = 30;
             smbxAllUsers.Items.AddRange(new object[] { "كل التصنيفات", "فرامل", "بواجي", "تعليق" });
-            smbxAllUsers.Location = new Point(375, 35);
+            smbxAllUsers.Location = new Point(351, 37);
             smbxAllUsers.Name = "smbxAllUsers";
             smbxAllUsers.RightToLeft = RightToLeft.Yes;
-            smbxAllUsers.Size = new Size(223, 36);
+            smbxAllUsers.Size = new Size(278, 36);
             smbxAllUsers.TabIndex = 17;
             smbxAllUsers.SelectedIndexChanged += smbxAllUsers_SelectedIndexChanged;
             // 
@@ -298,10 +320,10 @@
             cstbxMovements.FormattingEnabled = true;
             cstbxMovements.ItemHeight = 30;
             cstbxMovements.Items.AddRange(new object[] { "كل الحركات", "بيع", "مرتجع", "شراء", "تعديل يدوي" });
-            cstbxMovements.Location = new Point(888, 35);
+            cstbxMovements.Location = new Point(940, 37);
             cstbxMovements.Name = "cstbxMovements";
             cstbxMovements.RightToLeft = RightToLeft.Yes;
-            cstbxMovements.Size = new Size(254, 36);
+            cstbxMovements.Size = new Size(234, 36);
             cstbxMovements.TabIndex = 14;
             cstbxMovements.SelectedIndexChanged += cstbxMovements_SelectedIndexChanged;
             // 
@@ -312,11 +334,11 @@
             stxbxPartName.BorderSize = 2;
             stxbxPartName.Font = new Font("Cairo", 10F);
             stxbxPartName.ForeColor = Color.FromArgb(64, 64, 64);
-            stxbxPartName.Location = new Point(1158, 34);
+            stxbxPartName.Location = new Point(1192, 34);
             stxbxPartName.Name = "stxbxPartName";
             stxbxPartName.PlaceholderText = "اسم القعطة";
             stxbxPartName.RightToLeft = RightToLeft.Yes;
-            stxbxPartName.Size = new Size(284, 39);
+            stxbxPartName.Size = new Size(243, 39);
             stxbxPartName.TabIndex = 15;
             stxbxPartName.TabStop = false;
             stxbxPartName.Texts = "";
@@ -328,11 +350,11 @@
             dgvInventoryTransactions.AllowUserToDeleteRows = false;
             dgvInventoryTransactions.AllowUserToOrderColumns = true;
             dgvInventoryTransactions.AllowUserToResizeRows = false;
-            dataGridViewCellStyle6.BackColor = Color.FromArgb(248, 250, 252);
-            dataGridViewCellStyle6.ForeColor = Color.FromArgb(51, 65, 85);
-            dataGridViewCellStyle6.SelectionBackColor = Color.FromArgb(30, 58, 138);
-            dataGridViewCellStyle6.SelectionForeColor = Color.White;
-            dgvInventoryTransactions.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 250, 252);
+            dataGridViewCellStyle1.ForeColor = Color.FromArgb(51, 65, 85);
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            dataGridViewCellStyle1.SelectionForeColor = Color.White;
+            dgvInventoryTransactions.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvInventoryTransactions.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvInventoryTransactions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvInventoryTransactions.BackgroundColor = Color.White;
@@ -342,27 +364,27 @@
             dgvInventoryTransactions.ButtonHoverColor = Color.FromArgb(238, 242, 255);
             dgvInventoryTransactions.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dgvInventoryTransactions.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.BackColor = Color.White;
-            dataGridViewCellStyle7.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            dataGridViewCellStyle7.ForeColor = Color.FromArgb(64, 64, 64);
-            dataGridViewCellStyle7.Padding = new Padding(8, 0, 8, 0);
-            dataGridViewCellStyle7.SelectionBackColor = Color.White;
-            dataGridViewCellStyle7.SelectionForeColor = Color.FromArgb(64, 64, 64);
-            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.True;
-            dgvInventoryTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = Color.White;
+            dataGridViewCellStyle2.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.FromArgb(64, 64, 64);
+            dataGridViewCellStyle2.Padding = new Padding(8, 0, 8, 0);
+            dataGridViewCellStyle2.SelectionBackColor = Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = Color.FromArgb(64, 64, 64);
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvInventoryTransactions.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvInventoryTransactions.ColumnHeadersHeight = 45;
             dgvInventoryTransactions.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvInventoryTransactions.Columns.AddRange(new DataGridViewColumn[] { dataGridViewButtonColumn1 });
-            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle9.BackColor = Color.White;
-            dataGridViewCellStyle9.Font = new Font("Cairo", 10F);
-            dataGridViewCellStyle9.ForeColor = Color.FromArgb(51, 65, 85);
-            dataGridViewCellStyle9.Padding = new Padding(8, 0, 8, 0);
-            dataGridViewCellStyle9.SelectionBackColor = Color.FromArgb(30, 58, 138);
-            dataGridViewCellStyle9.SelectionForeColor = Color.White;
-            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.False;
-            dgvInventoryTransactions.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.BackColor = Color.White;
+            dataGridViewCellStyle4.Font = new Font("Cairo", 10F);
+            dataGridViewCellStyle4.ForeColor = Color.FromArgb(51, 65, 85);
+            dataGridViewCellStyle4.Padding = new Padding(8, 0, 8, 0);
+            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            dataGridViewCellStyle4.SelectionForeColor = Color.White;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            dgvInventoryTransactions.DefaultCellStyle = dataGridViewCellStyle4;
             dgvInventoryTransactions.EnableHeadersVisualStyles = false;
             dgvInventoryTransactions.Font = new Font("Cairo", 10F);
             dgvInventoryTransactions.GridColor = Color.FromArgb(226, 232, 240);
@@ -380,14 +402,14 @@
             dgvInventoryTransactions.RowAlternateBackColor = Color.FromArgb(248, 250, 252);
             dgvInventoryTransactions.RowBackColor = Color.White;
             dgvInventoryTransactions.RowForeColor = Color.FromArgb(51, 65, 85);
-            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = SystemColors.Control;
-            dataGridViewCellStyle10.Font = new Font("Cairo", 10F);
-            dataGridViewCellStyle10.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = Color.FromArgb(30, 58, 138);
-            dataGridViewCellStyle10.SelectionForeColor = Color.White;
-            dataGridViewCellStyle10.WrapMode = DataGridViewTriState.True;
-            dgvInventoryTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = SystemColors.Control;
+            dataGridViewCellStyle5.Font = new Font("Cairo", 10F);
+            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            dataGridViewCellStyle5.SelectionForeColor = Color.White;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            dgvInventoryTransactions.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             dgvInventoryTransactions.RowHeadersVisible = false;
             dgvInventoryTransactions.RowHeadersWidth = 51;
             dgvInventoryTransactions.RowHeight = 40;
@@ -400,12 +422,12 @@
             // 
             // dataGridViewButtonColumn1
             // 
-            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = Color.White;
-            dataGridViewCellStyle8.ForeColor = Color.Black;
-            dataGridViewCellStyle8.SelectionBackColor = Color.White;
-            dataGridViewCellStyle8.SelectionForeColor = Color.Black;
-            dataGridViewButtonColumn1.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = Color.White;
+            dataGridViewCellStyle3.ForeColor = Color.Black;
+            dataGridViewCellStyle3.SelectionBackColor = Color.White;
+            dataGridViewCellStyle3.SelectionForeColor = Color.Black;
+            dataGridViewButtonColumn1.DefaultCellStyle = dataGridViewCellStyle3;
             dataGridViewButtonColumn1.FlatStyle = FlatStyle.Flat;
             dataGridViewButtonColumn1.HeaderText = "الإجراءات";
             dataGridViewButtonColumn1.MinimumWidth = 6;
@@ -413,26 +435,6 @@
             dataGridViewButtonColumn1.ReadOnly = true;
             dataGridViewButtonColumn1.Text = "عرض  تعديل  حركة";
             dataGridViewButtonColumn1.UseColumnTextForButtonValue = true;
-            // 
-            // sabraDateTimePicker1
-            // 
-            sabraDateTimePicker1.BackColor = Color.Transparent;
-            sabraDateTimePicker1.BorderColor = Color.DodgerBlue;
-            sabraDateTimePicker1.BorderRadius = 15;
-            sabraDateTimePicker1.BorderSize = 1;
-            sabraDateTimePicker1.CustomFormat = null;
-            sabraDateTimePicker1.Format = DateTimePickerFormat.Short;
-            sabraDateTimePicker1.IconColor = Color.DodgerBlue;
-            sabraDateTimePicker1.Location = new Point(618, 33);
-            sabraDateTimePicker1.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
-            sabraDateTimePicker1.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
-            sabraDateTimePicker1.MinimumSize = new Size(0, 35);
-            sabraDateTimePicker1.Name = "sabraDateTimePicker1";
-            sabraDateTimePicker1.Size = new Size(250, 50);
-            sabraDateTimePicker1.SkinColor = Color.White;
-            sabraDateTimePicker1.TabIndex = 21;
-            sabraDateTimePicker1.TextColor = Color.Black;
-            sabraDateTimePicker1.Value = new DateTime(2026, 8, 30, 4, 18, 55, 409);
             // 
             // ucInventoryTransactions
             // 
