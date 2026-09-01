@@ -130,7 +130,7 @@
             scbtnDeleteInvoice.FlatStyle = FlatStyle.Flat;
             scbtnDeleteInvoice.Font = new Font("Cairo", 10F, FontStyle.Bold);
             scbtnDeleteInvoice.ForeColor = Color.White;
-            scbtnDeleteInvoice.HoverColor = Color.CornflowerBlue;
+            scbtnDeleteInvoice.HoverColor = Color.Crimson;
             scbtnDeleteInvoice.IconChar = FontAwesome.Sharp.IconChar.TrashAlt;
             scbtnDeleteInvoice.IconColor = Color.Beige;
             scbtnDeleteInvoice.IconFont = FontAwesome.Sharp.IconFont.Auto;
@@ -157,7 +157,7 @@
             sbtnPrint.FlatStyle = FlatStyle.Flat;
             sbtnPrint.Font = new Font("Cairo", 10F, FontStyle.Bold);
             sbtnPrint.ForeColor = Color.White;
-            sbtnPrint.HoverColor = Color.CornflowerBlue;
+            sbtnPrint.HoverColor = Color.SlateGray;
             sbtnPrint.IconChar = FontAwesome.Sharp.IconChar.Print;
             sbtnPrint.IconColor = Color.Beige;
             sbtnPrint.IconFont = FontAwesome.Sharp.IconFont.Auto;
@@ -184,7 +184,7 @@
             sbtnExportAsExcel.FlatStyle = FlatStyle.Flat;
             sbtnExportAsExcel.Font = new Font("Cairo", 10F, FontStyle.Bold);
             sbtnExportAsExcel.ForeColor = Color.White;
-            sbtnExportAsExcel.HoverColor = Color.CornflowerBlue;
+            sbtnExportAsExcel.HoverColor = Color.DarkGreen;
             sbtnExportAsExcel.IconChar = FontAwesome.Sharp.IconChar.FileUpload;
             sbtnExportAsExcel.IconColor = Color.Beige;
             sbtnExportAsExcel.IconFont = FontAwesome.Sharp.IconFont.Auto;
@@ -372,8 +372,19 @@
             stxbCustomer.Size = new Size(312, 47);
             stxbCustomer.TabIndex = 19;
             stxbCustomer.TabStop = false;
-            stxbCustomer.Texts = "";
             stxbCustomer.TextChanged += stxbCustomer_TextChanged;
+            // 
+            // sabraLabel1
+            // 
+            sabraLabel1.BackColor = Color.Transparent;
+            sabraLabel1.BorderColor = Color.DodgerBlue;
+            sabraLabel1.BorderRadius = 8;
+            sabraLabel1.BorderSize = 0;
+            sabraLabel1.Location = new Point(0, 0);
+            sabraLabel1.Name = "sabraLabel1";
+            sabraLabel1.Size = new Size(120, 32);
+            sabraLabel1.TabIndex = 23;
+            sabraLabel1.TextAlign = ContentAlignment.MiddleRight;
             // 
             // scbxBrand
             // 
@@ -572,7 +583,6 @@
             stxbPartName.Size = new Size(312, 47);
             stxbPartName.TabIndex = 21;
             stxbPartName.TabStop = false;
-            stxbPartName.Texts = "";
             stxbPartName.TextChanged += stxbPartName_TextChanged;
             // 
             // sabraPanel3
@@ -1116,7 +1126,7 @@
             dgvInvoice.SelectionBackColor = Color.FromArgb(30, 58, 138);
             dgvInvoice.SelectionForeColor = Color.White;
             dgvInvoice.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvInvoice.Size = new Size(1025, 1245);
+            dgvInvoice.Size = new Size(1025, 1400);
             dgvInvoice.TabIndex = 29;
             dgvInvoice.CellContentClick += dgvInvoice_CellContentClick;
             // 
@@ -1130,7 +1140,7 @@
             Controls.Add(spnlCustomer);
             Controls.Add(sabraPanel1);
             Name = "ucNewInvoice";
-            Size = new Size(1418, 961);
+            Size = new Size(1397, 940);
             Load += ucNewInvoice_Load;
             sabraPanel1.ResumeLayout(false);
             sabraPanel1.PerformLayout();

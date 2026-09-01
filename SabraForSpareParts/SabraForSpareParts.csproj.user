@@ -28,13 +28,28 @@
     <Compile Update="Screens\ucAddPart.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Screens\ucGoodsReceipt.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Screens\ucInventory.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Screens\ucInventoryTransactions.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Screens\ucInvoicesList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Screens\ucNewInvoice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucNewPurchaseOrder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucPurchaseOrdersList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucReturns.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Screens\ucVehicleCompatibility.cs">

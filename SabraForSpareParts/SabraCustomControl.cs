@@ -154,13 +154,64 @@ namespace SabraForSpareParts
         }
     }
 
-
     public class SabraLabel : Label
     {
+        #region Fields
+
         private int borderRadius = 8;
         private int borderSize = 0;
         private Color borderColor = Color.DodgerBlue;
+
         private bool isTitle = false;
+
+        private bool required = false;
+        private Color requiredColor = Color.Red;
+
+        #endregion
+
+        #region Properties
+
+        // ==============================
+        // Required
+        // ==============================
+
+        [Category("Sabra Appearance")]
+        [DefaultValue(false)]
+        public bool Required
+        {
+            get => required;
+            set
+            {
+                if (required == value)
+                    return;
+
+                required = value;
+                Invalidate();
+            }
+        }
+
+        // ==============================
+        // Required Color
+        // ==============================
+
+        [Category("Sabra Appearance")]
+        [DefaultValue(typeof(Color), "Red")]
+        public Color RequiredColor
+        {
+            get => requiredColor;
+            set
+            {
+                if (requiredColor == value)
+                    return;
+
+                requiredColor = value;
+                Invalidate();
+            }
+        }
+
+        // ==============================
+        // Is Title
+        // ==============================
 
         [Category("Sabra Appearance")]
         [DefaultValue(false)]
@@ -169,265 +220,15 @@ namespace SabraForSpareParts
             get => isTitle;
             set
             {
+                if (isTitle == value)
+                    return;
+
                 isTitle = value;
+
                 Font = isTitle
                     ? new Font("Cairo", 12F, FontStyle.Bold)
                     : new Font("Cairo", 10F, FontStyle.Regular);
-                Invalidate();
-            }
-        }
 
-        [Category("Sabra Appearance")]
-        public int BorderRadius
-        {
-            get => borderRadius;
-            set { borderRadius = Math.Max(0, value); Invalidate(); }
-        }
-
-        [Category("Sabra Appearance")]
-        public int BorderSize
-        {
-            get => borderSize;
-            set { borderSize = Math.Max(0, value); Invalidate(); }
-        }
-
-        [Category("Sabra Appearance")]
-        public Color BorderColor
-        {
-            get => borderColor;
-            set { borderColor = value; Invalidate(); }
-        }
-
-        public SabraLabel()
-        {
-            // تفعيل الرسم المخصص بالكامل ودعم الشفافية
-            SetStyle(
-                ControlStyles.UserPaint |
-                ControlStyles.AllPaintingInWmPaint |
-                ControlStyles.OptimizedDoubleBuffer |
-                ControlStyles.ResizeRedraw |
-                ControlStyles.SupportsTransparentBackColor,
-                true);
-
-            DoubleBuffered = true;
-            AutoSize = false;
-            Size = new Size(120, 32);
-            BackColor = Color.Transparent;
-            TextAlign = ContentAlignment.MiddleRight;
-            Padding = new Padding(0);
-        }
-
-        // --- إجبار الكنترول على إعادة الرسم عند تغيير الخصائص الأساسية ---
-        protected override void OnForeColorChanged(EventArgs e)
-        {
-            base.OnForeColorChanged(e);
-            Invalidate();
-        }
-
-        protected override void OnBackColorChanged(EventArgs e)
-        {
-            base.OnBackColorChanged(e);
-            Invalidate();
-        }
-
-        protected override void OnTextChanged(EventArgs e)
-        {
-            base.OnTextChanged(e);
-            Invalidate();
-        }
-
-        protected override void OnSizeChanged(EventArgs e)
-        {
-            base.OnSizeChanged(e);
-            Invalidate();
-        }
-
-        // بناء المسار الدائري مع حماية من الأرقام الكبيرة
-        private GraphicsPath GetFigurePath(RectangleF rect, float radius)
-        {
-            GraphicsPath path = new GraphicsPath();
-            float curve = radius * 2F;
-
-            if (rect.Width <= 0 || rect.Height <= 0) return path;
-
-            // لو مفيش انحناء، ارسم مستطيل عادي
-            if (radius <= 0)
-            {
-                path.AddRectangle(rect);
-                return path;
-            }
-
-            path.StartFigure();
-            path.AddArc(rect.X, rect.Y, curve, curve, 180, 90);
-            path.AddArc(rect.Right - curve, rect.Y, curve, curve, 270, 90);
-            path.AddArc(rect.Right - curve, rect.Bottom - curve, curve, curve, 0, 90);
-            path.AddArc(rect.X, rect.Bottom - curve, curve, curve, 90, 90);
-            path.CloseFigure();
-
-            return path;
-        }
-
-        // ضبط محاذاة النص
-        private TextFormatFlags GetTextAlignment()
-        {
-            TextFormatFlags flags = TextFormatFlags.PreserveGraphicsClipping | TextFormatFlags.WordBreak;
-
-            // أفقي
-            if (TextAlign == ContentAlignment.TopLeft || TextAlign == ContentAlignment.MiddleLeft || TextAlign == ContentAlignment.BottomLeft)
-                flags |= TextFormatFlags.Left;
-            else if (TextAlign == ContentAlignment.TopCenter || TextAlign == ContentAlignment.MiddleCenter || TextAlign == ContentAlignment.BottomCenter)
-                flags |= TextFormatFlags.HorizontalCenter;
-            else
-                flags |= TextFormatFlags.Right;
-
-            // عمودي
-            if (TextAlign == ContentAlignment.TopLeft || TextAlign == ContentAlignment.TopCenter || TextAlign == ContentAlignment.TopRight)
-                flags |= TextFormatFlags.Top;
-            else if (TextAlign == ContentAlignment.MiddleLeft || TextAlign == ContentAlignment.MiddleCenter || TextAlign == ContentAlignment.MiddleRight)
-                flags |= TextFormatFlags.VerticalCenter;
-            else
-                flags |= TextFormatFlags.Bottom;
-
-            return flags;
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            // تحسين جودة الرسم لأقصى درجة
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-
-            RectangleF rectSurface = new RectangleF(0, 0, this.Width, this.Height);
-
-            // حماية: التأكد إن الـ Radius مش أكبر من نص حجم الكنترول عشان الشكل ميبوظش
-            float safeRadius = Math.Min(borderRadius, Math.Min(rectSurface.Width / 2, rectSurface.Height / 2));
-
-            bool hasBorder = borderSize > 0;
-            float borderHalf = hasBorder ? borderSize / 2f : 0f;
-
-            // مستطيل الإطار (أصغر شوية عشان يترسم جوه الكنترول بالظبط وميتقصش منه حاجة)
-            RectangleF rectBorder = new RectangleF(
-                borderHalf, borderHalf,
-                rectSurface.Width - borderSize,
-                rectSurface.Height - borderSize);
-
-            float safeBorderRadius = Math.Min(borderRadius, Math.Min(rectBorder.Width / 2, rectBorder.Height / 2));
-
-            using (GraphicsPath pathSurface = GetFigurePath(rectSurface, safeRadius))
-            using (GraphicsPath pathBorder = GetFigurePath(rectBorder, safeBorderRadius))
-            {
-                // 1. رسم الخلفية
-                if (BackColor != Color.Transparent)
-                {
-                    using (SolidBrush brush = new SolidBrush(BackColor))
-                    {
-                        e.Graphics.FillPath(brush, pathSurface);
-                    }
-                }
-
-                // 2. رسم الإطار
-                if (hasBorder)
-                {
-                    using (Pen penBorder = new Pen(borderColor, borderSize))
-                    {
-                        penBorder.Alignment = PenAlignment.Center;
-                        e.Graphics.DrawPath(penBorder, pathBorder);
-                    }
-                }
-            }
-
-            // 3. رسم النص
-            Rectangle rectText = new Rectangle(
-                Padding.Left,
-                Padding.Top,
-                this.Width - Padding.Horizontal,
-                this.Height - Padding.Vertical
-            );
-
-            // رسم النص باستخدام ForeColor اللي بيتحدث تلقائي
-            TextRenderer.DrawText(e.Graphics, this.Text, this.Font, rectText, this.ForeColor, GetTextAlignment());
-        }
-    }
-
-
-    public class SabraTextBox : TextBox
-    {
-        // ==============================
-        // Custom Properties
-        // ==============================
-
-        private Color borderColor = Color.DodgerBlue;
-        private Color borderFocusColor = Color.DeepSkyBlue;
-
-        private int borderRadius = 10;
-        private int borderSize = 1;
-
-        private bool underlinedStyle = false;
-        private bool isFocused = false;
-
-        private Color placeholderColor = Color.DarkGray;
-        private string placeholderText = "";
-        private bool isPlaceholder = false;
-        private bool isPassword = false;
-
-        // Internal TextBox
-        private TextBox textBox1;
-
-        // ==============================
-        // Events
-        // ==============================
-
-        public new event EventHandler TextChanged;
-
-        // ==============================
-        // Border Color
-        // ==============================
-
-        [Category("Custom Properties")]
-        [DefaultValue(typeof(Color), "DodgerBlue")]
-        public Color BorderColor
-        {
-            get { return borderColor; }
-            set
-            {
-                borderColor = value;
-                Invalidate();
-            }
-        }
-
-        // ==============================
-        // Border Focus Color
-        // ==============================
-
-        [Category("Custom Properties")]
-        [DefaultValue(typeof(Color), "DeepSkyBlue")]
-        public Color BorderFocusColor
-        {
-            get { return borderFocusColor; }
-            set
-            {
-                borderFocusColor = value;
-                Invalidate();
-            }
-        }
-
-        // ==============================
-        // Border Size
-        // ==============================
-
-        [Category("Custom Properties")]
-        [DefaultValue(1)]
-        public int BorderSize
-        {
-            get { return borderSize; }
-            set
-            {
-                if (value < 1)
-                    value = 1;
-
-                borderSize = value;
                 Invalidate();
             }
         }
@@ -436,530 +237,40 @@ namespace SabraForSpareParts
         // Border Radius
         // ==============================
 
-        [Category("Custom Properties")]
-        [DefaultValue(10)]
+        [Category("Sabra Appearance")]
+        [DefaultValue(8)]
         public int BorderRadius
         {
-            get { return borderRadius; }
+            get => borderRadius;
             set
             {
-                if (value < 0)
-                    value = 0;
+                int newValue = Math.Max(0, value);
 
-                borderRadius = value;
-                Invalidate();
-            }
-        }
-
-        // ==============================
-        // Underlined Style
-        // ==============================
-
-        [Category("Custom Properties")]
-        [DefaultValue(false)]
-        public bool UnderlinedStyle
-        {
-            get { return underlinedStyle; }
-            set
-            {
-                underlinedStyle = value;
-                Invalidate();
-            }
-        }
-
-        // ==============================
-        // Password
-        // ==============================
-
-        [Category("Custom Properties")]
-        [DefaultValue(false)]
-        public bool PasswordChar
-        {
-            get { return isPassword; }
-            set
-            {
-                isPassword = value;
-
-                if (!isPlaceholder)
-                    textBox1.UseSystemPasswordChar = value;
-            }
-        }
-
-        // ==============================
-        // Multiline
-        // ==============================
-
-        [Category("Custom Properties")]
-        public bool Multiline
-        {
-            get { return textBox1.Multiline; }
-            set
-            {
-                textBox1.Multiline = value;
-                UpdateControlHeight();
-            }
-        }
-
-        // ==============================
-        // BackColor
-        // ==============================
-
-        [Category("Custom Properties")]
-        public override Color BackColor
-        {
-            get { return base.BackColor; }
-            set
-            {
-                base.BackColor = value;
-
-                if (textBox1 != null)
-                    textBox1.BackColor = value;
-
-                Invalidate();
-            }
-        }
-
-        // ==============================
-        // ForeColor
-        // ==============================
-
-        [Category("Custom Properties")]
-        public override Color ForeColor
-        {
-            get { return base.ForeColor; }
-            set
-            {
-                base.ForeColor = value;
-
-                if (textBox1 != null && !isPlaceholder)
-                    textBox1.ForeColor = value;
-
-                Invalidate();
-            }
-        }
-
-        // ==============================
-        // Font
-        // ==============================
-
-        [Category("Custom Properties")]
-        public override Font Font
-        {
-            get { return base.Font; }
-            set
-            {
-                base.Font = value;
-
-                if (textBox1 != null)
-                    textBox1.Font = value;
-
-                UpdateControlHeight();
-            }
-        }
-
-        // ==============================
-        // Text
-        // ==============================
-
-        [Category("Custom Properties")]
-        [Browsable(false)]
-        public string Texts
-        {
-            get
-            {
-                if (isPlaceholder)
-                    return "";
-
-                return textBox1.Text;
-            }
-            set
-            {
-                if (textBox1 == null)
+                if (borderRadius == newValue)
                     return;
 
-                isPlaceholder = false;
-                textBox1.Text = value;
-
-                if (string.IsNullOrWhiteSpace(value))
-                    SetPlaceholder();
-            }
-        }
-
-        // ==============================
-        // Placeholder Text
-        // ==============================
-
-        [Category("Custom Properties")]
-        [DefaultValue("")]
-        public string PlaceholderText
-        {
-            get { return placeholderText; }
-            set
-            {
-                placeholderText = value;
-
-                if (textBox1 != null)
-                {
-                    textBox1.Text = "";
-                    SetPlaceholder();
-                }
-            }
-        }
-
-        // ==============================
-        // Placeholder Color
-        // ==============================
-
-        [Category("Custom Properties")]
-        [DefaultValue(typeof(Color), "DarkGray")]
-        public Color PlaceholderColor
-        {
-            get { return placeholderColor; }
-            set
-            {
-                placeholderColor = value;
-
-                if (isPlaceholder && textBox1 != null)
-                    textBox1.ForeColor = value;
-
+                borderRadius = newValue;
                 Invalidate();
             }
         }
 
         // ==============================
-        // Constructor
+        // Border Size
         // ==============================
 
-        public SabraTextBox()
-        {
-            textBox1 = new TextBox();
-
-            SuspendLayout();
-
-            // ==============================
-            // Internal TextBox
-            // ==============================
-
-            textBox1.BorderStyle = BorderStyle.None;
-            textBox1.Dock = DockStyle.Fill;
-            textBox1.Location = new Point(10, 7);
-            textBox1.Name = "textBox1";
-            textBox1.TabIndex = 0;
-
-            textBox1.TextChanged += textBox1_TextChanged;
-            textBox1.Enter += textBox1_Enter;
-            textBox1.Leave += textBox1_Leave;
-
-            // ==============================
-            // Main Control
-            // ==============================
-
-            Controls.Add(textBox1);
-
-            Padding = new Padding(10, 7, 10, 7);
-
-            Size = new Size(250, 40);
-
-            BackColor = Color.White;
-
-            ForeColor = Color.FromArgb(64, 64, 64);
-
-            RightToLeft = RightToLeft.Yes;
-
-            Font = new Font(
-                "Cairo",
-                10F,
-                FontStyle.Regular,
-                GraphicsUnit.Point
-            );
-
-            // ==============================
-            // Finish
-            // ==============================
-
-            ResumeLayout(false);
-            PerformLayout();
-
-            UpdateControlHeight();
-        }
-
-        // ==============================
-        // Placeholder
-        // ==============================
-
-        private void SetPlaceholder()
-        {
-            if (textBox1 == null)
-                return;
-
-            if (
-                string.IsNullOrWhiteSpace(textBox1.Text) &&
-                !string.IsNullOrWhiteSpace(placeholderText)
-            )
-            {
-                isPlaceholder = true;
-
-                textBox1.Text = placeholderText;
-
-                textBox1.ForeColor = placeholderColor;
-
-                if (isPassword)
-                    textBox1.UseSystemPasswordChar = false;
-            }
-        }
-
-        private void RemovePlaceholder()
-        {
-            if (
-                isPlaceholder &&
-                !string.IsNullOrWhiteSpace(placeholderText)
-            )
-            {
-                isPlaceholder = false;
-
-                textBox1.Text = "";
-
-                textBox1.ForeColor = ForeColor;
-
-                if (isPassword)
-                    textBox1.UseSystemPasswordChar = true;
-            }
-        }
-
-        // ==============================
-        // Text Changed
-        // ==============================
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            if (TextChanged != null)
-                TextChanged.Invoke(sender, e);
-        }
-
-        // ==============================
-        // Enter
-        // ==============================
-
-        private void textBox1_Enter(object sender, EventArgs e)
-        {
-            isFocused = true;
-
-            RemovePlaceholder();
-
-            Invalidate();
-        }
-
-        // ==============================
-        // Leave
-        // ==============================
-
-        private void textBox1_Leave(object sender, EventArgs e)
-        {
-            isFocused = false;
-
-            SetPlaceholder();
-
-            Invalidate();
-        }
-
-        // ==============================
-        // Update Height
-        // ==============================
-
-        private void UpdateControlHeight()
-        {
-            if (textBox1 == null)
-                return;
-
-            if (!textBox1.Multiline)
-            {
-                int textHeight =
-                    TextRenderer.MeasureText(
-                        "Text",
-                        Font
-                    ).Height + 1;
-
-                textBox1.MinimumSize =
-                    new Size(0, textHeight);
-
-                Height =
-                    textHeight +
-                    Padding.Top +
-                    Padding.Bottom;
-            }
-        }
-
-        // ==============================
-        // Resize
-        // ==============================
-
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-
-            UpdateControlHeight();
-
-            Invalidate();
-        }
-
-        // ==============================
-        // Paint
-        // ==============================
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            Graphics g = e.Graphics;
-
-            g.SmoothingMode =
-                SmoothingMode.AntiAlias;
-
-            Color currentBorderColor =
-                isFocused
-                    ? borderFocusColor
-                    : borderColor;
-
-            using (Pen penBorder =
-                new Pen(
-                    currentBorderColor,
-                    borderSize
-                ))
-            {
-                penBorder.Alignment =
-                    PenAlignment.Inset;
-
-                // ==============================
-                // Underline
-                // ==============================
-
-                if (underlinedStyle)
-                {
-                    g.DrawLine(
-                        penBorder,
-                        0,
-                        Height - 1,
-                        Width,
-                        Height - 1
-                    );
-
-                    return;
-                }
-
-                // ==============================
-                // Rounded Border
-                // ==============================
-
-                int radius = Math.Min(
-                    borderRadius,
-                    Math.Min(
-                        Width,
-                        Height
-                    ) / 2
-                );
-
-                RectangleF rect =
-                    new RectangleF(
-                        borderSize / 2f,
-                        borderSize / 2f,
-                        Width - borderSize,
-                        Height - borderSize
-                    );
-
-                using (GraphicsPath path =
-                    new GraphicsPath())
-                {
-                    if (radius == 0)
-                    {
-                        path.AddRectangle(rect);
-                    }
-                    else
-                    {
-                        float diameter =
-                            radius * 2;
-
-                        path.AddArc(
-                            rect.X,
-                            rect.Y,
-                            diameter,
-                            diameter,
-                            180,
-                            90
-                        );
-
-                        path.AddArc(
-                            rect.Right - diameter,
-                            rect.Y,
-                            diameter,
-                            diameter,
-                            270,
-                            90
-                        );
-
-                        path.AddArc(
-                            rect.Right - diameter,
-                            rect.Bottom - diameter,
-                            diameter,
-                            diameter,
-                            0,
-                            90
-                        );
-
-                        path.AddArc(
-                            rect.X,
-                            rect.Bottom - diameter,
-                            diameter,
-                            diameter,
-                            90,
-                            90
-                        );
-
-                        path.CloseFigure();
-                    }
-
-                    g.DrawPath(
-                        penBorder,
-                        path
-                    );
-                }
-            }
-        }
-
-    }
-    public class SabraComboBox : ComboBox
-    {
-        // ==============================
-        // Custom Properties
-        // ==============================
-
-        private Color borderColor = Color.DodgerBlue;
-        private Color borderFocusColor = Color.DeepSkyBlue;
-
-        private int borderSize = 1;
-
-        private bool underlinedStyle = false;
-        private bool isFocused = false;
-
-        private Color arrowColor = Color.DodgerBlue;
-
-        private int defaultSelectedIndex = 0;
-
-        [Category("Custom Properties")]
+        [Category("Sabra Appearance")]
         [DefaultValue(0)]
-        public int DefaultSelectedIndex
+        public int BorderSize
         {
-            get { return defaultSelectedIndex; }
+            get => borderSize;
             set
             {
-                defaultSelectedIndex = value;
+                int newValue = Math.Max(0, value);
 
-                if (Items.Count > 0 &&
-                    value >= 0 &&
-                    value < Items.Count)
-                {
-                    SelectedIndex = value;
-                }
+                if (borderSize == newValue)
+                    return;
 
+                borderSize = newValue;
                 Invalidate();
             }
         }
@@ -968,14 +279,761 @@ namespace SabraForSpareParts
         // Border Color
         // ==============================
 
-        [Category("Custom Properties")]
+        [Category("Sabra Appearance")]
         [DefaultValue(typeof(Color), "DodgerBlue")]
         public Color BorderColor
         {
-            get { return borderColor; }
+            get => borderColor;
             set
             {
+                if (borderColor == value)
+                    return;
+
                 borderColor = value;
+                Invalidate();
+            }
+        }
+
+        #endregion
+
+        #region Constructor
+
+        public SabraLabel()
+        {
+            // ==============================
+            // Custom Painting
+            // ==============================
+
+            SetStyle(
+                ControlStyles.UserPaint |
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.ResizeRedraw |
+                ControlStyles.SupportsTransparentBackColor,
+                true
+            );
+
+            DoubleBuffered = true;
+
+            // ==============================
+            // Default Settings
+            // ==============================
+
+            AutoSize = false;
+
+            Size = new Size(120, 32);
+
+            BackColor = Color.Transparent;
+
+            ForeColor = Color.FromArgb(64, 64, 64);
+
+            RightToLeft = RightToLeft.Yes;
+
+            TextAlign = ContentAlignment.MiddleRight;
+
+            Padding = new Padding(0);
+
+            Font = new Font(
+                "Cairo",
+                10F,
+                FontStyle.Regular,
+                GraphicsUnit.Point
+            );
+        }
+
+        #endregion
+
+        #region Control Events
+
+        protected override void OnForeColorChanged(EventArgs e)
+        {
+            base.OnForeColorChanged(e);
+
+            Invalidate();
+        }
+
+        protected override void OnBackColorChanged(EventArgs e)
+        {
+            base.OnBackColorChanged(e);
+
+            Invalidate();
+        }
+
+        protected override void OnTextChanged(EventArgs e)
+        {
+            base.OnTextChanged(e);
+
+            Invalidate();
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+
+            Invalidate();
+        }
+
+        protected override void OnFontChanged(EventArgs e)
+        {
+            base.OnFontChanged(e);
+
+            Invalidate();
+        }
+
+        protected override void OnRightToLeftChanged(EventArgs e)
+        {
+            base.OnRightToLeftChanged(e);
+
+            Invalidate();
+        }
+
+        #endregion
+
+        #region Graphics Helpers
+
+        private GraphicsPath GetFigurePath(
+            RectangleF rect,
+            float radius)
+        {
+            GraphicsPath path = new GraphicsPath();
+
+            if (rect.Width <= 0 || rect.Height <= 0)
+                return path;
+
+            radius = Math.Max(
+                0,
+                Math.Min(
+                    radius,
+                    Math.Min(
+                        rect.Width / 2f,
+                        rect.Height / 2f
+                    )
+                )
+            );
+
+            if (radius <= 0)
+            {
+                path.AddRectangle(rect);
+                return path;
+            }
+
+            float diameter = radius * 2f;
+
+            path.StartFigure();
+
+            path.AddArc(
+                rect.X,
+                rect.Y,
+                diameter,
+                diameter,
+                180,
+                90
+            );
+
+            path.AddArc(
+                rect.Right - diameter,
+                rect.Y,
+                diameter,
+                diameter,
+                270,
+                90
+            );
+
+            path.AddArc(
+                rect.Right - diameter,
+                rect.Bottom - diameter,
+                diameter,
+                diameter,
+                0,
+                90
+            );
+
+            path.AddArc(
+                rect.X,
+                rect.Bottom - diameter,
+                diameter,
+                diameter,
+                90,
+                90
+            );
+
+            path.CloseFigure();
+
+            return path;
+        }
+
+        private TextFormatFlags GetTextAlignment()
+        {
+            TextFormatFlags flags =
+                TextFormatFlags.PreserveGraphicsClipping |
+                TextFormatFlags.NoPadding;
+
+            // ==============================
+            // Horizontal Alignment
+            // ==============================
+
+            switch (TextAlign)
+            {
+                case ContentAlignment.TopLeft:
+                case ContentAlignment.MiddleLeft:
+                case ContentAlignment.BottomLeft:
+
+                    flags |= TextFormatFlags.Left;
+                    break;
+
+                case ContentAlignment.TopCenter:
+                case ContentAlignment.MiddleCenter:
+                case ContentAlignment.BottomCenter:
+
+                    flags |= TextFormatFlags.HorizontalCenter;
+                    break;
+
+                default:
+
+                    flags |= TextFormatFlags.Right;
+                    break;
+            }
+
+            // ==============================
+            // Vertical Alignment
+            // ==============================
+
+            switch (TextAlign)
+            {
+                case ContentAlignment.TopLeft:
+                case ContentAlignment.TopCenter:
+                case ContentAlignment.TopRight:
+
+                    flags |= TextFormatFlags.Top;
+                    break;
+
+                case ContentAlignment.MiddleLeft:
+                case ContentAlignment.MiddleCenter:
+                case ContentAlignment.MiddleRight:
+
+                    flags |= TextFormatFlags.VerticalCenter;
+                    break;
+
+                default:
+
+                    flags |= TextFormatFlags.Bottom;
+                    break;
+            }
+
+            // ==============================
+            // RTL
+            // ==============================
+
+            if (RightToLeft == RightToLeft.Yes)
+            {
+                flags |= TextFormatFlags.RightToLeft;
+            }
+
+            return flags;
+        }
+
+        #endregion
+
+        #region Text Drawing
+
+        private void DrawNormalText(
+            Graphics graphics,
+            Rectangle rectText)
+        {
+            TextRenderer.DrawText(
+                graphics,
+                Text,
+                Font,
+                rectText,
+                ForeColor,
+                GetTextAlignment()
+            );
+        }
+
+        private void DrawRequiredText(
+            Graphics graphics,
+            Rectangle rectText)
+        {
+            if (string.IsNullOrEmpty(Text))
+            {
+                DrawRequiredStarOnly(
+                    graphics,
+                    rectText
+                );
+
+                return;
+            }
+
+            using (Font starFont = new Font(
+                Font.FontFamily,
+                Font.Size,
+                FontStyle.Bold,
+                GraphicsUnit.Point))
+            {
+                Size textSize = TextRenderer.MeasureText(
+                    graphics,
+                    Text,
+                    Font,
+                    rectText.Size,
+                    TextFormatFlags.NoPadding
+                );
+
+                Size starSize = TextRenderer.MeasureText(
+                    graphics,
+                    "*",
+                    starFont,
+                    rectText.Size,
+                    TextFormatFlags.NoPadding
+                );
+
+                const int spacing = 4;
+
+                int totalWidth =
+                    textSize.Width +
+                    spacing +
+                    starSize.Width;
+
+                // ==============================
+                // Calculate X
+                // ==============================
+
+                int startX;
+
+                bool isCenter =
+                    TextAlign == ContentAlignment.TopCenter ||
+                    TextAlign == ContentAlignment.MiddleCenter ||
+                    TextAlign == ContentAlignment.BottomCenter;
+
+                bool isLeft =
+                    TextAlign == ContentAlignment.TopLeft ||
+                    TextAlign == ContentAlignment.MiddleLeft ||
+                    TextAlign == ContentAlignment.BottomLeft;
+
+                if (isCenter)
+                {
+                    startX =
+                        rectText.Left +
+                        (rectText.Width - totalWidth) / 2;
+                }
+                else if (isLeft)
+                {
+                    startX = rectText.Left;
+                }
+                else
+                {
+                    startX =
+                        rectText.Right -
+                        totalWidth;
+                }
+
+                // ==============================
+                // Calculate Y
+                // ==============================
+
+                int startY;
+
+                bool isTop =
+                    TextAlign == ContentAlignment.TopLeft ||
+                    TextAlign == ContentAlignment.TopCenter ||
+                    TextAlign == ContentAlignment.TopRight;
+
+                bool isBottom =
+                    TextAlign == ContentAlignment.BottomLeft ||
+                    TextAlign == ContentAlignment.BottomCenter ||
+                    TextAlign == ContentAlignment.BottomRight;
+
+                if (isTop)
+                {
+                    startY = rectText.Top;
+                }
+                else if (isBottom)
+                {
+                    startY =
+                        rectText.Bottom -
+                        Font.Height;
+                }
+                else
+                {
+                    startY =
+                        rectText.Top +
+                        (rectText.Height - Font.Height) / 2;
+                }
+
+                // ==============================
+                // RTL
+                // ==============================
+
+                if (RightToLeft == RightToLeft.Yes)
+                {
+                    // النجمة ناحية اليمين
+                    // والنص بعدها ناحية اليسار
+
+                    int starX =
+                        startX;
+
+                    int textX =
+                        starX +
+                        starSize.Width +
+                        spacing;
+
+                    TextRenderer.DrawText(
+                        graphics,
+                        "*",
+                        starFont,
+                        new Point(starX, startY),
+                        RequiredColor,
+                        TextFormatFlags.NoPadding
+                    );
+
+                    TextRenderer.DrawText(
+                        graphics,
+                        Text,
+                        Font,
+                        new Point(textX, startY),
+                        ForeColor,
+                        TextFormatFlags.NoPadding |
+                        TextFormatFlags.RightToLeft
+                    );
+                }
+                else
+                {
+                    // LTR:
+                    // النص ثم النجمة
+
+                    TextRenderer.DrawText(
+                        graphics,
+                        Text,
+                        Font,
+                        new Point(startX, startY),
+                        ForeColor,
+                        TextFormatFlags.NoPadding
+                    );
+
+                    TextRenderer.DrawText(
+                        graphics,
+                        "*",
+                        starFont,
+                        new Point(
+                            startX +
+                            textSize.Width +
+                            spacing,
+                            startY
+                        ),
+                        RequiredColor,
+                        TextFormatFlags.NoPadding
+                    );
+                }
+            }
+        }
+
+        private void DrawRequiredStarOnly(
+            Graphics graphics,
+            Rectangle rectText)
+        {
+            using (Font starFont = new Font(
+                Font.FontFamily,
+                Font.Size,
+                FontStyle.Bold,
+                GraphicsUnit.Point))
+            {
+                Size starSize = TextRenderer.MeasureText(
+                    graphics,
+                    "*",
+                    starFont,
+                    rectText.Size,
+                    TextFormatFlags.NoPadding
+                );
+
+                int x;
+
+                switch (TextAlign)
+                {
+                    case ContentAlignment.TopCenter:
+                    case ContentAlignment.MiddleCenter:
+                    case ContentAlignment.BottomCenter:
+
+                        x = rectText.Left +
+                            (rectText.Width - starSize.Width) / 2;
+                        break;
+
+                    case ContentAlignment.TopLeft:
+                    case ContentAlignment.MiddleLeft:
+                    case ContentAlignment.BottomLeft:
+
+                        x = rectText.Left;
+                        break;
+
+                    default:
+
+                        x = rectText.Right -
+                            starSize.Width;
+                        break;
+                }
+
+                int y =
+                    rectText.Top +
+                    (rectText.Height - starFont.Height) / 2;
+
+                TextRenderer.DrawText(
+                    graphics,
+                    "*",
+                    starFont,
+                    new Point(x, y),
+                    RequiredColor,
+                    TextFormatFlags.NoPadding
+                );
+            }
+        }
+
+        #endregion
+
+        #region Paint
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            Graphics graphics = e.Graphics;
+
+            // ==============================
+            // Graphics Quality
+            // ==============================
+
+            graphics.SmoothingMode =
+                SmoothingMode.AntiAlias;
+
+            graphics.InterpolationMode =
+                InterpolationMode.HighQualityBicubic;
+
+            graphics.PixelOffsetMode =
+                PixelOffsetMode.HighQuality;
+
+            graphics.TextRenderingHint =
+                System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+
+            // ==============================
+            // Surface
+            // ==============================
+
+            RectangleF surfaceRect =
+                new RectangleF(
+                    0,
+                    0,
+                    Width,
+                    Height
+                );
+
+            if (surfaceRect.Width <= 0 ||
+                surfaceRect.Height <= 0)
+            {
+                return;
+            }
+
+            float safeRadius =
+                Math.Min(
+                    borderRadius,
+                    Math.Min(
+                        surfaceRect.Width / 2f,
+                        surfaceRect.Height / 2f
+                    )
+                );
+
+            // ==============================
+            // Border Rectangle
+            // ==============================
+
+            bool hasBorder =
+                borderSize > 0;
+
+            float borderHalf =
+                hasBorder
+                    ? borderSize / 2f
+                    : 0f;
+
+            RectangleF borderRect =
+                new RectangleF(
+                    borderHalf,
+                    borderHalf,
+                    Math.Max(
+                        0,
+                        Width - borderSize
+                    ),
+                    Math.Max(
+                        0,
+                        Height - borderSize
+                    )
+                );
+
+            float safeBorderRadius =
+                Math.Min(
+                    borderRadius,
+                    Math.Min(
+                        borderRect.Width / 2f,
+                        borderRect.Height / 2f
+                    )
+                );
+
+            // ==============================
+            // Background + Border
+            // ==============================
+
+            using (GraphicsPath surfacePath =
+                GetFigurePath(
+                    surfaceRect,
+                    safeRadius))
+            using (GraphicsPath borderPath =
+                GetFigurePath(
+                    borderRect,
+                    safeBorderRadius))
+            {
+                // Background
+
+                if (BackColor != Color.Transparent)
+                {
+                    using (SolidBrush backgroundBrush =
+                        new SolidBrush(BackColor))
+                    {
+                        graphics.FillPath(
+                            backgroundBrush,
+                            surfacePath
+                        );
+                    }
+                }
+
+                // Border
+
+                if (hasBorder)
+                {
+                    using (Pen borderPen =
+                        new Pen(
+                            borderColor,
+                            borderSize))
+                    {
+                        borderPen.Alignment =
+                            PenAlignment.Center;
+
+                        graphics.DrawPath(
+                            borderPen,
+                            borderPath
+                        );
+                    }
+                }
+            }
+
+            // ==============================
+            // Text Area
+            // ==============================
+
+            Rectangle rectText =
+                new Rectangle(
+                    Padding.Left,
+                    Padding.Top,
+                    Math.Max(
+                        0,
+                        Width - Padding.Horizontal
+                    ),
+                    Math.Max(
+                        0,
+                        Height - Padding.Vertical
+                    )
+                );
+
+            if (rectText.Width <= 0 ||
+                rectText.Height <= 0)
+            {
+                return;
+            }
+
+            // ==============================
+            // Text
+            // ==============================
+
+            if (Required)
+            {
+                DrawRequiredText(
+                    graphics,
+                    rectText
+                );
+            }
+            else
+            {
+                DrawNormalText(
+                    graphics,
+                    rectText
+                );
+            }
+        }
+    }
+   public class SabraTextBox : UserControl
+        {
+            // ==============================================================
+            // ليه غيّرت الـ base class من TextBox لـ UserControl؟ (السبب الجذري)
+            // ==============================================================
+            // - TextBox هو Wrapper حوالين كنترول Windows الأصلي (Edit control)،
+            //   وده بيخليه ControlStyles.UserPaint = false، يعني OnPaint بتاعك
+            //   ماكنش بينفّذ أصلاً وقت الرسم الفعلي -> عشان كده الـ BorderRadius
+            //   (اللي بتقول عليه "الرواندد") مكنش بيظهر أبدًا.
+            // - كنت عامل TextBox جوه TextBox (الكلاس نفسه + textBox1 جواه)،
+            //   يعني في native edit controls اتنين فوق بعض بيتنازعوا على الفوكس
+            //   والرسم، وده سبب مباشر لمشاكل الأداء والتقطيع (flicker).
+            // - UserControl هو الكلاس الصح للحالة دي: بيدعم الرسم المخصص (GDI+)
+            //   بشكل طبيعي بدون أي حِيَل إضافية.
+
+            #region Fields
+
+            private Color borderColor = Color.DodgerBlue;
+            private Color borderFocusColor = Color.DeepSkyBlue;
+
+            private int borderRadius = 10;
+            private int borderSize = 1;
+
+            private bool underlinedStyle = false;
+            private bool isFocused = false;
+
+            private Color placeholderColor = Color.DarkGray;
+            private string placeholderText = "";
+            private bool isPlaceholder = false;
+            private bool isPassword = false;
+
+            // عشان مانخليش الـ TextChanged يتطلق وهمي وقت ما بنغيّر النص
+            // برمجيًا عشان نظبط الـ placeholder (مش المستخدم اللي بيكتب فعليًا)
+            private bool _suppressTextChanged = false;
+
+            // الـ TextBox الحقيقي الظاهر جوه الكنترول
+            private TextBox textBox1;
+
+        private bool required = false;
+        private Color requiredColor = Color.Red;
+        #endregion
+
+        // ==============================
+        // Events
+        // ==============================
+
+        public new event EventHandler TextChanged;
+
+            // ==============================
+            // Border Color
+            // ==============================
+
+            [Category("Custom Properties")]
+            [DefaultValue(typeof(Color), "DodgerBlue")]
+            public Color BorderColor
+            {
+                get { return borderColor; }
+                set
+                {
+                    borderColor = value;
+                    Invalidate();
+                }
+            }
+
+        [Category("Custom Properties")]
+        [DefaultValue(false)]
+        public bool Required
+        {
+            get { return required; }
+            set
+            {
+                required = value;
                 Invalidate();
             }
         }
@@ -985,1122 +1043,1923 @@ namespace SabraForSpareParts
         // ==============================
 
         [Category("Custom Properties")]
-        [DefaultValue(typeof(Color), "DeepSkyBlue")]
-        public Color BorderFocusColor
-        {
-            get { return borderFocusColor; }
-            set
+            [DefaultValue(typeof(Color), "DeepSkyBlue")]
+            public Color BorderFocusColor
             {
-                borderFocusColor = value;
-                Invalidate();
+                get { return borderFocusColor; }
+                set
+                {
+                    borderFocusColor = value;
+                    Invalidate();
+                }
             }
-        }
 
-        // ==============================
-        // Border Size
-        // ==============================
+            // ==============================
+            // Border Size
+            // ==============================
 
-        [Category("Custom Properties")]
-        [DefaultValue(1)]
-        public int BorderSize
-        {
-            get { return borderSize; }
-            set
+            [Category("Custom Properties")]
+            [DefaultValue(1)]
+            public int BorderSize
             {
-                if (value < 1)
-                    value = 1;
+                get { return borderSize; }
+                set
+                {
+                    if (value < 1)
+                        value = 1;
 
-                borderSize = value;
-                Invalidate();
+                    borderSize = value;
+                    Invalidate();
+                }
             }
-        }
 
-        // ==============================
-        // Underlined Style
-        // ==============================
+            // ==============================
+            // Border Radius
+            // ==============================
 
-        [Category("Custom Properties")]
-        [DefaultValue(false)]
-        public bool UnderlinedStyle
-        {
-            get { return underlinedStyle; }
-            set
+            [Category("Custom Properties")]
+            [DefaultValue(10)]
+            public int BorderRadius
             {
-                underlinedStyle = value;
-                Invalidate();
+                get { return borderRadius; }
+                set
+                {
+                    if (value < 0)
+                        value = 0;
+
+                    borderRadius = value;
+                    Invalidate();
+                }
             }
-        }
 
-        // ==============================
-        // Arrow Color
-        // ==============================
+            // ==============================
+            // Underlined Style
+            // ==============================
 
-        [Category("Custom Properties")]
-        [DefaultValue(typeof(Color), "DodgerBlue")]
-        public Color ArrowColor
-        {
-            get { return arrowColor; }
-            set
+            [Category("Custom Properties")]
+            [DefaultValue(false)]
+            public bool UnderlinedStyle
             {
-                arrowColor = value;
-                Invalidate();
+                get { return underlinedStyle; }
+                set
+                {
+                    underlinedStyle = value;
+                    Invalidate();
+                }
             }
-        }
 
-        // ==============================
-        // Constructor
-        // ==============================
+            // ==============================
+            // Password
+            // ==============================
 
-        public SabraComboBox()
-        {
-            this.DrawMode = DrawMode.OwnerDrawFixed;
-            this.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            this.FlatStyle = FlatStyle.Flat;
-
-            this.BackColor = Color.White;
-            this.ForeColor = Color.FromArgb(64, 64, 64);
-
-            this.RightToLeft = RightToLeft.Yes;
-
-            this.Font = new Font(
-                "Cairo",
-                10F,
-                FontStyle.Regular,
-                GraphicsUnit.Point
-            );
-
-            this.Size = new Size(250, 40);
-
-            this.ItemHeight = 30;
-
-            this.DropDown += SabraComboBox_DropDown;
-            this.DropDownClosed += SabraComboBox_DropDownClosed;
-
-            this.Enter += SabraComboBox_Enter;
-            this.Leave += SabraComboBox_Leave;
-        }
-
-        // ==============================
-        // Focus
-        // ==============================
-
-        private void SabraComboBox_Enter(object sender, EventArgs e)
-        {
-            isFocused = true;
-            Invalidate();
-        }
-
-        private void SabraComboBox_Leave(object sender, EventArgs e)
-        {
-            isFocused = false;
-            Invalidate();
-        }
-
-        // ==============================
-        // Dropdown
-        // ==============================
-
-        private void SabraComboBox_DropDown(object sender, EventArgs e)
-        {
-            isFocused = true;
-            Invalidate();
-        }
-
-        private void SabraComboBox_DropDownClosed(object sender, EventArgs e)
-        {
-            isFocused = false;
-            Invalidate();
-        }
-
-        // ==============================
-        // Draw Items
-        // ==============================
-
-        protected override void OnDrawItem(DrawItemEventArgs e)
-        {
-            base.OnDrawItem(e);
-
-            if (e.Index < 0)
-                return;
-
-            Graphics g = e.Graphics;
-
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-
-            bool selected =
-                (e.State & DrawItemState.Selected) == DrawItemState.Selected;
-
-            Color backgroundColor = selected
-                ? Color.FromArgb(240, 245, 250)
-                : BackColor;
-
-            using (SolidBrush backgroundBrush =
-                    new SolidBrush(backgroundColor))
+            [Category("Custom Properties")]
+            [DefaultValue(false)]
+            public bool PasswordChar
             {
-                g.FillRectangle(
-                    backgroundBrush,
-                    e.Bounds
+                get { return isPassword; }
+                set
+                {
+                    isPassword = value;
+
+                    if (!isPlaceholder)
+                        textBox1.UseSystemPasswordChar = value;
+                }
+            }
+
+            // ==============================
+            // Multiline
+            // ==============================
+
+            [Category("Custom Properties")]
+            [DefaultValue(false)]
+            public bool Multiline
+            {
+                get { return textBox1.Multiline; }
+                set
+                {
+                    textBox1.Multiline = value;
+                    UpdateControlHeight();
+                }
+            }
+
+            // ==============================
+            // خصائص TextBox شائعة الاستخدام - مضافة عشان أي كود قديم بيستخدمها
+            // مايبوظش لما TextBox اتحول لـ UserControl (زي MaxLength, ReadOnly...)
+            // لو في خاصية تانية بتستخدمها في مواضع تانية وملقتهاش هنا قولّي أضيفها
+            // ==============================
+
+            [Category("Custom Properties")]
+            [DefaultValue(32767)]
+            public int MaxLength
+            {
+                get { return textBox1.MaxLength; }
+                set { textBox1.MaxLength = value; }
+            }
+
+            [Category("Custom Properties")]
+            [DefaultValue(false)]
+            public bool ReadOnly
+            {
+                get { return textBox1.ReadOnly; }
+                set { textBox1.ReadOnly = value; }
+            }
+
+            [Category("Custom Properties")]
+            [DefaultValue(CharacterCasing.Normal)]
+            public CharacterCasing CharacterCasing
+            {
+                get { return textBox1.CharacterCasing; }
+                set { textBox1.CharacterCasing = value; }
+            }
+
+            [Category("Custom Properties")]
+            [DefaultValue(HorizontalAlignment.Left)]
+            public HorizontalAlignment TextAlign
+            {
+                get { return textBox1.TextAlign; }
+                set { textBox1.TextAlign = value; }
+            }
+
+            [Browsable(false)]
+            public int SelectionStart
+            {
+                get { return textBox1.SelectionStart; }
+                set { textBox1.SelectionStart = value; }
+            }
+
+            [Browsable(false)]
+            public int SelectionLength
+            {
+                get { return textBox1.SelectionLength; }
+                set { textBox1.SelectionLength = value; }
+            }
+
+            [Browsable(false)]
+            public string SelectedText
+            {
+                get { return textBox1.SelectedText; }
+                set { textBox1.SelectedText = value; }
+            }
+
+            // ==============================
+            // BackColor
+            // ==============================
+
+            [Category("Custom Properties")]
+            public override Color BackColor
+            {
+                get { return base.BackColor; }
+                set
+                {
+                    base.BackColor = value;
+
+                    if (textBox1 != null)
+                        textBox1.BackColor = value;
+
+                    Invalidate();
+                }
+            }
+
+            // ==============================
+            // ForeColor
+            // ==============================
+
+            [Category("Custom Properties")]
+            public override Color ForeColor
+            {
+                get { return base.ForeColor; }
+                set
+                {
+                    base.ForeColor = value;
+
+                    if (textBox1 != null && !isPlaceholder)
+                        textBox1.ForeColor = value;
+
+                    Invalidate();
+                }
+            }
+
+            // ==============================
+            // Font
+            // ==============================
+
+            [Category("Custom Properties")]
+            public override Font Font
+            {
+                get { return base.Font; }
+                set
+                {
+                    base.Font = value;
+
+                    if (textBox1 != null)
+                        textBox1.Font = value;
+
+                    UpdateControlHeight();
+                }
+            }
+
+            // ==============================
+            // Text (دي كانت المشكلة التانية الكبيرة)
+            // ==============================
+            // في الكود الأصلي كانت الخاصية اسمها "Texts" مش "Text"، يعني أي كود
+            // بيستخدم ".Text" العادية (زي أي TextBox طبيعي) كان بيتعامل مع
+            // الـ Text الأصلية المخفية بتاعة TextBox القديم اللي مالوش أي تأثير
+            // ظاهر للمستخدم - يعني القراءة والكتابة بالـ ".Text" كانت مش شغالة
+            // خالص من غير ما تدّي أي error. دلوقتي "Text" بقت override حقيقية.
+
+            [Category("Custom Properties")]
+            [Browsable(true)]
+            public override string Text
+            {
+                get
+                {
+                    if (textBox1 == null) return base.Text;
+                    return isPlaceholder ? "" : textBox1.Text;
+                }
+                set
+                {
+                    if (textBox1 == null)
+                    {
+                        base.Text = value;
+                        return;
+                    }
+
+                    isPlaceholder = false;
+                    textBox1.ForeColor = ForeColor;
+                    textBox1.Text = value ?? "";
+
+                    if (string.IsNullOrWhiteSpace(value))
+                        SetPlaceholder();
+                }
+            }
+
+            // خلّيتها موجودة عشان أي كود قديم عندك بيستخدم ".Texts" (بالـ s)
+            // يفضل شغال زي ما هو من غير ما يبوظ حاجة - بس استخدم "Text" بس
+            // في أي كود جديد.
+            [Browsable(false)]
+            [Obsolete("استخدم الخاصية Text العادية بدل Texts - اتسابت هنا بس للتوافق مع كود قديم")]
+            public string Texts
+            {
+                get { return Text; }
+                set { Text = value; }
+            }
+
+            // ==============================
+            // Placeholder Text
+            // ==============================
+
+            [Category("Custom Properties")]
+            [DefaultValue("")]
+            public string PlaceholderText
+            {
+                get { return placeholderText; }
+                set
+                {
+                    placeholderText = value;
+
+                    if (textBox1 == null) return;
+
+                    // لو المستخدم مكتوبش حاجة فعلية، حدّث الـ placeholder على طول.
+                    // لو فيه نص حقيقي مكتوب بالفعل سيبه زي ما هو ومتمسحوش
+                    // (في النسخة القديمة كان بيتمسح دايمًا وده كان ممكن يمسح
+                    // كلام المستخدم لو الخاصية دي اتغيرت وقت الشغل)
+                    if (isPlaceholder || string.IsNullOrEmpty(textBox1.Text))
+                    {
+                        _suppressTextChanged = true;
+                        textBox1.Text = "";
+                        _suppressTextChanged = false;
+
+                        SetPlaceholder();
+                    }
+                }
+            }
+
+            // ==============================
+            // Placeholder Color
+            // ==============================
+
+            [Category("Custom Properties")]
+            [DefaultValue(typeof(Color), "DarkGray")]
+            public Color PlaceholderColor
+            {
+                get { return placeholderColor; }
+                set
+                {
+                    placeholderColor = value;
+
+                    if (isPlaceholder && textBox1 != null)
+                        textBox1.ForeColor = value;
+
+                    Invalidate();
+                }
+            }
+
+            // ==============================
+            // Focused
+            // ==============================
+            // Control.Focused الأصلية كانت هترجع false دايمًا حتى لو المستخدم
+            // بيكتب فعليًا، لأن الفوكس الحقيقي بيروح لـ textBox1 الداخلي مش
+            // للكنترول الخارجي نفسه.
+
+            [Browsable(false)]
+            public new bool Focused
+            {
+                get { return textBox1 != null && textBox1.Focused; }
+            }
+
+            // ==============================
+            // Constructor
+            // ==============================
+
+            public SabraTextBox()
+            {
+                // رسم مخصص سلس + تقليل الوميض (flicker) وقت الرسم/الـ Resize
+                SetStyle(
+                    ControlStyles.UserPaint |
+                    ControlStyles.AllPaintingInWmPaint |
+                    ControlStyles.OptimizedDoubleBuffer |
+                    ControlStyles.ResizeRedraw |
+                    ControlStyles.SupportsTransparentBackColor,
+                    true);
+
+                DoubleBuffered = true;
+
+                textBox1 = new TextBox();
+
+                SuspendLayout();
+
+                // ==============================
+                // Internal TextBox
+                // ==============================
+
+                textBox1.BorderStyle = BorderStyle.None;
+                textBox1.Dock = DockStyle.Fill;
+                textBox1.Name = "textBox1";
+                textBox1.TabIndex = 0;
+
+                textBox1.TextChanged += textBox1_TextChanged;
+                textBox1.Enter += textBox1_Enter;
+                textBox1.Leave += textBox1_Leave;
+
+                // ==============================
+                // Main Control
+                // ==============================
+
+                Controls.Add(textBox1);
+
+                Padding = new Padding(10, 7, 25, 7);
+
+                Size = new Size(250, 40);
+
+                BackColor = Color.White;
+
+                ForeColor = Color.FromArgb(64, 64, 64);
+
+                RightToLeft = RightToLeft.Yes;
+
+                Cursor = Cursors.IBeam;
+
+                Font = new Font(
+                    "Cairo",
+                    10F,
+                    FontStyle.Regular,
+                    GraphicsUnit.Point
                 );
+
+                // لو المستخدم دوس في مساحة الـ Padding حوالين الـ TextBox (يعني
+                // مساحة الحدود المدورة نفسها)، نودي الفوكس تلقائيًا للـ TextBox
+                // الداخلي بدل ما يفضل مش شغال
+                Click += (s, e) =>
+                {
+                    if (!textBox1.Focused)
+                        textBox1.Focus();
+                };
+
+                // ==============================
+                // Finish
+                // ==============================
+
+                ResumeLayout(false);
+                PerformLayout();
+
+                UpdateControlHeight();
             }
 
-            string text = GetItemText(Items[e.Index]);
+            // ==============================
+            // Focus / SelectAll / Clear - Helper methods
+            // ==============================
 
-            TextFormatFlags flags =
-                TextFormatFlags.VerticalCenter |
-                TextFormatFlags.Right;
+            public new bool Focus()
+            {
+                return textBox1 != null && textBox1.Focus();
+            }
 
-            Rectangle textRectangle = new Rectangle(
-                10,
-                e.Bounds.Y,
-                e.Bounds.Width - 20,
-                e.Bounds.Height
-            );
+            public void SelectAll()
+            {
+                textBox1?.SelectAll();
+            }
 
-            TextRenderer.DrawText(
-                g,
-                text,
-                Font,
-                textRectangle,
-                ForeColor,
-                flags
-            );
+            public void Clear()
+            {
+                Text = "";
+            }
 
-            e.DrawFocusRectangle();
-        }
+            public void AppendText(string text)
+            {
+                isPlaceholder = false;
+                textBox1?.AppendText(text);
+            }
 
-        // ==============================
-        // Paint
-        // ==============================
+            // ==============================
+            // Placeholder
+            // ==============================
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
+            private void SetPlaceholder()
+            {
+                if (textBox1 == null)
+                    return;
 
-            Graphics g = e.Graphics;
+                if (
+                    string.IsNullOrWhiteSpace(textBox1.Text) &&
+                    !string.IsNullOrWhiteSpace(placeholderText)
+                )
+                {
+                    isPlaceholder = true;
 
-            g.SmoothingMode = SmoothingMode.AntiAlias;
+                    _suppressTextChanged = true;
+                    textBox1.Text = placeholderText;
+                    _suppressTextChanged = false;
 
-            Color currentBorderColor =
-                isFocused
-                    ? borderFocusColor
-                    : borderColor;
+                    textBox1.ForeColor = placeholderColor;
+
+                    if (isPassword)
+                        textBox1.UseSystemPasswordChar = false;
+                }
+            }
+
+            private void RemovePlaceholder()
+            {
+                if (
+                    isPlaceholder &&
+                    !string.IsNullOrWhiteSpace(placeholderText)
+                )
+                {
+                    isPlaceholder = false;
+
+                    _suppressTextChanged = true;
+                    textBox1.Text = "";
+                    _suppressTextChanged = false;
+
+                    textBox1.ForeColor = ForeColor;
+
+                    if (isPassword)
+                        textBox1.UseSystemPasswordChar = true;
+                }
+            }
+
+            // ==============================
+            // Text Changed
+            // ==============================
+
+            private void textBox1_TextChanged(object sender, EventArgs e)
+            {
+                // منمنعش الحدث ده يتطلق لما بنكتب/نمسح نص الـ placeholder داخليًا
+                // - بس لما المستخدم يكتب فعليًا
+                if (_suppressTextChanged)
+                    return;
+
+                TextChanged?.Invoke(this, e);
+            }
+
+            // ==============================
+            // Enter
+            // ==============================
+
+            private void textBox1_Enter(object sender, EventArgs e)
+            {
+                isFocused = true;
+
+                RemovePlaceholder();
+
+                Invalidate();
+            }
+
+            // ==============================
+            // Leave
+            // ==============================
+
+            private void textBox1_Leave(object sender, EventArgs e)
+            {
+                isFocused = false;
+
+                SetPlaceholder();
+
+                Invalidate();
+            }
+
+            // ==============================
+            // Update Height
+            // ==============================
+
+            private void UpdateControlHeight()
+            {
+                if (textBox1 == null)
+                    return;
+
+                if (!textBox1.Multiline)
+                {
+                    int textHeight =
+                        TextRenderer.MeasureText(
+                            "Text",
+                            Font
+                        ).Height + 1;
+
+                    textBox1.MinimumSize =
+                        new Size(0, textHeight);
+
+                    Height =
+                        textHeight +
+                        Padding.Top +
+                        Padding.Bottom;
+                }
+            }
+
+            // ==============================
+            // Resize
+            // ==============================
+
+            protected override void OnResize(EventArgs e)
+            {
+                base.OnResize(e);
+
+                UpdateControlHeight();
+
+                Invalidate();
+            }
+
+            // ==============================
+            // Paint
+            // ==============================
+
+            protected override void OnPaint(PaintEventArgs e)
+            {
+                base.OnPaint(e);
+
+                Graphics g = e.Graphics;
+
+                g.SmoothingMode =
+                    SmoothingMode.AntiAlias;
+
+                Color currentBorderColor =
+                    isFocused
+                        ? borderFocusColor
+                        : borderColor;
+
 
             using (Pen penBorder =
-                    new Pen(currentBorderColor, borderSize))
-            {
-                penBorder.Alignment = PenAlignment.Inset;
+                    new Pen(
+                        currentBorderColor,
+                        borderSize
+                    ))
+                {
+                    penBorder.Alignment =
+                        PenAlignment.Inset;
 
-                if (underlinedStyle)
-                {
-                    g.DrawLine(
-                        penBorder,
-                        0,
-                        Height - 1,
-                        Width,
-                        Height - 1
+                    // ==============================
+                    // Underline
+                    // ==============================
+
+                    if (underlinedStyle)
+                    {
+                        g.DrawLine(
+                            penBorder,
+                            0,
+                            Height - 1,
+                            Width,
+                            Height - 1
+                        );
+
+                        return;
+                    }
+
+                    // ==============================
+                    // Rounded Border
+                    // ==============================
+
+                    int radius = Math.Min(
+                        borderRadius,
+                        Math.Min(
+                            Width,
+                            Height
+                        ) / 2
                     );
-                }
-                else
-                {
-                    g.DrawRectangle(
-                        penBorder,
-                        0,
-                        0,
-                        Width - 1,
-                        Height - 1
-                    );
+
+                    RectangleF rect =
+                        new RectangleF(
+                            borderSize / 2f,
+                            borderSize / 2f,
+                            Width - borderSize,
+                            Height - borderSize
+                        );
+
+                    using (GraphicsPath path =
+                        new GraphicsPath())
+                    {
+                        if (radius == 0)
+                        {
+                            path.AddRectangle(rect);
+                        }
+                        else
+                        {
+                            float diameter =
+                                radius * 2;
+
+                            path.AddArc(
+                                rect.X,
+                                rect.Y,
+                                diameter,
+                                diameter,
+                                180,
+                                90
+                            );
+
+                            path.AddArc(
+                                rect.Right - diameter,
+                                rect.Y,
+                                diameter,
+                                diameter,
+                                270,
+                                90
+                            );
+
+                            path.AddArc(
+                                rect.Right - diameter,
+                                rect.Bottom - diameter,
+                                diameter,
+                                diameter,
+                                0,
+                                90
+                            );
+
+                            path.AddArc(
+                                rect.X,
+                                rect.Bottom - diameter,
+                                diameter,
+                                diameter,
+                                90,
+                                90
+                            );
+
+                            path.CloseFigure();
+                        }
+
+                        g.DrawPath(
+                            penBorder,
+                            path
+                        );
+                    }
                 }
             }
-        }
-
-        // ==============================
-        // Resize
-        // ==============================
-
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-
-            Invalidate();
-        }
     }
 
-    public class SabraDataGridView : DataGridView
-    {
-        #region Colors
-        private Color _headerBackColor = Color.FromArgb(248, 250, 252);
-        private Color _headerForeColor = Color.FromArgb(30, 41, 59);
 
-        private Color _rowBackColor = Color.White;
-        private Color _rowAlternateBackColor = Color.FromArgb(248, 250, 252);
+    public class SabraComboBox : ComboBox
+        {
+            #region Fields
 
-        private Color _rowForeColor = Color.FromArgb(51, 65, 85);
+            private Color borderColor = Color.DodgerBlue;
+            private Color borderFocusColor = Color.DeepSkyBlue;
 
-        private Color _selectionBackColor = Color.FromArgb(30, 58, 138);
-        private Color _selectionForeColor = Color.White;
+            private int borderSize = 1;
+            private int borderRadius = 10;
 
-        private Color _hoverBackColor = Color.FromArgb(241, 245, 249);
-        private Color _gridLineColor = Color.FromArgb(226, 232, 240);
+            private bool underlinedStyle = false;
+            private bool isFocused = false;
 
-        private Color _buttonBackColor = Color.White;
-        private Color _buttonForeColor = Color.FromArgb(51, 65, 85);
-        private Color _buttonHoverColor = Color.FromArgb(238, 242, 255);
+            private Color arrowColor = Color.DodgerBlue;
+
+            private int defaultSelectedIndex = 0;
+
+            private bool required = false;
+            private Color requiredColor = Color.Red;
         #endregion
 
-        #region Cached Fonts
-        // بدل ما نعمل new Font() جوه كل رسمة/كل ثيم (بيتكرر آلاف المرات وقت الـ scroll)
-        // بنعمل الخطوط دي مرة واحدة بس ونعيد استخدامها، وبنتخلص منها في Dispose.
-        private Font _regularFont;
-        private Font _boldFont;
-        private Font _smallFont;
-        #endregion
+        // ==============================
+        // Default Selected Index
+        // ==============================
+        // المشكلة الأصلية: لو الـ Items بتتضاف runtime (زي ما بنعمل في
+        // ucInvoicesList/ucReturns بـ Items.AddRange بعد الـ InitializeComponent)،
+        // وقت ما الخاصية دي كانت بتتظبط (عادة من الـ Designer وقت الإنشاء)
+        // كان Items.Count لسه = 0، فالتحديد الافتراضي مكنش بيطبّق ومفيش
+        // أي محاولة تانية بعد كده. دلوقتي فيه method عامة (ApplyDefaultSelectedIndex)
+        // تقدر تناديها بنفسك بعد ما تملى الـ Items، وبرضه بتتنادى تلقائيًا
+        // أول ما الكنترول يتجهز (OnHandleCreated).
 
-        #region Appearance Properties
-
-        [Category("Sabra Appearance")]
-        [Description("لون خلفية رأس الجدول")]
-        public Color HeaderBackColor
-        {
-            get => _headerBackColor;
-            set
+        [Category("Custom Properties")]
+            [DefaultValue(0)]
+            public int DefaultSelectedIndex
             {
-                _headerBackColor = value;
-                ApplyTheme();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون نص رأس الجدول")]
-        public Color HeaderForeColor
-        {
-            get => _headerForeColor;
-            set
-            {
-                _headerForeColor = value;
-                ApplyTheme();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون الصفوف")]
-        public Color RowBackColor
-        {
-            get => _rowBackColor;
-            set
-            {
-                _rowBackColor = value;
-                ApplyTheme();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون الصفوف البديلة")]
-        public Color RowAlternateBackColor
-        {
-            get => _rowAlternateBackColor;
-            set
-            {
-                _rowAlternateBackColor = value;
-                ApplyTheme();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون نص الصفوف")]
-        public Color RowForeColor
-        {
-            get => _rowForeColor;
-            set
-            {
-                _rowForeColor = value;
-                ApplyTheme();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون خلفية الصف المحدد")]
-        public Color SelectionBackColor
-        {
-            get => _selectionBackColor;
-            set
-            {
-                _selectionBackColor = value;
-                ApplyTheme();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون نص الصف المحدد")]
-        public Color SelectionForeColor
-        {
-            get => _selectionForeColor;
-            set
-            {
-                _selectionForeColor = value;
-                ApplyTheme();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون الصف عند مرور الماوس")]
-        public Color HoverBackColor
-        {
-            get => _hoverBackColor;
-            set
-            {
-                _hoverBackColor = value;
-                Invalidate();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون خطوط الجدول")]
-        public Color GridLineCustomColor
-        {
-            get => _gridLineColor;
-            set
-            {
-                _gridLineColor = value;
-                ApplyTheme();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون خلفية أزرار الجدول")]
-        public Color ButtonBackColor
-        {
-            get => _buttonBackColor;
-            set
-            {
-                _buttonBackColor = value;
-                ApplyTheme();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون نص أزرار الجدول")]
-        public Color ButtonForeColor
-        {
-            get => _buttonForeColor;
-            set
-            {
-                _buttonForeColor = value;
-                ApplyTheme();
-            }
-        }
-
-        [Category("Sabra Appearance")]
-        [Description("لون الزر عند مرور الماوس")]
-        public Color ButtonHoverColor
-        {
-            get => _buttonHoverColor;
-            set
-            {
-                _buttonHoverColor = value;
-                Invalidate();
-            }
-        }
-
-        #endregion
-
-        #region Layout Properties
-
-        [Category("Sabra Layout")]
-        [DefaultValue(44)]
-        public int HeaderHeight
-        {
-            get => ColumnHeadersHeight;
-            set
-            {
-                ColumnHeadersHeight = Math.Max(30, value);
-                Invalidate();
-            }
-        }
-
-        [Category("Sabra Layout")]
-        [DefaultValue(42)]
-        public int RowHeight
-        {
-            get => RowTemplate.Height;
-            set
-            {
-                RowTemplate.Height = Math.Max(25, value);
-
-                foreach (DataGridViewRow row in Rows)
+                get { return defaultSelectedIndex; }
+                set
                 {
-                    if (!row.IsNewRow)
-                        row.Height = RowTemplate.Height;
+                    defaultSelectedIndex = value;
+                    ApplyDefaultSelectedIndex();
+                    Invalidate();
+                }
+            }
+
+        [Category("Custom Properties")]
+        [DefaultValue(false)]
+        public bool Required
+        {
+            get { return required; }
+            set
+            {
+                required = value;
+                Invalidate();
+            }
+        }
+        public void ApplyDefaultSelectedIndex()
+            {
+                if (Items.Count > 0 &&
+                    defaultSelectedIndex >= 0 &&
+                    defaultSelectedIndex < Items.Count)
+                {
+                    SelectedIndex = defaultSelectedIndex;
+                }
+            }
+
+            // ==============================
+            // Border Color
+            // ==============================
+
+            [Category("Custom Properties")]
+            [DefaultValue(typeof(Color), "DodgerBlue")]
+            public Color BorderColor
+            {
+                get { return borderColor; }
+                set
+                {
+                    borderColor = value;
+                    Invalidate();
+                }
+            }
+
+            // ==============================
+            // Border Focus Color
+            // ==============================
+
+            [Category("Custom Properties")]
+            [DefaultValue(typeof(Color), "DeepSkyBlue")]
+            public Color BorderFocusColor
+            {
+                get { return borderFocusColor; }
+                set
+                {
+                    borderFocusColor = value;
+                    Invalidate();
+                }
+            }
+
+            // ==============================
+            // Border Size
+            // ==============================
+
+            [Category("Custom Properties")]
+            [DefaultValue(1)]
+            public int BorderSize
+            {
+                get { return borderSize; }
+                set
+                {
+                    if (value < 1)
+                        value = 1;
+
+                    borderSize = value;
+                    Invalidate();
+                }
+            }
+
+            // ==============================
+            // Border Radius (مكنش موجود خالص قبل كده)
+            // ==============================
+            // شكل التصميم عندك في الشاشات التانية (مربعات البحث، الكروت...)
+            // كله حواف مدورة، وSabraTextBox بقى بيدعمها، فضفتها هنا كمان
+            // عشان الشكل يبقى متسق في كل الكنترولز.
+
+            [Category("Custom Properties")]
+            [DefaultValue(10)]
+            public int BorderRadius
+            {
+                get { return borderRadius; }
+                set
+                {
+                    if (value < 0)
+                        value = 0;
+
+                    borderRadius = value;
+                    Invalidate();
+                }
+            }
+
+            // ==============================
+            // Underlined Style
+            // ==============================
+
+            [Category("Custom Properties")]
+            [DefaultValue(false)]
+            public bool UnderlinedStyle
+            {
+                get { return underlinedStyle; }
+                set
+                {
+                    underlinedStyle = value;
+                    Invalidate();
+                }
+            }
+
+            // ==============================
+            // Arrow Color
+            // ==============================
+            // المشكلة الأصلية: الخاصية دي كانت موجودة ومعمول لها Invalidate،
+            // بس مفيش أي كود في OnPaint بيستخدمها فعليًا! يعني كنت بتغيّرها
+            // ومفيش أي تأثير - السهم كان بيفضل يترسم بالشكل الافتراضي اللي
+            // .NET نفسه بيرسمه (رمادي/أسود) مش اللون اللي انت حددته.
+            // دلوقتي بنمسح السهم الافتراضي ونرسم واحد بديل بلون ArrowColor فعليًا.
+
+            [Category("Custom Properties")]
+            [DefaultValue(typeof(Color), "DodgerBlue")]
+            public Color ArrowColor
+            {
+                get { return arrowColor; }
+                set
+                {
+                    arrowColor = value;
+                    Invalidate();
+                }
+            }
+
+            // ==============================
+            // Constructor
+            // ==============================
+
+            public SabraComboBox()
+            {
+                SetStyle(
+                    ControlStyles.OptimizedDoubleBuffer |
+                    ControlStyles.AllPaintingInWmPaint |
+                    ControlStyles.ResizeRedraw,
+                    true);
+
+                this.DrawMode = DrawMode.OwnerDrawFixed;
+                this.DropDownStyle = ComboBoxStyle.DropDownList;
+
+                this.FlatStyle = FlatStyle.Flat;
+
+                this.BackColor = Color.White;
+                this.ForeColor = Color.FromArgb(64, 64, 64);
+
+                this.RightToLeft = RightToLeft.Yes;
+
+                this.Font = new Font(
+                    "Cairo",
+                    10F,
+                    FontStyle.Regular,
+                    GraphicsUnit.Point
+                ); // ده بينادي RecalculateItemHeight تلقائيًا (شوف Font override تحت)
+
+                this.Size = new Size(250, 40);
+
+                this.DropDown += SabraComboBox_DropDown;
+                this.DropDownClosed += SabraComboBox_DropDownClosed;
+
+                this.Enter += SabraComboBox_Enter;
+                this.Leave += SabraComboBox_Leave;
+            }
+
+            // ==============================
+            // Font (جديد) - عشان ItemHeight يتظبط تلقائي مع حجم الخط
+            // ==============================
+            // قبل كده ItemHeight كان رقم ثابت (30) مهما كان حجم الخط، يعني
+            // لو حد كبّر الخط (accessibility مثلاً) كان النص بيتقطع جوه الليست.
+
+            public override Font Font
+            {
+                get { return base.Font; }
+                set
+                {
+                    base.Font = value;
+                    RecalculateItemHeight();
+                    Invalidate();
+                }
+            }
+
+            private void RecalculateItemHeight()
+            {
+                if (Font != null)
+                    ItemHeight = Math.Max(20, Font.Height + 12);
+            }
+
+            // ==============================
+            // Handle Created
+            // ==============================
+
+            protected override void OnHandleCreated(EventArgs e)
+            {
+                base.OnHandleCreated(e);
+                ApplyDefaultSelectedIndex();
+            }
+
+            // ==============================
+            // Focus
+            // ==============================
+
+            private void SabraComboBox_Enter(object sender, EventArgs e)
+            {
+                isFocused = true;
+                Invalidate();
+            }
+
+            private void SabraComboBox_Leave(object sender, EventArgs e)
+            {
+                isFocused = false;
+                Invalidate();
+            }
+
+            // ==============================
+            // Dropdown
+            // ==============================
+
+            private void SabraComboBox_DropDown(object sender, EventArgs e)
+            {
+                isFocused = true;
+                Invalidate();
+            }
+
+            private void SabraComboBox_DropDownClosed(object sender, EventArgs e)
+            {
+                isFocused = false;
+                Invalidate();
+            }
+
+            // ==============================
+            // لون فاتح للحالة المعطّلة (Enabled = false)
+            // ==============================
+            // قبل كده لو عملت Disable للكومبو بوكس، البوردر والسهم كانوا لسه
+            // بلونهم العادي الواضح (DodgerBlue مثلاً) وكأن الكنترول شغال،
+            // وده مضلل بصريًا للمستخدم.
+
+            private Color GetEffectiveColor(Color color)
+            {
+                return Enabled ? color : Color.FromArgb(130, color);
+            }
+
+            // ==============================
+            // Draw Items
+            // ==============================
+
+            protected override void OnDrawItem(DrawItemEventArgs e)
+            {
+                base.OnDrawItem(e);
+
+                if (e.Index < 0)
+                    return;
+
+                Graphics g = e.Graphics;
+
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+
+                bool selected =
+                    (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+
+                Color backgroundColor = selected
+                    ? Color.FromArgb(240, 245, 250)
+                    : BackColor;
+
+                using (SolidBrush backgroundBrush =
+                        new SolidBrush(backgroundColor))
+                {
+                    g.FillRectangle(
+                        backgroundBrush,
+                        e.Bounds
+                    );
                 }
 
+                string text = GetItemText(Items[e.Index]);
+
+                // كانت TextFormatFlags.Right ثابتة دايمًا مهما كان اتجاه الكنترول؛
+                // دلوقتي بتتظبط حسب RightToLeft فعليًا، وضفنا RightToLeft flag
+                // كمان عشان شكل النص العربي (bidi shaping) يترسم صح
+                bool isRtl = RightToLeft == RightToLeft.Yes;
+
+                TextFormatFlags flags = TextFormatFlags.VerticalCenter |
+                    (isRtl
+                        ? TextFormatFlags.Right | TextFormatFlags.RightToLeft
+                        : TextFormatFlags.Left);
+
+                Rectangle textRectangle = new Rectangle(
+                    10,
+                    e.Bounds.Y,
+                    e.Bounds.Width - 20,
+                    e.Bounds.Height
+                );
+
+                Color textColor = GetEffectiveColor(ForeColor);
+
+                TextRenderer.DrawText(
+                    g,
+                    text,
+                    Font,
+                    textRectangle,
+                    textColor,
+                    flags
+                );
+
+                e.DrawFocusRectangle();
+            }
+
+            // ==============================
+            // Paint
+            // ==============================
+
+            protected override void OnPaint(PaintEventArgs e)
+            {
+                base.OnPaint(e);
+
+                Graphics g = e.Graphics;
+
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+
+                // 1) .NET بترسم سهم افتراضي (رمادي/أسود) في المنطقة دي مهما
+                // عملنا - بنمسحها الأول عشان نرسم بديل بلوننا احنا
+                int buttonWidth = SystemInformation.VerticalScrollBarWidth + 6;
+                Rectangle arrowArea = new Rectangle(
+                    Width - buttonWidth, 0, buttonWidth, Height);
+
+                using (SolidBrush eraseBrush = new SolidBrush(BackColor))
+                {
+                    g.FillRectangle(eraseBrush, arrowArea);
+                }
+
+                // 2) نرسم السهم بلون ArrowColor الحقيقي (مش الافتراضي بتاع .NET)
+                DrawCustomArrow(g, arrowArea, GetEffectiveColor(arrowColor));
+
+                // 3) البوردر - باستخدام GraphicsPath مش DrawRectangle مباشرة.
+                // ملحوظة مهمة: Pen.Alignment = Inset بيتجاهله GDI+ تمامًا مع
+                // DrawRectangle (باج معروف في .NET)، فلو BorderSize أكبر من 1
+                // كان نص سمك الخط بيتقص برا حدود الكنترول. DrawPath بيحترم
+                // Inset صح، فاستخدمناها بدل كده (زي ما عملنا في SabraTextBox).
+                Color currentBorderColor = GetEffectiveColor(
+                    isFocused ? borderFocusColor : borderColor);
+
+                using (Pen penBorder = new Pen(currentBorderColor, borderSize))
+                {
+                    penBorder.Alignment = PenAlignment.Inset;
+
+                    if (underlinedStyle)
+                    {
+                        g.DrawLine(
+                            penBorder,
+                            0,
+                            Height - 1,
+                            Width,
+                            Height - 1
+                        );
+                    }
+                    else
+                    {
+                        RectangleF rect = new RectangleF(
+                            borderSize / 2f,
+                            borderSize / 2f,
+                            Width - borderSize,
+                            Height - borderSize
+                        );
+
+                        using (GraphicsPath path = CreateRoundedRectPath(rect, borderRadius))
+                        {
+                            g.DrawPath(penBorder, path);
+                        }
+                    }
+                }
+            }
+
+            private void DrawCustomArrow(Graphics g, Rectangle buttonBounds, Color color)
+            {
+                const int arrowWidth = 8;
+                const int arrowHeight = 5;
+
+                int cx = buttonBounds.Left + buttonBounds.Width / 2;
+                int cy = buttonBounds.Top + buttonBounds.Height / 2;
+
+                Point[] arrowPoints =
+                {
+                new Point(cx - arrowWidth / 2, cy - arrowHeight / 2),
+                new Point(cx + arrowWidth / 2, cy - arrowHeight / 2),
+                new Point(cx, cy + arrowHeight / 2)
+            };
+
+                using (SolidBrush arrowBrush = new SolidBrush(color))
+                {
+                    g.FillPolygon(arrowBrush, arrowPoints);
+                }
+            }
+
+            private GraphicsPath CreateRoundedRectPath(RectangleF rect, int radius)
+            {
+                var path = new GraphicsPath();
+
+                int r = Math.Min(radius, (int)Math.Min(rect.Width, rect.Height) / 2);
+
+                if (r <= 0)
+                {
+                    path.AddRectangle(rect);
+                    return path;
+                }
+
+                float diameter = r * 2;
+
+                path.AddArc(rect.X, rect.Y, diameter, diameter, 180, 90);
+                path.AddArc(rect.Right - diameter, rect.Y, diameter, diameter, 270, 90);
+                path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
+                path.AddArc(rect.X, rect.Bottom - diameter, diameter, diameter, 90, 90);
+                path.CloseFigure();
+
+                return path;
+            }
+
+            // ==============================
+            // Resize
+            // ==============================
+
+            protected override void OnResize(EventArgs e)
+            {
+                base.OnResize(e);
+
                 Invalidate();
+            }
+    }
+    
+    // ملحوظة: افترضت الـ namespace دا (SabraForSpareParts.Controls) لأنه مش موجود في اللي بعتهولي.
+        // لو الكلاس عندك في namespace تاني، غيّره هنا بس.
+
+        public enum SabraButtonKind
+        {
+            Default,
+            Primary,
+            Success,
+            Danger,
+            Warning,
+        }
+
+        /// <summary>
+        /// عمود زرار بيدعم "نوع" (لون) جاهز — Primary لزرار التعديل، Danger لزرار الحذف، إلخ،
+        /// بدل ما تكون كل الأزرار في الجدول بنفس اللون زي القديم.
+        /// </summary>
+        public class SabraButtonColumn : DataGridViewButtonColumn
+        {
+            public SabraButtonKind Kind { get; set; } = SabraButtonKind.Default;
+
+            /// <summary>حرف أو رمز صغير يتحط قبل نص الزرار، اختياري (مثلاً "✎" أو "×")</summary>
+            public string Icon { get; set; }
+
+            public SabraButtonColumn()
+            {
+                UseColumnTextForButtonValue = true;
             }
         }
 
-        [Category("Sabra Layout")]
-        [DefaultValue(true)]
-        public bool EnableHoverEffect { get; set; } = true;
-
-        [Category("Sabra Layout")]
-        [DefaultValue(true)]
-        public bool ShowOuterBorder { get; set; } = true;
-
-        // كانت الخاصية دي معمولة بس مش متوصّلة بحاجة فعليًا (dead property) —
-        // الفاصل بين الصفوف كان جاي من قيمة CellBorderStyle المكتوبة تابت في InitializeGrid.
-        // دلوقتي هي فعليًا اللي بتتحكم في ظهور الخط الفاصل، والافتراضي False (من غير بوردرز).
-        private bool _showCellBorders = false;
-
-        [Category("Sabra Layout")]
-        [DefaultValue(false)]
-        [Description("إظهار خط فاصل بين الصفوف")]
-        public bool ShowCellBorders
+        public class SabraDataGridView : DataGridView
         {
-            get => _showCellBorders;
-            set
+            #region Colors
+            private Color _headerBackColor = Color.FromArgb(248, 250, 252);
+            private Color _headerForeColor = Color.FromArgb(30, 41, 59);
+
+            private Color _rowBackColor = Color.White;
+            private Color _rowAlternateBackColor = Color.FromArgb(248, 250, 252);
+
+            private Color _rowForeColor = Color.FromArgb(51, 65, 85);
+
+            private Color _selectionBackColor = Color.FromArgb(30, 58, 138);
+            private Color _selectionForeColor = Color.White;
+
+            private Color _hoverBackColor = Color.FromArgb(241, 245, 249);
+            private Color _gridLineColor = Color.FromArgb(226, 232, 240);
+
+            // دول دلوقتي بيمثلوا لون الزرار "الافتراضي" (Kind = Default) بس،
+            // كل Kind تاني (Primary/Success/Danger/Warning) ليه باليتة لون ثابتة جاهزة.
+            private Color _buttonBackColor = Color.FromArgb(241, 245, 249);
+            private Color _buttonForeColor = Color.FromArgb(51, 65, 85);
+            private Color _buttonHoverColor = Color.FromArgb(226, 232, 240);
+            #endregion
+
+            #region Editable Columns
+            // أسماء الأعمدة اللي المفروض تظهر بشكل "خانة إدخال" مميزة لأنها قابلة للتعديل فعلاً.
+            private readonly HashSet<string> _editableColumnNames =
+                new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            private Color _editableCellBackColor = Color.White;
+            private Color _editableCellBorderColor = Color.FromArgb(203, 213, 225);
+
+            [Category("Sabra Appearance")]
+            [Description("لون خلفية الخانة القابلة للتعديل")]
+            public Color EditableCellBackColor
             {
-                _showCellBorders = value;
+                get => _editableCellBackColor;
+                set { _editableCellBackColor = value; Invalidate(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون حدود الخانة القابلة للتعديل")]
+            public Color EditableCellBorderColor
+            {
+                get => _editableCellBorderColor;
+                set { _editableCellBorderColor = value; Invalidate(); }
+            }
+            #endregion
+
+            #region Cached Fonts
+            // بدل ما نعمل new Font() جوه كل رسمة/كل ثيم (بيتكرر آلاف المرات وقت الـ scroll)
+            // بنعمل الخطوط دي مرة واحدة بس ونعيد استخدامها، وبنتخلص منها في Dispose.
+            private Font _regularFont;
+            private Font _boldFont;
+            private Font _smallFont;
+            #endregion
+
+            #region Hover Tracking (للأزرار تحديدًا، منفصل عن هوفر الصف)
+            private int _hoveredRowIndex = -1;
+            private int _hoveredColumnIndex = -1;
+            #endregion
+
+            #region Appearance Properties
+
+            [Category("Sabra Appearance")]
+            [Description("لون خلفية رأس الجدول")]
+            public Color HeaderBackColor
+            {
+                get => _headerBackColor;
+                set { _headerBackColor = value; ApplyTheme(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون نص رأس الجدول")]
+            public Color HeaderForeColor
+            {
+                get => _headerForeColor;
+                set { _headerForeColor = value; ApplyTheme(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون الصفوف")]
+            public Color RowBackColor
+            {
+                get => _rowBackColor;
+                set { _rowBackColor = value; ApplyTheme(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون الصفوف البديلة")]
+            public Color RowAlternateBackColor
+            {
+                get => _rowAlternateBackColor;
+                set { _rowAlternateBackColor = value; ApplyTheme(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون نص الصفوف")]
+            public Color RowForeColor
+            {
+                get => _rowForeColor;
+                set { _rowForeColor = value; ApplyTheme(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون خلفية الصف المحدد")]
+            public Color SelectionBackColor
+            {
+                get => _selectionBackColor;
+                set { _selectionBackColor = value; ApplyTheme(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون نص الصف المحدد")]
+            public Color SelectionForeColor
+            {
+                get => _selectionForeColor;
+                set { _selectionForeColor = value; ApplyTheme(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون الصف عند مرور الماوس")]
+            public Color HoverBackColor
+            {
+                get => _hoverBackColor;
+                set { _hoverBackColor = value; Invalidate(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون خطوط الجدول")]
+            public Color GridLineCustomColor
+            {
+                get => _gridLineColor;
+                set { _gridLineColor = value; ApplyTheme(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون خلفية الأزرار (Kind = Default بس)")]
+            public Color ButtonBackColor
+            {
+                get => _buttonBackColor;
+                set { _buttonBackColor = value; Invalidate(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون نص الأزرار (Kind = Default بس)")]
+            public Color ButtonForeColor
+            {
+                get => _buttonForeColor;
+                set { _buttonForeColor = value; Invalidate(); }
+            }
+
+            [Category("Sabra Appearance")]
+            [Description("لون الزرار عند مرور الماوس (Kind = Default بس)")]
+            public Color ButtonHoverColor
+            {
+                get => _buttonHoverColor;
+                set { _buttonHoverColor = value; Invalidate(); }
+            }
+
+            #endregion
+
+            #region Layout Properties
+
+            [Category("Sabra Layout")]
+            [DefaultValue(44)]
+            public int HeaderHeight
+            {
+                get => ColumnHeadersHeight;
+                set { ColumnHeadersHeight = Math.Max(30, value); Invalidate(); }
+            }
+
+            [Category("Sabra Layout")]
+            [DefaultValue(42)]
+            public int RowHeight
+            {
+                get => RowTemplate.Height;
+                set
+                {
+                    RowTemplate.Height = Math.Max(25, value);
+
+                    foreach (DataGridViewRow row in Rows)
+                    {
+                        if (!row.IsNewRow)
+                            row.Height = RowTemplate.Height;
+                    }
+
+                    Invalidate();
+                }
+            }
+
+            [Category("Sabra Layout")]
+            [DefaultValue(true)]
+            public bool EnableHoverEffect { get; set; } = true;
+
+            [Category("Sabra Layout")]
+            [DefaultValue(true)]
+            public bool ShowOuterBorder { get; set; } = true;
+
+            private bool _showCellBorders = false;
+
+            [Category("Sabra Layout")]
+            [DefaultValue(false)]
+            [Description("إظهار خط فاصل بين الصفوف")]
+            public bool ShowCellBorders
+            {
+                get => _showCellBorders;
+                set
+                {
+                    _showCellBorders = value;
+
+                    CellBorderStyle =
+                        _showCellBorders
+                            ? DataGridViewCellBorderStyle.SingleHorizontal
+                            : DataGridViewCellBorderStyle.None;
+
+                    Invalidate();
+                }
+            }
+
+            #endregion
+
+            #region Constructor
+
+            public SabraDataGridView()
+            {
+                InitializeFonts();
+
+                InitializeGrid();
+
+                // أي عمود جديد بيتضاف، بيبقى ReadOnly افتراضيًا (نفس السلوك القديم بالظبط)
+                // إلا لو حد نادى SetColumnEditable عليه بعد كده.
+                ColumnAdded += (s, e) =>
+                {
+                    if (!_editableColumnNames.Contains(e.Column.Name))
+                        e.Column.ReadOnly = true;
+                };
+
+                CellFormatting += SabraDataGridView_CellFormatting;
+                CellPainting += SabraDataGridView_CellPainting;
+                CellMouseEnter += SabraDataGridView_CellMouseEnter;
+                CellMouseLeave += SabraDataGridView_CellMouseLeave;
+                MouseLeave += (s, e) => Cursor = Cursors.Default;
+
+                ApplyTheme();
+            }
+
+            #endregion
+
+            #region Fonts Init
+
+            private void InitializeFonts()
+            {
+                _regularFont = new Font("Cairo", 10F, FontStyle.Regular, GraphicsUnit.Point);
+                _boldFont = new Font("Cairo", 10F, FontStyle.Bold, GraphicsUnit.Point);
+                _smallFont = new Font("Cairo", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            }
+
+            #endregion
+
+            #region Initialization
+
+            private void InitializeGrid()
+            {
+                DoubleBuffered = true;
+
+                BorderStyle = BorderStyle.None;
+
+                BackgroundColor = Color.White;
+
+                EnableHeadersVisualStyles = false;
+
+                AllowUserToAddRows = false;
+                AllowUserToDeleteRows = false;
+                AllowUserToResizeRows = false;
+                AllowUserToOrderColumns = false;
+
+                // القديم كان بيحط ReadOnly = true هنا على الجدول كله، وده كان بيقفل أي تعديل
+                // نهائيًا حتى لو عمود بعينه كان ReadOnly = false. دلوقتي القفل بقى مركزي على
+                // مستوى كل عمود لوحده (شوف ColumnAdded فوق و SetColumnEditable تحت)، فتقدر
+                // تفتح عمود معين للتعديل من غير ما تفتح الجدول كله.
+
+                MultiSelect = false;
+
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+                // كليكة واحدة على خانة قابلة للتعديل تدخلك على طول في وضع الكتابة،
+                // بدل ما تحتاج دبل كليك أو F2 عشان تلاحظ إنها أصلاً قابلة للتعديل.
+                EditMode = DataGridViewEditMode.EditOnEnter;
+
+                AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                RowHeadersVisible = false;
+
+                RightToLeft = RightToLeft.Yes;
+
+                Font = _regularFont;
 
                 CellBorderStyle =
                     _showCellBorders
                         ? DataGridViewCellBorderStyle.SingleHorizontal
                         : DataGridViewCellBorderStyle.None;
 
+                ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+
+                RowTemplate.Height = 42;
+
+                ColumnHeadersHeight = 44;
+
+                ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+
+                ScrollBars = ScrollBars.Both;
+
+                ShowCellToolTips = true;
+
+                AllowUserToResizeColumns = true;
+
+                AllowUserToResizeRows = false;
+            }
+
+            #endregion
+
+            #region Editable Columns API
+
+            /// <summary>
+            /// يفتح عمود معين للتعديل (أو يقفله) وياديله شكل "خانة إدخال" مميز عشان يبان للمستخدم
+            /// إنه قابل للتعديل. ده البديل الصحيح لمحاولة تعديل ReadOnly يدويًا على العمود،
+            /// لأن الجدول أصلاً بيقفل أي عمود جديد تلقائيًا.
+            /// مثال: dgv.SetColumnEditable("colQuantity");
+            /// </summary>
+            public void SetColumnEditable(string columnName, bool editable = true)
+            {
+                if (!Columns.Contains(columnName))
+                    return;
+
+                Columns[columnName].ReadOnly = !editable;
+
+                if (editable)
+                    _editableColumnNames.Add(columnName);
+                else
+                    _editableColumnNames.Remove(columnName);
+
                 Invalidate();
             }
-        }
 
-        #endregion
-
-        #region Constructor
-
-        public SabraDataGridView()
-        {
-            InitializeFonts();
-
-            InitializeGrid();
-
-            CellFormatting += SabraDataGridView_CellFormatting;
-            CellPainting += SabraDataGridView_CellPainting;
-            CellMouseEnter += SabraDataGridView_CellMouseEnter;
-            CellMouseLeave += SabraDataGridView_CellMouseLeave;
-
-            ApplyTheme();
-        }
-
-        #endregion
-
-        #region Fonts Init
-
-        private void InitializeFonts()
-        {
-            _regularFont =
-                new Font(
-                    "Cairo",
-                    10F,
-                    FontStyle.Regular,
-                    GraphicsUnit.Point);
-
-            _boldFont =
-                new Font(
-                    "Cairo",
-                    10F,
-                    FontStyle.Bold,
-                    GraphicsUnit.Point);
-
-            _smallFont =
-                new Font(
-                    "Cairo",
-                    9F,
-                    FontStyle.Regular,
-                    GraphicsUnit.Point);
-        }
-
-        #endregion
-
-        #region Initialization
-
-        private void InitializeGrid()
-        {
-            DoubleBuffered = true;
-
-            BorderStyle = BorderStyle.None;
-
-            BackgroundColor = Color.White;
-
-            EnableHeadersVisualStyles = false;
-
-            AllowUserToAddRows = false;
-            AllowUserToDeleteRows = false;
-            AllowUserToResizeRows = false;
-            AllowUserToOrderColumns = false;
-
-            ReadOnly = true;
-
-            MultiSelect = false;
-
-            SelectionMode =
-                DataGridViewSelectionMode.FullRowSelect;
-
-            AutoSizeRowsMode =
-                DataGridViewAutoSizeRowsMode.None;
-
-            AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.Fill;
-
-            RowHeadersVisible = false;
-
-            RightToLeft = RightToLeft.Yes;
-
-            Font = _regularFont;
-
-            // مفيش خطوط فاصلة بين الخلايا افتراضيًا (كانت رخمة الشكل).
-            // لو حد حابب يرجعها يقدر يفعّل ShowCellBorders = true.
-            CellBorderStyle =
-                _showCellBorders
-                    ? DataGridViewCellBorderStyle.SingleHorizontal
-                    : DataGridViewCellBorderStyle.None;
-
-            ColumnHeadersBorderStyle =
-                DataGridViewHeaderBorderStyle.None;
-
-            RowTemplate.Height = 42;
-
-            ColumnHeadersHeight = 44;
-
-            ColumnHeadersHeightSizeMode =
-                DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-
-            ScrollBars =
-                ScrollBars.Both;
-
-            ShowCellToolTips = true;
-
-            AllowUserToResizeColumns = true;
-
-            AllowUserToResizeRows = false;
-        }
-
-        #endregion
-
-        #region Theme
-
-        private void ApplyTheme()
-        {
-            SuspendLayout();
-
-            // Header
-            ColumnHeadersDefaultCellStyle.BackColor =
-                _headerBackColor;
-
-            ColumnHeadersDefaultCellStyle.ForeColor =
-                _headerForeColor;
-
-            ColumnHeadersDefaultCellStyle.Font =
-                _boldFont;
-
-            ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
-            ColumnHeadersDefaultCellStyle.SelectionBackColor =
-                _headerBackColor;
-
-            ColumnHeadersDefaultCellStyle.SelectionForeColor =
-                _headerForeColor;
-
-            ColumnHeadersDefaultCellStyle.Padding =
-                new Padding(8, 0, 8, 0);
-
-            // Normal cells
-            DefaultCellStyle.BackColor =
-                _rowBackColor;
-
-            DefaultCellStyle.ForeColor =
-                _rowForeColor;
-
-            DefaultCellStyle.Font =
-                _regularFont;
-
-            DefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
-            DefaultCellStyle.SelectionBackColor =
-                _selectionBackColor;
-
-            DefaultCellStyle.SelectionForeColor =
-                _selectionForeColor;
-
-            DefaultCellStyle.Padding =
-                new Padding(8, 0, 8, 0);
-
-            DefaultCellStyle.WrapMode =
-                DataGridViewTriState.False;
-
-            // Alternating rows
-            AlternatingRowsDefaultCellStyle.BackColor =
-                _rowAlternateBackColor;
-
-            AlternatingRowsDefaultCellStyle.ForeColor =
-                _rowForeColor;
-
-            AlternatingRowsDefaultCellStyle.SelectionBackColor =
-                _selectionBackColor;
-
-            AlternatingRowsDefaultCellStyle.SelectionForeColor =
-                _selectionForeColor;
-
-            // Grid
-            GridColor = _gridLineColor;
-
-            // Row headers
-            RowHeadersDefaultCellStyle.SelectionBackColor =
-                _selectionBackColor;
-
-            RowHeadersDefaultCellStyle.SelectionForeColor =
-                _selectionForeColor;
-
-            ResumeLayout();
-        }
-
-        #endregion
-
-        #region Cell Formatting
-
-        private void SabraDataGridView_CellFormatting(
-            object sender,
-            DataGridViewCellFormattingEventArgs e)
-        {
-            if (e.RowIndex < 0 ||
-                e.ColumnIndex < 0)
-                return;
-
-            DataGridViewCell cell =
-                Rows[e.RowIndex].Cells[e.ColumnIndex];
-
-            string columnName =
-                Columns[e.ColumnIndex].Name;
-
-            // مهم جدًا:
-            // التحديد لازم يفضل بلون النص الواضح
-            // بدل ما الخلية تاخد لون نص باهت.
-
-            if (cell.Selected)
+            public bool IsColumnEditable(string columnName)
             {
-                e.CellStyle.SelectionBackColor =
-                    _selectionBackColor;
-
-                e.CellStyle.SelectionForeColor =
-                    _selectionForeColor;
+                return Columns.Contains(columnName) && !Columns[columnName].ReadOnly;
             }
 
-            // Quantity
-            if (columnName == "Quantity" ||
-                columnName == "الكمية")
-            {
-                if (e.Value != null &&
-                    decimal.TryParse(
-                        e.Value.ToString(),
-                        out decimal quantity))
-                {
-                    if (quantity <= 0)
-                    {
-                        e.CellStyle.ForeColor =
-                            Color.FromArgb(220, 38, 38);
-                    }
-                    else if (quantity < 5)
-                    {
-                        e.CellStyle.ForeColor =
-                            Color.FromArgb(217, 119, 6);
-                    }
-                    else
-                    {
-                        e.CellStyle.ForeColor =
-                            Color.FromArgb(22, 163, 74);
-                    }
+            #endregion
 
-                    // عند تحديد الصف:
-                    // نخلي النص غامق وواضح
-                    if (cell.Selected)
+            #region Theme
+
+            private void ApplyTheme()
+            {
+                SuspendLayout();
+
+                ColumnHeadersDefaultCellStyle.BackColor = _headerBackColor;
+                ColumnHeadersDefaultCellStyle.ForeColor = _headerForeColor;
+                ColumnHeadersDefaultCellStyle.Font = _boldFont;
+                ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                ColumnHeadersDefaultCellStyle.SelectionBackColor = _headerBackColor;
+                ColumnHeadersDefaultCellStyle.SelectionForeColor = _headerForeColor;
+                ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 0, 8, 0);
+
+                DefaultCellStyle.BackColor = _rowBackColor;
+                DefaultCellStyle.ForeColor = _rowForeColor;
+                DefaultCellStyle.Font = _regularFont;
+                DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                DefaultCellStyle.SelectionBackColor = _selectionBackColor;
+                DefaultCellStyle.SelectionForeColor = _selectionForeColor;
+                DefaultCellStyle.Padding = new Padding(8, 0, 8, 0);
+                DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                AlternatingRowsDefaultCellStyle.BackColor = _rowAlternateBackColor;
+                AlternatingRowsDefaultCellStyle.ForeColor = _rowForeColor;
+                AlternatingRowsDefaultCellStyle.SelectionBackColor = _selectionBackColor;
+                AlternatingRowsDefaultCellStyle.SelectionForeColor = _selectionForeColor;
+
+                GridColor = _gridLineColor;
+
+                RowHeadersDefaultCellStyle.SelectionBackColor = _selectionBackColor;
+                RowHeadersDefaultCellStyle.SelectionForeColor = _selectionForeColor;
+
+                ResumeLayout();
+            }
+
+            #endregion
+
+            #region Cell Formatting
+
+            private void SabraDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+            {
+                if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                    return;
+
+                DataGridViewCell cell = Rows[e.RowIndex].Cells[e.ColumnIndex];
+                string columnName = Columns[e.ColumnIndex].Name;
+
+                if (cell.Selected)
+                {
+                    e.CellStyle.SelectionBackColor = _selectionBackColor;
+                    e.CellStyle.SelectionForeColor = _selectionForeColor;
+                }
+
+                if (columnName == "Quantity" || columnName == "الكمية")
+                {
+                    if (e.Value != null && decimal.TryParse(e.Value.ToString(), out decimal quantity))
                     {
-                        e.CellStyle.SelectionForeColor =
-                            _selectionForeColor;
+                        if (quantity <= 0)
+                            e.CellStyle.ForeColor = Color.FromArgb(220, 38, 38);
+                        else if (quantity < 5)
+                            e.CellStyle.ForeColor = Color.FromArgb(217, 119, 6);
+                        else
+                            e.CellStyle.ForeColor = Color.FromArgb(22, 163, 74);
+
+                        if (cell.Selected)
+                            e.CellStyle.SelectionForeColor = _selectionForeColor;
                     }
                 }
             }
-        }
 
-        #endregion
+            #endregion
 
-        #region Cell Painting
+            #region Cell Painting
 
-        private void SabraDataGridView_CellPainting(
-            object sender,
-            DataGridViewCellPaintingEventArgs e)
-        {
-            if (e.RowIndex < 0 ||
-                e.ColumnIndex < 0)
-                return;
-
-            string columnName =
-                Columns[e.ColumnIndex].Name;
-
-            // Category Chip
-            if (columnName == "Category" ||
-                columnName == "التصنيف")
+            private void SabraDataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
             {
-                PaintCategoryChip(e);
+                if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                    return;
 
-                return;
+                string columnName = Columns[e.ColumnIndex].Name;
+
+                if (Columns[e.ColumnIndex] is DataGridViewButtonColumn)
+                {
+                    PaintButtonCell(e);
+                    return;
+                }
+
+                if (columnName == "Category" || columnName == "التصنيف")
+                {
+                    PaintCategoryChip(e);
+                    return;
+                }
+
+                // خانة قابلة للتعديل (اتفتحت عن طريق SetColumnEditable) بتترسم بشكل خانة إدخال واضح
+                if (!Columns[e.ColumnIndex].ReadOnly && _editableColumnNames.Contains(columnName))
+                {
+                    PaintEditableCell(e);
+                    return;
+                }
             }
 
-            // Button
-            if (Columns[e.ColumnIndex]
-                is DataGridViewButtonColumn)
+            #endregion
+
+            #region Editable Cell Painting
+
+            private void PaintEditableCell(DataGridViewCellPaintingEventArgs e)
             {
-                PaintButtonCell(e);
+                e.Paint(e.CellBounds, DataGridViewPaintParts.Background);
 
-                return;
-            }
-        }
+                bool isSelected = Rows[e.RowIndex].Cells[e.ColumnIndex].Selected;
 
-        #endregion
+                Rectangle inputBounds = new Rectangle(
+                    e.CellBounds.X + 6,
+                    e.CellBounds.Y + 6,
+                    e.CellBounds.Width - 12,
+                    e.CellBounds.Height - 12);
 
-        #region Category Chip
+                using SolidBrush backBrush = new SolidBrush(_editableCellBackColor);
+                using Pen borderPen = new Pen(isSelected ? _selectionBackColor : _editableCellBorderColor, 1);
+                using StringFormat format = new StringFormat
+                {
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center,
+                };
 
-        private void PaintCategoryChip(
-            DataGridViewCellPaintingEventArgs e)
-        {
-            e.Paint(
-                e.CellBounds,
-                DataGridViewPaintParts.Background |
-                DataGridViewPaintParts.Border);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-            if (e.Value == null)
-            {
+                using GraphicsPath path = CreateRoundedRectangle(inputBounds, 6);
+                e.Graphics.FillPath(backBrush, path);
+                e.Graphics.DrawPath(borderPen, path);
+
+                e.Graphics.SmoothingMode = SmoothingMode.Default;
+
+                string text = e.Value?.ToString() ?? "";
+
+                using SolidBrush textBrush = new SolidBrush(_rowForeColor);
+                e.Graphics.DrawString(text, _regularFont, textBrush, inputBounds, format);
+
                 e.Handled = true;
-                return;
             }
 
-            string text = e.Value.ToString();
+            #endregion
 
-            bool selected = e.RowIndex >= 0 &&
-                            Rows[e.RowIndex]
-                            .Cells[e.ColumnIndex]
-                            .Selected;
+            #region Category Chip
 
-            Color chipBackColor;
-            Color chipForeColor;
-
-            if (selected)
+            private void PaintCategoryChip(DataGridViewCellPaintingEventArgs e)
             {
-                chipBackColor =
-                    Color.FromArgb(191, 219, 254);
+                e.Paint(e.CellBounds, DataGridViewPaintParts.Background | DataGridViewPaintParts.Border);
 
-                chipForeColor =
-                    Color.FromArgb(30, 64, 175);
-            }
-            else
-            {
-                chipBackColor =
-                    Color.FromArgb(239, 246, 255);
+                if (e.Value == null)
+                {
+                    e.Handled = true;
+                    return;
+                }
 
-                chipForeColor =
-                    Color.FromArgb(30, 64, 175);
-            }
+                string text = e.Value.ToString();
+                bool selected = e.RowIndex >= 0 && Rows[e.RowIndex].Cells[e.ColumnIndex].Selected;
 
-            Rectangle bounds =
-                new Rectangle(
+                Color chipBackColor = selected ? Color.FromArgb(191, 219, 254) : Color.FromArgb(239, 246, 255);
+                Color chipForeColor = Color.FromArgb(30, 64, 175);
+
+                Rectangle bounds = new Rectangle(
                     e.CellBounds.X + 8,
                     e.CellBounds.Y + 7,
                     e.CellBounds.Width - 16,
                     e.CellBounds.Height - 14);
 
-            using GraphicsPath path =
-                CreateRoundedRectangle(
-                    bounds,
-                    12);
-
-            using SolidBrush backBrush =
-                new SolidBrush(chipBackColor);
-
-            using SolidBrush textBrush =
-                new SolidBrush(chipForeColor);
-
-            using StringFormat format =
-                new StringFormat
+                using GraphicsPath path = CreateRoundedRectangle(bounds, 12);
+                using SolidBrush backBrush = new SolidBrush(chipBackColor);
+                using SolidBrush textBrush = new SolidBrush(chipForeColor);
+                using StringFormat format = new StringFormat
                 {
-                    Alignment =
-                        StringAlignment.Center,
-
-                    LineAlignment =
-                        StringAlignment.Center
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center,
                 };
 
-            e.Graphics.SmoothingMode =
-                SmoothingMode.AntiAlias;
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                e.Graphics.FillPath(backBrush, path);
+                e.Graphics.DrawString(text, _smallFont, textBrush, bounds, format);
+                e.Graphics.SmoothingMode = SmoothingMode.Default;
 
-            e.Graphics.FillPath(
-                backBrush,
-                path);
+                e.Handled = true;
+            }
 
-            e.Graphics.DrawString(
-                text,
-                _smallFont,
-                textBrush,
-                bounds,
-                format);
+            #endregion
 
-            e.Graphics.SmoothingMode =
-                SmoothingMode.Default;
+            #region Button Painting
 
-            e.Handled = true;
-        }
-
-        #endregion
-
-        #region Button Painting
-
-        private void PaintButtonCell(
-            DataGridViewCellPaintingEventArgs e)
-        {
-            bool selected =
-                Rows[e.RowIndex]
-                .Cells[e.ColumnIndex]
-                .Selected;
-
-            Color backgroundColor =
-                selected
-                    ? _buttonHoverColor
-                    : _buttonBackColor;
-
-            Color foregroundColor =
-                _buttonForeColor;
-
-            e.Paint(
-                e.CellBounds,
-                DataGridViewPaintParts.Border);
-
-            Rectangle buttonBounds =
-                new Rectangle(
-                    e.CellBounds.X + 5,
-                    e.CellBounds.Y + 5,
-                    e.CellBounds.Width - 10,
-                    e.CellBounds.Height - 10);
-
-            using SolidBrush backgroundBrush =
-                new SolidBrush(backgroundColor);
-
-            using Pen borderPen =
-                new Pen(
-                    _gridLineColor,
-                    1);
-
-            using SolidBrush textBrush =
-                new SolidBrush(foregroundColor);
-
-            using StringFormat format =
-                new StringFormat
-                {
-                    Alignment =
-                        StringAlignment.Center,
-
-                    LineAlignment =
-                        StringAlignment.Center
-                };
-
-            e.Graphics.SmoothingMode =
-                SmoothingMode.AntiAlias;
-
-            e.Graphics.FillRectangle(
-                backgroundBrush,
-                buttonBounds);
-
-            e.Graphics.DrawRectangle(
-                borderPen,
-                buttonBounds);
-
-            string text =
-                e.Value?.ToString() ??
-                Columns[e.ColumnIndex]
-                .HeaderText;
-
-            e.Graphics.DrawString(
-                text,
-                _smallFont,
-                textBrush,
-                buttonBounds,
-                format);
-
-            e.Graphics.SmoothingMode =
-                SmoothingMode.Default;
-
-            e.Handled = true;
-        }
-
-        #endregion
-
-        #region Hover
-
-        private void SabraDataGridView_CellMouseEnter(
-            object sender,
-            DataGridViewCellEventArgs e)
-        {
-            if (!EnableHoverEffect ||
-                e.RowIndex < 0)
-                return;
-
-            if (e.RowIndex >= Rows.Count)
-                return;
-
-            if (Rows[e.RowIndex].Selected)
-                return;
-
-            Rows[e.RowIndex].DefaultCellStyle.BackColor =
-                _hoverBackColor;
-        }
-
-        private void SabraDataGridView_CellMouseLeave(
-            object sender,
-            DataGridViewCellEventArgs e)
-        {
-            if (!EnableHoverEffect ||
-                e.RowIndex < 0)
-                return;
-
-            if (e.RowIndex >= Rows.Count)
-                return;
-
-            if (Rows[e.RowIndex].Selected)
-                return;
-
-            Rows[e.RowIndex].DefaultCellStyle.BackColor =
-                e.RowIndex % 2 == 0
-                    ? _rowBackColor
-                    : _rowAlternateBackColor;
-        }
-
-        #endregion
-
-        #region Selection Fix
-
-        protected override void OnSelectionChanged(
-            EventArgs e)
-        {
-            base.OnSelectionChanged(e);
-
-            foreach (DataGridViewRow row in Rows)
+            private (Color Back, Color Fore, Color Hover) GetButtonPalette(SabraButtonKind kind)
             {
-                if (row.IsNewRow)
-                    continue;
-
-                if (row.Selected)
+                return kind switch
                 {
-                    row.DefaultCellStyle.SelectionBackColor =
-                        _selectionBackColor;
+                    SabraButtonKind.Primary => (Color.FromArgb(219, 234, 254), Color.FromArgb(30, 64, 175), Color.FromArgb(191, 219, 254)),
+                    SabraButtonKind.Success => (Color.FromArgb(220, 252, 231), Color.FromArgb(22, 101, 52), Color.FromArgb(187, 247, 208)),
+                    SabraButtonKind.Danger => (Color.FromArgb(254, 226, 226), Color.FromArgb(153, 27, 27), Color.FromArgb(254, 202, 202)),
+                    SabraButtonKind.Warning => (Color.FromArgb(254, 243, 199), Color.FromArgb(146, 64, 14), Color.FromArgb(253, 230, 138)),
+                    _ => (_buttonBackColor, _buttonForeColor, _buttonHoverColor),
+                };
+            }
 
-                    row.DefaultCellStyle.SelectionForeColor =
-                        _selectionForeColor;
+            private void PaintButtonCell(DataGridViewCellPaintingEventArgs e)
+            {
+                e.Paint(e.CellBounds, DataGridViewPaintParts.Background);
+
+                SabraButtonKind kind = SabraButtonKind.Default;
+                string icon = null;
+
+                if (Columns[e.ColumnIndex] is SabraButtonColumn sabraButtonColumn)
+                {
+                    kind = sabraButtonColumn.Kind;
+                    icon = sabraButtonColumn.Icon;
+                }
+
+                var (backColor, foreColor, hoverColor) = GetButtonPalette(kind);
+
+                bool isHovered = e.RowIndex == _hoveredRowIndex && e.ColumnIndex == _hoveredColumnIndex;
+
+                Rectangle buttonBounds = new Rectangle(
+                    e.CellBounds.X + 6,
+                    e.CellBounds.Y + 6,
+                    e.CellBounds.Width - 12,
+                    e.CellBounds.Height - 12);
+
+                using SolidBrush backgroundBrush = new SolidBrush(isHovered ? hoverColor : backColor);
+                using SolidBrush textBrush = new SolidBrush(foreColor);
+                using StringFormat format = new StringFormat
+                {
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center,
+                };
+
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                using GraphicsPath path = CreateRoundedRectangle(buttonBounds, 8);
+                e.Graphics.FillPath(backgroundBrush, path);
+
+                string text = e.Value?.ToString() ?? Columns[e.ColumnIndex].HeaderText;
+
+                if (!string.IsNullOrEmpty(icon))
+                    text = $"{icon}  {text}";
+
+                e.Graphics.DrawString(text, _smallFont, textBrush, buttonBounds, format);
+
+                e.Graphics.SmoothingMode = SmoothingMode.Default;
+
+                e.Handled = true;
+            }
+
+            #endregion
+
+            #region Hover
+
+            private void SabraDataGridView_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+            {
+                if (e.RowIndex < 0 || e.RowIndex >= Rows.Count)
+                    return;
+
+                _hoveredRowIndex = e.RowIndex;
+                _hoveredColumnIndex = e.ColumnIndex;
+
+                if (Columns[e.ColumnIndex] is DataGridViewButtonColumn)
+                {
+                    Cursor = Cursors.Hand;
+                    InvalidateCell(e.ColumnIndex, e.RowIndex);
+                    return;
+                }
+
+                if (EnableHoverEffect && !Rows[e.RowIndex].Selected)
+                {
+                    Rows[e.RowIndex].DefaultCellStyle.BackColor = _hoverBackColor;
                 }
             }
 
-            Invalidate();
-        }
-
-        #endregion
-
-        #region Rounded Rectangle
-
-        private GraphicsPath CreateRoundedRectangle(
-            Rectangle bounds,
-            int radius)
-        {
-            GraphicsPath path = new GraphicsPath();
-
-            int diameter = radius * 2;
-
-            path.AddArc(
-                bounds.X,
-                bounds.Y,
-                diameter,
-                diameter,
-                180,
-                90);
-
-            path.AddArc(
-                bounds.Right - diameter,
-                bounds.Y,
-                diameter,
-                diameter,
-                270,
-                90);
-
-            path.AddArc(
-                bounds.Right - diameter,
-                bounds.Bottom - diameter,
-                diameter,
-                diameter,
-                0,
-                90);
-
-            path.AddArc(
-                bounds.X,
-                bounds.Bottom - diameter,
-                diameter,
-                diameter,
-                90,
-                90);
-
-            path.CloseFigure();
-
-            return path;
-        }
-
-        #endregion
-
-        #region Outer Border
-
-        protected override void OnPaint(
-            PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            if (!ShowOuterBorder)
-                return;
-
-            using Pen pen =
-                new Pen(
-                    _gridLineColor,
-                    1);
-
-            Rectangle bounds =
-                new Rectangle(
-                    0,
-                    0,
-                    Width - 1,
-                    Height - 1);
-
-            e.Graphics.DrawRectangle(
-                pen,
-                bounds);
-        }
-        #endregion
-
-        #region Dispose
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            private void SabraDataGridView_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
             {
-                _regularFont?.Dispose();
-                _boldFont?.Dispose();
-                _smallFont?.Dispose();
+                if (e.RowIndex < 0 || e.RowIndex >= Rows.Count)
+                    return;
+
+                bool wasButtonCell = Columns[e.ColumnIndex] is DataGridViewButtonColumn;
+
+                if (_hoveredRowIndex == e.RowIndex && _hoveredColumnIndex == e.ColumnIndex)
+                {
+                    _hoveredRowIndex = -1;
+                    _hoveredColumnIndex = -1;
+                }
+
+                if (wasButtonCell)
+                {
+                    Cursor = Cursors.Default;
+                    InvalidateCell(e.ColumnIndex, e.RowIndex);
+                    return;
+                }
+
+                if (EnableHoverEffect && !Rows[e.RowIndex].Selected)
+                {
+                    Rows[e.RowIndex].DefaultCellStyle.BackColor =
+                        e.RowIndex % 2 == 0 ? _rowBackColor : _rowAlternateBackColor;
+                }
             }
 
-            base.Dispose(disposing);
+            #endregion
+
+            #region Selection Fix
+
+            protected override void OnSelectionChanged(EventArgs e)
+            {
+                base.OnSelectionChanged(e);
+
+                foreach (DataGridViewRow row in Rows)
+                {
+                    if (row.IsNewRow)
+                        continue;
+
+                    if (row.Selected)
+                    {
+                        row.DefaultCellStyle.SelectionBackColor = _selectionBackColor;
+                        row.DefaultCellStyle.SelectionForeColor = _selectionForeColor;
+                    }
+                }
+
+                Invalidate();
+            }
+
+            #endregion
+
+            #region Rounded Rectangle
+
+            private GraphicsPath CreateRoundedRectangle(Rectangle bounds, int radius)
+            {
+                GraphicsPath path = new GraphicsPath();
+                int diameter = radius * 2;
+
+                path.AddArc(bounds.X, bounds.Y, diameter, diameter, 180, 90);
+                path.AddArc(bounds.Right - diameter, bounds.Y, diameter, diameter, 270, 90);
+                path.AddArc(bounds.Right - diameter, bounds.Bottom - diameter, diameter, diameter, 0, 90);
+                path.AddArc(bounds.X, bounds.Bottom - diameter, diameter, diameter, 90, 90);
+                path.CloseFigure();
+
+                return path;
+            }
+
+            #endregion
+
+            #region Outer Border
+
+            protected override void OnPaint(PaintEventArgs e)
+            {
+                base.OnPaint(e);
+
+                if (!ShowOuterBorder)
+                    return;
+
+                using Pen pen = new Pen(_gridLineColor, 1);
+                Rectangle bounds = new Rectangle(0, 0, Width - 1, Height - 1);
+
+                e.Graphics.DrawRectangle(pen, bounds);
+            }
+
+            #endregion
+
+            #region Dispose
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    _regularFont?.Dispose();
+                    _boldFont?.Dispose();
+                    _smallFont?.Dispose();
+                }
+
+                base.Dispose(disposing);
+            }
+
+            #endregion
         }
-
-        #endregion
-
-    }
+    
 
     public class SabraPanel : Panel
     {
@@ -2794,6 +3653,7 @@ namespace SabraForSpareParts
         private bool showCheckBox = false;
         private bool isChecked = true;
 
+        private bool required = false;
         public event EventHandler ValueChanged;
 
         public SabraDateTimePicker()
@@ -2867,6 +3727,22 @@ namespace SabraForSpareParts
 
             UpdateDateText();
             UpdateEnabledState();
+        }
+
+        [Category("Sabra Custom Properties")]
+        [DefaultValue(false)]
+        public bool Required
+        {
+            get => required;
+            set
+            {
+                if (required == value)
+                    return;
+
+                required = value;
+                UpdateDateText();
+                Invalidate();
+            }
         }
 
         [Category("Sabra Custom Properties")]
@@ -3802,4 +4678,4 @@ namespace SabraForSpareParts
 
 }
 
-
+#endregion

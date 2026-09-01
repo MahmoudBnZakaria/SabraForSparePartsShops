@@ -768,5 +768,10 @@ namespace SabraForSpareParts.Screens
         }
 
         #endregion
+
+        private void sabraPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

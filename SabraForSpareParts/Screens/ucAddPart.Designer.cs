@@ -123,6 +123,18 @@
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
@@ -149,6 +161,14 @@
             sabraTableLayoutPanel1.RightToLeft = RightToLeft.Yes;
             sabraTableLayoutPanel1.RowCount = 8;
             sabraTableLayoutPanel1.Rows = 8;
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
@@ -497,10 +517,13 @@
             stxbxTechnicalNum.ForeColor = Color.FromArgb(64, 64, 64);
             stxbxTechnicalNum.Location = new Point(141, 130);
             stxbxTechnicalNum.Name = "stxbxTechnicalNum";
+            stxbxTechnicalNum.Padding = new Padding(10, 7, 10, 7);
             stxbxTechnicalNum.RightToLeft = RightToLeft.Yes;
-            stxbxTechnicalNum.Size = new Size(261, 39);
+            stxbxTechnicalNum.SelectedText = "";
+            stxbxTechnicalNum.SelectionLength = 0;
+            stxbxTechnicalNum.SelectionStart = 0;
+            stxbxTechnicalNum.Size = new Size(261, 47);
             stxbxTechnicalNum.TabIndex = 18;
-            stxbxTechnicalNum.Texts = "مثال: OC90";
             // 
             // sabraLabel6
             // 
@@ -618,10 +641,13 @@
             stxbxParcode.ForeColor = Color.FromArgb(64, 64, 64);
             stxbxParcode.Location = new Point(470, 130);
             stxbxParcode.Name = "stxbxParcode";
+            stxbxParcode.Padding = new Padding(10, 7, 10, 7);
             stxbxParcode.RightToLeft = RightToLeft.Yes;
-            stxbxParcode.Size = new Size(261, 39);
+            stxbxParcode.SelectedText = "";
+            stxbxParcode.SelectionLength = 0;
+            stxbxParcode.SelectionStart = 0;
+            stxbxParcode.Size = new Size(261, 47);
             stxbxParcode.TabIndex = 7;
-            stxbxParcode.Texts = "اسكان أو يدوي";
             // 
             // stxbxPartName
             // 
@@ -631,11 +657,14 @@
             stxbxPartName.ForeColor = Color.FromArgb(64, 64, 64);
             stxbxPartName.Location = new Point(761, 130);
             stxbxPartName.Name = "stxbxPartName";
+            stxbxPartName.Padding = new Padding(10, 7, 10, 7);
             stxbxPartName.RightToLeft = RightToLeft.Yes;
-            stxbxPartName.Size = new Size(612, 39);
+            stxbxPartName.SelectedText = "";
+            stxbxPartName.SelectionLength = 0;
+            stxbxPartName.SelectionStart = 0;
+            stxbxPartName.Size = new Size(612, 47);
             stxbxPartName.TabIndex = 6;
             stxbxPartName.TextAlign = HorizontalAlignment.Center;
-            stxbxPartName.Texts = "مثال: فلتر زيت تويوتا كورولا 2018 - 2023";
             // 
             // panel1
             // 
@@ -750,11 +779,14 @@
             stbxNotes.ForeColor = Color.FromArgb(64, 64, 64);
             stbxNotes.Location = new Point(419, 260);
             stbxNotes.Name = "stbxNotes";
+            stbxNotes.Padding = new Padding(10, 7, 10, 7);
             stbxNotes.PlaceholderText = "لا تصرف إلا لورشة كذا كذا";
             stbxNotes.RightToLeft = RightToLeft.Yes;
-            stbxNotes.Size = new Size(499, 39);
+            stbxNotes.SelectedText = "";
+            stbxNotes.SelectionLength = 0;
+            stbxNotes.SelectionStart = 0;
+            stbxNotes.Size = new Size(499, 47);
             stbxNotes.TabIndex = 29;
-            stbxNotes.Texts = "";
             // 
             // sabraLabel16
             // 
@@ -779,11 +811,14 @@
             stbxAlternativePart.ForeColor = Color.FromArgb(64, 64, 64);
             stbxAlternativePart.Location = new Point(1065, 260);
             stbxAlternativePart.Name = "stbxAlternativePart";
+            stbxAlternativePart.Padding = new Padding(10, 7, 10, 7);
             stbxAlternativePart.PlaceholderText = "بحث باسم أو باركود ";
             stbxAlternativePart.RightToLeft = RightToLeft.Yes;
-            stbxAlternativePart.Size = new Size(315, 39);
+            stbxAlternativePart.SelectedText = "";
+            stbxAlternativePart.SelectionLength = 0;
+            stbxAlternativePart.SelectionStart = 0;
+            stbxAlternativePart.Size = new Size(315, 47);
             stbxAlternativePart.TabIndex = 27;
-            stbxAlternativePart.Texts = "";
             // 
             // panel3
             // 
@@ -832,11 +867,14 @@
             stbxMiniAmount.ForeColor = Color.FromArgb(64, 64, 64);
             stbxMiniAmount.Location = new Point(36, 117);
             stbxMiniAmount.Name = "stbxMiniAmount";
+            stbxMiniAmount.Padding = new Padding(10, 7, 10, 7);
             stbxMiniAmount.PlaceholderText = "5";
             stbxMiniAmount.RightToLeft = RightToLeft.Yes;
-            stbxMiniAmount.Size = new Size(184, 39);
+            stbxMiniAmount.SelectedText = "";
+            stbxMiniAmount.SelectionLength = 0;
+            stbxMiniAmount.SelectionStart = 0;
+            stbxMiniAmount.Size = new Size(184, 47);
             stbxMiniAmount.TabIndex = 23;
-            stbxMiniAmount.Texts = "";
             // 
             // sabraLabel12
             // 
@@ -861,11 +899,14 @@
             stbxSellPrice.ForeColor = Color.FromArgb(64, 64, 64);
             stbxSellPrice.Location = new Point(540, 117);
             stbxSellPrice.Name = "stbxSellPrice";
+            stbxSellPrice.Padding = new Padding(10, 7, 10, 7);
             stbxSellPrice.PlaceholderText = "بيتحسب تلقائي";
             stbxSellPrice.RightToLeft = RightToLeft.Yes;
-            stbxSellPrice.Size = new Size(262, 39);
+            stbxSellPrice.SelectedText = "";
+            stbxSellPrice.SelectionLength = 0;
+            stbxSellPrice.SelectionStart = 0;
+            stbxSellPrice.Size = new Size(262, 47);
             stbxSellPrice.TabIndex = 21;
-            stbxSellPrice.Texts = "";
             // 
             // sabraLabel11
             // 
@@ -905,11 +946,14 @@
             stbxProfitPercentage.ForeColor = Color.FromArgb(64, 64, 64);
             stbxProfitPercentage.Location = new Point(831, 117);
             stbxProfitPercentage.Name = "stbxProfitPercentage";
+            stbxProfitPercentage.Padding = new Padding(10, 7, 10, 7);
             stbxProfitPercentage.PlaceholderText = "20";
             stbxProfitPercentage.RightToLeft = RightToLeft.Yes;
-            stbxProfitPercentage.Size = new Size(262, 39);
+            stbxProfitPercentage.SelectedText = "";
+            stbxProfitPercentage.SelectionLength = 0;
+            stbxProfitPercentage.SelectionStart = 0;
+            stbxProfitPercentage.Size = new Size(262, 47);
             stbxProfitPercentage.TabIndex = 19;
-            stbxProfitPercentage.Texts = "";
             // 
             // stbxCurrentAmount
             // 
@@ -919,11 +963,14 @@
             stbxCurrentAmount.ForeColor = Color.FromArgb(64, 64, 64);
             stbxCurrentAmount.Location = new Point(259, 117);
             stbxCurrentAmount.Name = "stbxCurrentAmount";
+            stbxCurrentAmount.Padding = new Padding(10, 7, 10, 7);
             stbxCurrentAmount.PlaceholderText = "0";
             stbxCurrentAmount.RightToLeft = RightToLeft.Yes;
-            stbxCurrentAmount.Size = new Size(252, 39);
+            stbxCurrentAmount.SelectedText = "";
+            stbxCurrentAmount.SelectionLength = 0;
+            stbxCurrentAmount.SelectionStart = 0;
+            stbxCurrentAmount.Size = new Size(252, 47);
             stbxCurrentAmount.TabIndex = 19;
-            stbxCurrentAmount.Texts = "";
             // 
             // sabraLabel9
             // 
@@ -948,13 +995,16 @@
             stbxPurchasePrice.ForeColor = Color.FromArgb(64, 64, 64);
             stbxPurchasePrice.Location = new Point(1130, 117);
             stbxPurchasePrice.Name = "stbxPurchasePrice";
+            stbxPurchasePrice.Padding = new Padding(10, 7, 10, 7);
             stbxPurchasePrice.PlaceholderColor = Color.DimGray;
             stbxPurchasePrice.PlaceholderText = "11";
             stbxPurchasePrice.RightToLeft = RightToLeft.Yes;
-            stbxPurchasePrice.Size = new Size(254, 39);
+            stbxPurchasePrice.SelectedText = "";
+            stbxPurchasePrice.SelectionLength = 0;
+            stbxPurchasePrice.SelectionStart = 0;
+            stbxPurchasePrice.Size = new Size(254, 47);
             stbxPurchasePrice.TabIndex = 17;
             stbxPurchasePrice.TextAlign = HorizontalAlignment.Right;
-            stbxPurchasePrice.Texts = "";
             // 
             // panel2
             // 

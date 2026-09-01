@@ -78,6 +78,7 @@
             sabraPanel1.Name = "sabraPanel1";
             sabraPanel1.Size = new Size(1502, 111);
             sabraPanel1.TabIndex = 2;
+            sabraPanel1.Paint += sabraPanel1_Paint;
             // 
             // sbtnPrint
             // 
@@ -341,7 +342,6 @@
             stxbxPartName.Size = new Size(243, 39);
             stxbxPartName.TabIndex = 15;
             stxbxPartName.TabStop = false;
-            stxbxPartName.Texts = "";
             stxbxPartName.TextChanged += stxbxPartName_TextChanged;
             // 
             // dgvInventoryTransactions

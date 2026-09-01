@@ -525,7 +525,6 @@
             stxbxSearch.Size = new Size(284, 39);
             stxbxSearch.TabIndex = 12;
             stxbxSearch.TabStop = false;
-            stxbxSearch.Texts = "";
             stxbxSearch.TextChanged += stxbxSearch_TextChanged;
             // 
             // sabraDataGridView1

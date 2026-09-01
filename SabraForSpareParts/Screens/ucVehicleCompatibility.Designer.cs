@@ -202,7 +202,6 @@
             stxbPartInfo.Size = new Size(312, 39);
             stxbPartInfo.TabIndex = 19;
             stxbPartInfo.TabStop = false;
-            stxbPartInfo.Texts = "";
             // 
             // stxbYear
             // 
@@ -218,7 +217,6 @@
             stxbYear.Size = new Size(144, 39);
             stxbYear.TabIndex = 18;
             stxbYear.TabStop = false;
-            stxbYear.Texts = "";
             stxbYear.TextChanged += stxbYear_TextChanged;
             // 
             // sabraLabel1
@@ -298,7 +296,6 @@
             stxbxModel.Size = new Size(253, 39);
             stxbxModel.TabIndex = 12;
             stxbxModel.TabStop = false;
-            stxbxModel.Texts = "";
             stxbxModel.TextChanged += stxbxModel_TextChanged;
             // 
             // sabraDataGridView1
