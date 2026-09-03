@@ -28,33 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            ucGoodsReceipt1 = new SabraForSpareParts.Screens.ucGoodsReceipt();
+            ucSalaries1 = new SabraForSpareParts.Screens.ucSalaries();
             SuspendLayout();
             // 
-            // ucGoodsReceipt1
+            // ucSalaries1
             // 
-            ucGoodsReceipt1.AutoScroll = true;
-            ucGoodsReceipt1.AutoScrollMinSize = new Size(1502, 1000);
-            ucGoodsReceipt1.BackColor = Color.WhiteSmoke;
-            ucGoodsReceipt1.BorderColor = Color.Transparent;
-            ucGoodsReceipt1.Dock = DockStyle.Fill;
-            ucGoodsReceipt1.Font = new Font("Cairo", 10F);
-            ucGoodsReceipt1.ForeColor = Color.FromArgb(40, 40, 40);
-            ucGoodsReceipt1.Location = new Point(0, 0);
-            ucGoodsReceipt1.Margin = new Padding(0);
-            ucGoodsReceipt1.MinimumSize = new Size(900, 600);
-            ucGoodsReceipt1.Name = "ucGoodsReceipt1";
-            ucGoodsReceipt1.Padding = new Padding(10);
-            ucGoodsReceipt1.RightToLeft = RightToLeft.Yes;
-            ucGoodsReceipt1.Size = new Size(1404, 670);
-            ucGoodsReceipt1.TabIndex = 0;
+            ucSalaries1.AutoScroll = true;
+            ucSalaries1.AutoScrollMinSize = new Size(1502, 1000);
+            ucSalaries1.BackColor = Color.WhiteSmoke;
+            ucSalaries1.BorderColor = Color.Transparent;
+            ucSalaries1.Dock = DockStyle.Fill;
+            ucSalaries1.Font = new Font("Cairo", 10F);
+            ucSalaries1.ForeColor = Color.FromArgb(40, 40, 40);
+            ucSalaries1.Location = new Point(0, 0);
+            ucSalaries1.Margin = new Padding(0);
+            ucSalaries1.MinimumSize = new Size(900, 600);
+            ucSalaries1.Name = "ucSalaries1";
+            ucSalaries1.Padding = new Padding(10);
+            ucSalaries1.RightToLeft = RightToLeft.Yes;
+            ucSalaries1.Size = new Size(1404, 670);
+            ucSalaries1.TabIndex = 0;
             // 
             // test
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1404, 670);
-            Controls.Add(ucGoodsReceipt1);
+            Controls.Add(ucSalaries1);
             Name = "test";
             Text = "test";
             ResumeLayout(false);
@@ -62,6 +62,7 @@
 
         #endregion
 
-        private Screens.ucGoodsReceipt ucGoodsReceipt1;
+        private Screens.InventoryAlerts.ucInventoryAlertRow ucInventoryAlertRow1;
+        private Screens.ucSalaries ucSalaries1;
     }
 }

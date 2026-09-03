@@ -28,6 +28,18 @@
     <Compile Update="Screens\ucAddPart.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Screens\ucCustomers.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucCustomerStatement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucEmployeeSalaryCard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucExpenses.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Screens\ucGoodsReceipt.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -50,6 +62,18 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Screens\ucReturns.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucSalaries.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucSuppliers.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucSupplierStatement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucTreasury.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Screens\ucVehicleCompatibility.cs">

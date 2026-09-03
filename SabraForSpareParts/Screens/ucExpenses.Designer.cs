@@ -1,6 +1,6 @@
 ﻿namespace SabraForSpareParts.Screens
 {
-    partial class ucInvoicesList
+    partial class ucExpenses
     {
         /// <summary> 
         /// Required designer variable.
@@ -33,39 +33,38 @@
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             sabraPanel1 = new SabraPanel();
-            sbtnAddNewInvoice = new SabraButton();
+            sbtnAddNewExpense = new SabraButton();
             sbtnPrint = new SabraButton();
             sbtnExportAsExcel = new SabraButton();
             icnDecreasedParts = new FontAwesome.Sharp.IconPictureBox();
             slblTitleOfTopPanel = new SabraLabel();
-            lblNumberOfInvoices = new SabraLabel();
+            lblNameOfTheMonthAndYear = new SabraLabel();
             spnlDataGridViewOPtions = new SabraPanel();
-            cmbPaymentStatus = new SabraComboBox();
+            cmbClassification = new SabraComboBox();
             sabraLabel4 = new SabraLabel();
             sabraLabel3 = new SabraLabel();
             dtpTo = new SabraDateTimePicker();
             dtpFrom = new SabraDateTimePicker();
             btnSearch = new SabraButton();
             smbxPeriod = new SabraComboBox();
-            stxbxInvoiceNumber = new SabraTextBox();
             pnlUnpaidInvoices = new SabraPanel();
             iconPictureBox4 = new FontAwesome.Sharp.IconPictureBox();
             lblUnpaidInvoicesDisc = new SabraLabel();
-            lblTotalInvoice = new SabraLabel();
+            lblTotalExpenses = new SabraLabel();
             pnlLowStock = new SabraPanel();
             lblLowStockPartsDisc = new SabraLabel();
-            lblTotalSales = new SabraLabel();
+            lblReleaseFees = new SabraLabel();
             iconPictureBox1 = new FontAwesome.Sharp.IconPictureBox();
             pnlNetProfit = new SabraPanel();
             sabraLabel2 = new SabraLabel();
-            lblCollected = new SabraLabel();
+            lblElectricity = new SabraLabel();
             iconPictureBox3 = new FontAwesome.Sharp.IconPictureBox();
             sabraPanel2 = new SabraPanel();
             sabraLabel1 = new SabraLabel();
-            lblOutstandingDebts = new SabraLabel();
+            lblOtherExpenses = new SabraLabel();
             iconPictureBox2 = new FontAwesome.Sharp.IconPictureBox();
             tableLayoutPanel1 = new TableLayoutPanel();
-            dgvInvoicesList = new SabraDataGridView();
+            dgvExpenses = new SabraDataGridView();
             sabraPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).BeginInit();
             spnlDataGridViewOPtions.SuspendLayout();
@@ -78,7 +77,7 @@
             sabraPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)iconPictureBox2).BeginInit();
             tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvInvoicesList).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvExpenses).BeginInit();
             SuspendLayout();
             // 
             // sabraPanel1
@@ -87,12 +86,12 @@
             sabraPanel1.BorderColor = Color.LightGray;
             sabraPanel1.BorderRadius = 15;
             sabraPanel1.BorderSize = 1;
-            sabraPanel1.Controls.Add(sbtnAddNewInvoice);
+            sabraPanel1.Controls.Add(sbtnAddNewExpense);
             sabraPanel1.Controls.Add(sbtnPrint);
             sabraPanel1.Controls.Add(sbtnExportAsExcel);
             sabraPanel1.Controls.Add(icnDecreasedParts);
             sabraPanel1.Controls.Add(slblTitleOfTopPanel);
-            sabraPanel1.Controls.Add(lblNumberOfInvoices);
+            sabraPanel1.Controls.Add(lblNameOfTheMonthAndYear);
             sabraPanel1.Dock = DockStyle.Top;
             sabraPanel1.EnableHover = true;
             sabraPanel1.ForeColor = Color.Black;
@@ -106,32 +105,33 @@
             sabraPanel1.Name = "sabraPanel1";
             sabraPanel1.Size = new Size(1608, 111);
             sabraPanel1.TabIndex = 3;
+            sabraPanel1.Paint += sabraPanel1_Paint;
             // 
-            // sbtnAddNewInvoice
+            // sbtnAddNewExpense
             // 
-            sbtnAddNewInvoice.BackColor = Color.RoyalBlue;
-            sbtnAddNewInvoice.BorderColor = Color.DodgerBlue;
-            sbtnAddNewInvoice.BorderRadius = 20;
-            sbtnAddNewInvoice.BorderSize = 0;
-            sbtnAddNewInvoice.FlatAppearance.BorderSize = 0;
-            sbtnAddNewInvoice.FlatStyle = FlatStyle.Flat;
-            sbtnAddNewInvoice.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            sbtnAddNewInvoice.ForeColor = Color.White;
-            sbtnAddNewInvoice.HoverColor = Color.CornflowerBlue;
-            sbtnAddNewInvoice.IconChar = FontAwesome.Sharp.IconChar.Add;
-            sbtnAddNewInvoice.IconColor = Color.White;
-            sbtnAddNewInvoice.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sbtnAddNewInvoice.IconSize = 30;
-            sbtnAddNewInvoice.ImageAlign = ContentAlignment.MiddleRight;
-            sbtnAddNewInvoice.Location = new Point(47, 20);
-            sbtnAddNewInvoice.Name = "sbtnAddNewInvoice";
-            sbtnAddNewInvoice.NormalColor = Color.RoyalBlue;
-            sbtnAddNewInvoice.Size = new Size(151, 70);
-            sbtnAddNewInvoice.TabIndex = 19;
-            sbtnAddNewInvoice.Text = "فاتورة جديدة";
-            sbtnAddNewInvoice.TextAlign = ContentAlignment.MiddleLeft;
-            sbtnAddNewInvoice.UseVisualStyleBackColor = false;
-            sbtnAddNewInvoice.Click += sbtnAddNewInvoice_Click;
+            sbtnAddNewExpense.BackColor = Color.RoyalBlue;
+            sbtnAddNewExpense.BorderColor = Color.DodgerBlue;
+            sbtnAddNewExpense.BorderRadius = 20;
+            sbtnAddNewExpense.BorderSize = 0;
+            sbtnAddNewExpense.FlatAppearance.BorderSize = 0;
+            sbtnAddNewExpense.FlatStyle = FlatStyle.Flat;
+            sbtnAddNewExpense.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sbtnAddNewExpense.ForeColor = Color.White;
+            sbtnAddNewExpense.HoverColor = Color.CornflowerBlue;
+            sbtnAddNewExpense.IconChar = FontAwesome.Sharp.IconChar.Add;
+            sbtnAddNewExpense.IconColor = Color.White;
+            sbtnAddNewExpense.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sbtnAddNewExpense.IconSize = 30;
+            sbtnAddNewExpense.ImageAlign = ContentAlignment.MiddleRight;
+            sbtnAddNewExpense.Location = new Point(47, 20);
+            sbtnAddNewExpense.Name = "sbtnAddNewExpense";
+            sbtnAddNewExpense.NormalColor = Color.RoyalBlue;
+            sbtnAddNewExpense.Size = new Size(165, 70);
+            sbtnAddNewExpense.TabIndex = 19;
+            sbtnAddNewExpense.Text = "إضافة مصروف";
+            sbtnAddNewExpense.TextAlign = ContentAlignment.MiddleLeft;
+            sbtnAddNewExpense.UseVisualStyleBackColor = false;
+            sbtnAddNewExpense.Click += sbtnAddNewExpense_Click;
             // 
             // sbtnPrint
             // 
@@ -211,29 +211,28 @@
             slblTitleOfTopPanel.BackColor = Color.Transparent;
             slblTitleOfTopPanel.Font = new Font("Cairo", 18F, FontStyle.Bold);
             slblTitleOfTopPanel.ForeColor = Color.FromArgb(40, 40, 40);
-            slblTitleOfTopPanel.Location = new Point(1296, 8);
+            slblTitleOfTopPanel.Location = new Point(1325, 8);
             slblTitleOfTopPanel.Name = "slblTitleOfTopPanel";
             slblTitleOfTopPanel.RightToLeft = RightToLeft.Yes;
-            slblTitleOfTopPanel.Size = new Size(209, 56);
+            slblTitleOfTopPanel.Size = new Size(171, 56);
             slblTitleOfTopPanel.TabIndex = 15;
-            slblTitleOfTopPanel.Text = "قائمة الفواتير";
+            slblTitleOfTopPanel.Text = "المصروفات";
             slblTitleOfTopPanel.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // lblNumberOfInvoices
+            // lblNameOfTheMonthAndYear
             // 
-            lblNumberOfInvoices.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblNumberOfInvoices.AutoSize = true;
-            lblNumberOfInvoices.BackColor = Color.Transparent;
-            lblNumberOfInvoices.Font = new Font("Cairo", 12F);
-            lblNumberOfInvoices.ForeColor = SystemColors.WindowFrame;
-            lblNumberOfInvoices.Location = new Point(1319, 64);
-            lblNumberOfInvoices.Name = "lblNumberOfInvoices";
-            lblNumberOfInvoices.RightToLeft = RightToLeft.Yes;
-            lblNumberOfInvoices.Size = new Size(177, 37);
-            lblNumberOfInvoices.TabIndex = 16;
-            lblNumberOfInvoices.Text = "إجمالي 1084 فاتورة";
-            lblNumberOfInvoices.TextAlign = ContentAlignment.MiddleRight;
-            lblNumberOfInvoices.Click += lblNumberOfInvoices_Click;
+            lblNameOfTheMonthAndYear.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblNameOfTheMonthAndYear.BackColor = Color.Transparent;
+            lblNameOfTheMonthAndYear.Font = new Font("Cairo", 12F);
+            lblNameOfTheMonthAndYear.ForeColor = SystemColors.WindowFrame;
+            lblNameOfTheMonthAndYear.Location = new Point(1227, 64);
+            lblNameOfTheMonthAndYear.Name = "lblNameOfTheMonthAndYear";
+            lblNameOfTheMonthAndYear.RightToLeft = RightToLeft.Yes;
+            lblNameOfTheMonthAndYear.Size = new Size(269, 37);
+            lblNameOfTheMonthAndYear.TabIndex = 16;
+            lblNameOfTheMonthAndYear.Text = "يناير 2025";
+            lblNameOfTheMonthAndYear.TextAlign = ContentAlignment.MiddleRight;
+            lblNameOfTheMonthAndYear.Click += lblNameOfTheMonthAndYear_Click;
             // 
             // spnlDataGridViewOPtions
             // 
@@ -242,14 +241,13 @@
             spnlDataGridViewOPtions.BorderColor = Color.LightGray;
             spnlDataGridViewOPtions.BorderRadius = 15;
             spnlDataGridViewOPtions.BorderSize = 0;
-            spnlDataGridViewOPtions.Controls.Add(cmbPaymentStatus);
+            spnlDataGridViewOPtions.Controls.Add(cmbClassification);
             spnlDataGridViewOPtions.Controls.Add(sabraLabel4);
             spnlDataGridViewOPtions.Controls.Add(sabraLabel3);
             spnlDataGridViewOPtions.Controls.Add(dtpTo);
             spnlDataGridViewOPtions.Controls.Add(dtpFrom);
             spnlDataGridViewOPtions.Controls.Add(btnSearch);
             spnlDataGridViewOPtions.Controls.Add(smbxPeriod);
-            spnlDataGridViewOPtions.Controls.Add(stxbxInvoiceNumber);
             spnlDataGridViewOPtions.EnableHover = true;
             spnlDataGridViewOPtions.ForeColor = Color.Black;
             spnlDataGridViewOPtions.GradientAngle = 90F;
@@ -264,24 +262,24 @@
             spnlDataGridViewOPtions.Size = new Size(1608, 130);
             spnlDataGridViewOPtions.TabIndex = 14;
             // 
-            // cmbPaymentStatus
+            // cmbClassification
             // 
-            cmbPaymentStatus.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            cmbPaymentStatus.BackColor = Color.WhiteSmoke;
-            cmbPaymentStatus.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbPaymentStatus.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbPaymentStatus.FlatStyle = FlatStyle.Flat;
-            cmbPaymentStatus.Font = new Font("Cairo", 10F);
-            cmbPaymentStatus.ForeColor = Color.FromArgb(64, 64, 64);
-            cmbPaymentStatus.FormattingEnabled = true;
-            cmbPaymentStatus.ItemHeight = 30;
-            cmbPaymentStatus.Items.AddRange(new object[] { "كل الحالات", "مدفوع بالكامل", "مدفوع جزئي", "آجل" });
-            cmbPaymentStatus.Location = new Point(173, 41);
-            cmbPaymentStatus.Name = "cmbPaymentStatus";
-            cmbPaymentStatus.RightToLeft = RightToLeft.Yes;
-            cmbPaymentStatus.Size = new Size(202, 36);
-            cmbPaymentStatus.TabIndex = 22;
-            cmbPaymentStatus.SelectedIndexChanged += cmbPaymentStatus_SelectedIndexChanged;
+            cmbClassification.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            cmbClassification.BackColor = Color.WhiteSmoke;
+            cmbClassification.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbClassification.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbClassification.FlatStyle = FlatStyle.Flat;
+            cmbClassification.Font = new Font("Cairo", 10F);
+            cmbClassification.ForeColor = Color.FromArgb(64, 64, 64);
+            cmbClassification.FormattingEnabled = true;
+            cmbClassification.ItemHeight = 30;
+            cmbClassification.Items.AddRange(new object[] { "كل التصنيفات", "الكهرباء", "الماء", "الإيجار", "صيانة" });
+            cmbClassification.Location = new Point(379, 46);
+            cmbClassification.Name = "cmbClassification";
+            cmbClassification.RightToLeft = RightToLeft.Yes;
+            cmbClassification.Size = new Size(202, 36);
+            cmbClassification.TabIndex = 22;
+            cmbClassification.SelectedIndexChanged += cmbClassification_SelectedIndexChanged;
             // 
             // sabraLabel4
             // 
@@ -290,7 +288,7 @@
             sabraLabel4.BackColor = Color.Transparent;
             sabraLabel4.Font = new Font("Cairo Black", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel4.ForeColor = Color.DimGray;
-            sabraLabel4.Location = new Point(1005, 41);
+            sabraLabel4.Location = new Point(1212, 49);
             sabraLabel4.Margin = new Padding(0);
             sabraLabel4.Name = "sabraLabel4";
             sabraLabel4.RightToLeft = RightToLeft.Yes;
@@ -306,7 +304,7 @@
             sabraLabel3.BackColor = Color.Transparent;
             sabraLabel3.Font = new Font("Cairo Black", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel3.ForeColor = Color.DimGray;
-            sabraLabel3.Location = new Point(667, 41);
+            sabraLabel3.Location = new Point(874, 49);
             sabraLabel3.Margin = new Padding(0);
             sabraLabel3.Name = "sabraLabel3";
             sabraLabel3.RightToLeft = RightToLeft.Yes;
@@ -326,7 +324,7 @@
             dtpTo.DateFormat = "dddd، dd MMMM yyyy";
             dtpTo.FocusedBorderColor = Color.FromArgb(0, 120, 212);
             dtpTo.Font = new Font("Cairo", 10F);
-            dtpTo.Location = new Point(389, 37);
+            dtpTo.Location = new Point(596, 45);
             dtpTo.MinimumSize = new Size(180, 45);
             dtpTo.Name = "dtpTo";
             dtpTo.RightToLeft = RightToLeft.Yes;
@@ -349,7 +347,7 @@
             dtpFrom.DateFormat = "dddd، dd MMMM yyyy";
             dtpFrom.FocusedBorderColor = Color.FromArgb(0, 120, 212);
             dtpFrom.Font = new Font("Cairo", 10F);
-            dtpFrom.Location = new Point(727, 37);
+            dtpFrom.Location = new Point(934, 45);
             dtpFrom.MinimumSize = new Size(180, 45);
             dtpFrom.Name = "dtpFrom";
             dtpFrom.RightToLeft = RightToLeft.Yes;
@@ -399,35 +397,13 @@
             smbxPeriod.ForeColor = Color.FromArgb(64, 64, 64);
             smbxPeriod.FormattingEnabled = true;
             smbxPeriod.ItemHeight = 30;
-            smbxPeriod.Items.AddRange(new object[] { "كل الفترات", "اليوم", "هذا الإسبوع", "هذا الشهر " });
-            smbxPeriod.Location = new Point(1050, 41);
+            smbxPeriod.Items.AddRange(new object[] { "هذا الشهر", "الشهر الماضي", "هذا العام" });
+            smbxPeriod.Location = new Point(1314, 46);
             smbxPeriod.Name = "smbxPeriod";
             smbxPeriod.RightToLeft = RightToLeft.Yes;
             smbxPeriod.Size = new Size(278, 36);
             smbxPeriod.TabIndex = 17;
             smbxPeriod.SelectedIndexChanged += smbxPeriod_SelectedIndexChanged;
-            // 
-            // stxbxInvoiceNumber
-            // 
-            stxbxInvoiceNumber.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            stxbxInvoiceNumber.BackColor = Color.WhiteSmoke;
-            stxbxInvoiceNumber.BorderSize = 2;
-            stxbxInvoiceNumber.Font = new Font("Cairo", 10F);
-            stxbxInvoiceNumber.ForeColor = Color.FromArgb(64, 64, 64);
-            stxbxInvoiceNumber.Location = new Point(1345, 38);
-            stxbxInvoiceNumber.Name = "stxbxInvoiceNumber";
-            stxbxInvoiceNumber.Padding = new Padding(10, 7, 10, 7);
-            stxbxInvoiceNumber.PlaceholderText = "رقم فاتروة أو عميل";
-            stxbxInvoiceNumber.Required = true;
-            stxbxInvoiceNumber.RightToLeft = RightToLeft.Yes;
-            stxbxInvoiceNumber.SelectedText = "";
-            stxbxInvoiceNumber.SelectionLength = 0;
-            stxbxInvoiceNumber.SelectionStart = 0;
-            stxbxInvoiceNumber.Size = new Size(243, 47);
-            stxbxInvoiceNumber.TabIndex = 15;
-            stxbxInvoiceNumber.TabStop = false;
-            stxbxInvoiceNumber.Texts = "";
-            stxbxInvoiceNumber.TextChanged += stxbxInvoiceNumber_TextChanged;
             // 
             // pnlUnpaidInvoices
             // 
@@ -437,7 +413,7 @@
             pnlUnpaidInvoices.BorderSize = 0;
             pnlUnpaidInvoices.Controls.Add(iconPictureBox4);
             pnlUnpaidInvoices.Controls.Add(lblUnpaidInvoicesDisc);
-            pnlUnpaidInvoices.Controls.Add(lblTotalInvoice);
+            pnlUnpaidInvoices.Controls.Add(lblTotalExpenses);
             pnlUnpaidInvoices.EnableHover = true;
             pnlUnpaidInvoices.ForeColor = Color.Black;
             pnlUnpaidInvoices.GradientAngle = 90F;
@@ -457,9 +433,9 @@
             iconPictureBox4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             iconPictureBox4.BackColor = Color.Transparent;
             iconPictureBox4.Flip = FontAwesome.Sharp.FlipOrientation.Horizontal;
-            iconPictureBox4.ForeColor = Color.RoyalBlue;
-            iconPictureBox4.IconChar = FontAwesome.Sharp.IconChar.FileInvoiceDollar;
-            iconPictureBox4.IconColor = Color.RoyalBlue;
+            iconPictureBox4.ForeColor = Color.Brown;
+            iconPictureBox4.IconChar = FontAwesome.Sharp.IconChar.MoneyCheckDollar;
+            iconPictureBox4.IconColor = Color.Brown;
             iconPictureBox4.IconFont = FontAwesome.Sharp.IconFont.Auto;
             iconPictureBox4.IconSize = 65;
             iconPictureBox4.Location = new Point(227, 12);
@@ -480,27 +456,27 @@
             lblUnpaidInvoicesDisc.Margin = new Padding(0);
             lblUnpaidInvoicesDisc.Name = "lblUnpaidInvoicesDisc";
             lblUnpaidInvoicesDisc.RightToLeft = RightToLeft.Yes;
-            lblUnpaidInvoicesDisc.Size = new Size(116, 32);
+            lblUnpaidInvoicesDisc.Size = new Size(150, 32);
             lblUnpaidInvoicesDisc.TabIndex = 2;
-            lblUnpaidInvoicesDisc.Text = "إجمالي الفواتير";
+            lblUnpaidInvoicesDisc.Text = "مصروفات الشهر (ج)";
             lblUnpaidInvoicesDisc.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // lblTotalInvoice
+            // lblTotalExpenses
             // 
-            lblTotalInvoice.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblTotalInvoice.BackColor = Color.Transparent;
-            lblTotalInvoice.Font = new Font("Cairo", 12F, FontStyle.Bold);
-            lblTotalInvoice.ForeColor = Color.RoyalBlue;
-            lblTotalInvoice.IsTitle = true;
-            lblTotalInvoice.Location = new Point(5, 14);
-            lblTotalInvoice.Margin = new Padding(0);
-            lblTotalInvoice.Name = "lblTotalInvoice";
-            lblTotalInvoice.RightToLeft = RightToLeft.Yes;
-            lblTotalInvoice.Size = new Size(168, 37);
-            lblTotalInvoice.TabIndex = 2;
-            lblTotalInvoice.Text = "1";
-            lblTotalInvoice.TextAlign = ContentAlignment.MiddleRight;
-            lblTotalInvoice.Click += lblTotalInvoice_Click;
+            lblTotalExpenses.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblTotalExpenses.BackColor = Color.Transparent;
+            lblTotalExpenses.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            lblTotalExpenses.ForeColor = Color.Brown;
+            lblTotalExpenses.IsTitle = true;
+            lblTotalExpenses.Location = new Point(45, 13);
+            lblTotalExpenses.Margin = new Padding(0);
+            lblTotalExpenses.Name = "lblTotalExpenses";
+            lblTotalExpenses.RightToLeft = RightToLeft.Yes;
+            lblTotalExpenses.Size = new Size(168, 37);
+            lblTotalExpenses.TabIndex = 2;
+            lblTotalExpenses.Text = "1";
+            lblTotalExpenses.TextAlign = ContentAlignment.MiddleRight;
+            lblTotalExpenses.Click += lblTotalExpenses_Click;
             // 
             // pnlLowStock
             // 
@@ -509,7 +485,7 @@
             pnlLowStock.BorderRadius = 15;
             pnlLowStock.BorderSize = 0;
             pnlLowStock.Controls.Add(lblLowStockPartsDisc);
-            pnlLowStock.Controls.Add(lblTotalSales);
+            pnlLowStock.Controls.Add(lblReleaseFees);
             pnlLowStock.Controls.Add(iconPictureBox1);
             pnlLowStock.EnableHover = true;
             pnlLowStock.ForeColor = Color.Black;
@@ -532,40 +508,40 @@
             lblLowStockPartsDisc.BackColor = Color.Transparent;
             lblLowStockPartsDisc.Font = new Font("Cairo Black", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblLowStockPartsDisc.ForeColor = Color.DimGray;
-            lblLowStockPartsDisc.Location = new Point(85, 47);
+            lblLowStockPartsDisc.Location = new Point(173, 46);
             lblLowStockPartsDisc.Margin = new Padding(0);
             lblLowStockPartsDisc.Name = "lblLowStockPartsDisc";
             lblLowStockPartsDisc.RightToLeft = RightToLeft.Yes;
-            lblLowStockPartsDisc.Size = new Size(103, 32);
+            lblLowStockPartsDisc.Size = new Size(50, 32);
             lblLowStockPartsDisc.TabIndex = 2;
-            lblLowStockPartsDisc.Text = "مخزون صفر";
+            lblLowStockPartsDisc.Text = "إيجار";
             lblLowStockPartsDisc.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // lblTotalSales
+            // lblReleaseFees
             // 
-            lblTotalSales.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblTotalSales.BackColor = Color.Transparent;
-            lblTotalSales.Font = new Font("Cairo", 12F, FontStyle.Bold);
-            lblTotalSales.ForeColor = Color.Green;
-            lblTotalSales.IsTitle = true;
-            lblTotalSales.Location = new Point(24, 14);
-            lblTotalSales.Margin = new Padding(0);
-            lblTotalSales.Name = "lblTotalSales";
-            lblTotalSales.RightToLeft = RightToLeft.Yes;
-            lblTotalSales.Size = new Size(164, 37);
-            lblTotalSales.TabIndex = 2;
-            lblTotalSales.Text = "22";
-            lblTotalSales.TextAlign = ContentAlignment.MiddleRight;
-            lblTotalSales.Click += lblTotalSales_Click;
+            lblReleaseFees.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblReleaseFees.BackColor = Color.Transparent;
+            lblReleaseFees.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            lblReleaseFees.ForeColor = SystemColors.GrayText;
+            lblReleaseFees.IsTitle = true;
+            lblReleaseFees.Location = new Point(59, 14);
+            lblReleaseFees.Margin = new Padding(0);
+            lblReleaseFees.Name = "lblReleaseFees";
+            lblReleaseFees.RightToLeft = RightToLeft.Yes;
+            lblReleaseFees.Size = new Size(164, 37);
+            lblReleaseFees.TabIndex = 2;
+            lblReleaseFees.Text = "22";
+            lblReleaseFees.TextAlign = ContentAlignment.MiddleRight;
+            lblReleaseFees.Click += lblReleaseFees_Click;
             // 
             // iconPictureBox1
             // 
             iconPictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             iconPictureBox1.BackColor = Color.Transparent;
             iconPictureBox1.Flip = FontAwesome.Sharp.FlipOrientation.Horizontal;
-            iconPictureBox1.ForeColor = Color.Green;
+            iconPictureBox1.ForeColor = SystemColors.GrayText;
             iconPictureBox1.IconChar = FontAwesome.Sharp.IconChar.MoneyBills;
-            iconPictureBox1.IconColor = Color.Green;
+            iconPictureBox1.IconColor = SystemColors.GrayText;
             iconPictureBox1.IconFont = FontAwesome.Sharp.IconFont.Auto;
             iconPictureBox1.IconSize = 60;
             iconPictureBox1.Location = new Point(237, 7);
@@ -582,7 +558,7 @@
             pnlNetProfit.BorderRadius = 15;
             pnlNetProfit.BorderSize = 0;
             pnlNetProfit.Controls.Add(sabraLabel2);
-            pnlNetProfit.Controls.Add(lblCollected);
+            pnlNetProfit.Controls.Add(lblElectricity);
             pnlNetProfit.Controls.Add(iconPictureBox3);
             pnlNetProfit.EnableHover = true;
             pnlNetProfit.ForeColor = Color.Black;
@@ -605,40 +581,40 @@
             sabraLabel2.BackColor = Color.Transparent;
             sabraLabel2.Font = new Font("Cairo Black", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel2.ForeColor = Color.DimGray;
-            sabraLabel2.Location = new Point(97, 47);
+            sabraLabel2.Location = new Point(153, 46);
             sabraLabel2.Margin = new Padding(0);
             sabraLabel2.Name = "sabraLabel2";
             sabraLabel2.RightToLeft = RightToLeft.Yes;
-            sabraLabel2.Size = new Size(98, 32);
+            sabraLabel2.Size = new Size(67, 32);
             sabraLabel2.TabIndex = 5;
-            sabraLabel2.Text = "المحصل(ج)";
+            sabraLabel2.Text = "كهرباء";
             sabraLabel2.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // lblCollected
+            // lblElectricity
             // 
-            lblCollected.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblCollected.BackColor = Color.Transparent;
-            lblCollected.Font = new Font("Cairo", 12F, FontStyle.Bold);
-            lblCollected.ForeColor = Color.Green;
-            lblCollected.IsTitle = true;
-            lblCollected.Location = new Point(38, 14);
-            lblCollected.Margin = new Padding(0);
-            lblCollected.Name = "lblCollected";
-            lblCollected.RightToLeft = RightToLeft.Yes;
-            lblCollected.Size = new Size(157, 37);
-            lblCollected.TabIndex = 4;
-            lblCollected.Text = "22";
-            lblCollected.TextAlign = ContentAlignment.MiddleRight;
-            lblCollected.Click += lblCollected_Click;
+            lblElectricity.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblElectricity.BackColor = Color.Transparent;
+            lblElectricity.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            lblElectricity.ForeColor = Color.DimGray;
+            lblElectricity.IsTitle = true;
+            lblElectricity.Location = new Point(63, 14);
+            lblElectricity.Margin = new Padding(0);
+            lblElectricity.Name = "lblElectricity";
+            lblElectricity.RightToLeft = RightToLeft.Yes;
+            lblElectricity.Size = new Size(157, 37);
+            lblElectricity.TabIndex = 4;
+            lblElectricity.Text = "22";
+            lblElectricity.TextAlign = ContentAlignment.MiddleRight;
+            lblElectricity.Click += lblElectricity_Click;
             // 
             // iconPictureBox3
             // 
             iconPictureBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             iconPictureBox3.BackColor = Color.Transparent;
             iconPictureBox3.Flip = FontAwesome.Sharp.FlipOrientation.Horizontal;
-            iconPictureBox3.ForeColor = Color.Green;
+            iconPictureBox3.ForeColor = Color.SlateGray;
             iconPictureBox3.IconChar = FontAwesome.Sharp.IconChar.MoneyBill1;
-            iconPictureBox3.IconColor = Color.Green;
+            iconPictureBox3.IconColor = Color.SlateGray;
             iconPictureBox3.IconFont = FontAwesome.Sharp.IconFont.Auto;
             iconPictureBox3.IconSize = 60;
             iconPictureBox3.Location = new Point(240, 7);
@@ -655,7 +631,7 @@
             sabraPanel2.BorderRadius = 15;
             sabraPanel2.BorderSize = 0;
             sabraPanel2.Controls.Add(sabraLabel1);
-            sabraPanel2.Controls.Add(lblOutstandingDebts);
+            sabraPanel2.Controls.Add(lblOtherExpenses);
             sabraPanel2.Controls.Add(iconPictureBox2);
             sabraPanel2.EnableHover = true;
             sabraPanel2.ForeColor = Color.Black;
@@ -678,31 +654,31 @@
             sabraLabel1.BackColor = Color.Transparent;
             sabraLabel1.Font = new Font("Cairo Black", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel1.ForeColor = Color.DimGray;
-            sabraLabel1.Location = new Point(83, 47);
+            sabraLabel1.Location = new Point(171, 46);
             sabraLabel1.Margin = new Padding(0);
             sabraLabel1.Name = "sabraLabel1";
             sabraLabel1.RightToLeft = RightToLeft.Yes;
-            sabraLabel1.Size = new Size(103, 32);
+            sabraLabel1.Size = new Size(54, 32);
             sabraLabel1.TabIndex = 2;
-            sabraLabel1.Text = "مخزون صفر";
+            sabraLabel1.Text = "آخرى";
             sabraLabel1.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // lblOutstandingDebts
+            // lblOtherExpenses
             // 
-            lblOutstandingDebts.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblOutstandingDebts.BackColor = Color.Transparent;
-            lblOutstandingDebts.Font = new Font("Cairo", 12F, FontStyle.Bold);
-            lblOutstandingDebts.ForeColor = Color.DarkRed;
-            lblOutstandingDebts.IsTitle = true;
-            lblOutstandingDebts.Location = new Point(44, 14);
-            lblOutstandingDebts.Margin = new Padding(0);
-            lblOutstandingDebts.Name = "lblOutstandingDebts";
-            lblOutstandingDebts.RightToLeft = RightToLeft.Yes;
-            lblOutstandingDebts.Size = new Size(142, 37);
-            lblOutstandingDebts.TabIndex = 2;
-            lblOutstandingDebts.Text = "22";
-            lblOutstandingDebts.TextAlign = ContentAlignment.MiddleRight;
-            lblOutstandingDebts.Click += lblOutstandingDebts_Click;
+            lblOtherExpenses.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblOtherExpenses.BackColor = Color.Transparent;
+            lblOtherExpenses.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            lblOtherExpenses.ForeColor = Color.DarkRed;
+            lblOtherExpenses.IsTitle = true;
+            lblOtherExpenses.Location = new Point(83, 13);
+            lblOtherExpenses.Margin = new Padding(0);
+            lblOtherExpenses.Name = "lblOtherExpenses";
+            lblOtherExpenses.RightToLeft = RightToLeft.Yes;
+            lblOtherExpenses.Size = new Size(142, 37);
+            lblOtherExpenses.TabIndex = 2;
+            lblOtherExpenses.Text = "22";
+            lblOtherExpenses.TextAlign = ContentAlignment.MiddleRight;
+            lblOtherExpenses.Click += lblOtherExpenses_Click;
             // 
             // iconPictureBox2
             // 
@@ -710,7 +686,7 @@
             iconPictureBox2.BackColor = Color.Transparent;
             iconPictureBox2.Flip = FontAwesome.Sharp.FlipOrientation.Horizontal;
             iconPictureBox2.ForeColor = Color.Brown;
-            iconPictureBox2.IconChar = FontAwesome.Sharp.IconChar.MoneyCheckDollar;
+            iconPictureBox2.IconChar = FontAwesome.Sharp.IconChar.MoneyBillWheat;
             iconPictureBox2.IconColor = Color.Brown;
             iconPictureBox2.IconFont = FontAwesome.Sharp.IconFont.Auto;
             iconPictureBox2.IconSize = 60;
@@ -743,25 +719,25 @@
             tableLayoutPanel1.Size = new Size(1608, 128);
             tableLayoutPanel1.TabIndex = 3;
             // 
-            // dgvInvoicesList
+            // dgvExpenses
             // 
-            dgvInvoicesList.AllowUserToAddRows = false;
-            dgvInvoicesList.AllowUserToDeleteRows = false;
-            dgvInvoicesList.AllowUserToResizeRows = false;
+            dgvExpenses.AllowUserToAddRows = false;
+            dgvExpenses.AllowUserToDeleteRows = false;
+            dgvExpenses.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 250, 252);
             dataGridViewCellStyle1.ForeColor = Color.FromArgb(51, 65, 85);
             dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(30, 58, 138);
             dataGridViewCellStyle1.SelectionForeColor = Color.White;
-            dgvInvoicesList.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            dgvInvoicesList.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dgvInvoicesList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvInvoicesList.BackgroundColor = Color.White;
-            dgvInvoicesList.BorderStyle = BorderStyle.None;
-            dgvInvoicesList.ButtonBackColor = Color.White;
-            dgvInvoicesList.ButtonForeColor = Color.FromArgb(51, 65, 85);
-            dgvInvoicesList.ButtonHoverColor = Color.FromArgb(238, 242, 255);
-            dgvInvoicesList.CellBorderStyle = DataGridViewCellBorderStyle.None;
-            dgvInvoicesList.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dgvExpenses.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dgvExpenses.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dgvExpenses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvExpenses.BackgroundColor = Color.White;
+            dgvExpenses.BorderStyle = BorderStyle.None;
+            dgvExpenses.ButtonBackColor = Color.White;
+            dgvExpenses.ButtonForeColor = Color.FromArgb(51, 65, 85);
+            dgvExpenses.ButtonHoverColor = Color.FromArgb(238, 242, 255);
+            dgvExpenses.CellBorderStyle = DataGridViewCellBorderStyle.None;
+            dgvExpenses.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle2.BackColor = Color.FromArgb(248, 250, 252);
             dataGridViewCellStyle2.Font = new Font("Cairo", 10F, FontStyle.Bold);
@@ -770,8 +746,8 @@
             dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(248, 250, 252);
             dataGridViewCellStyle2.SelectionForeColor = Color.FromArgb(30, 41, 59);
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvInvoicesList.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            dgvInvoicesList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvExpenses.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dgvExpenses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle3.BackColor = Color.White;
             dataGridViewCellStyle3.Font = new Font("Cairo", 10F);
@@ -780,26 +756,26 @@
             dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(30, 58, 138);
             dataGridViewCellStyle3.SelectionForeColor = Color.White;
             dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
-            dgvInvoicesList.DefaultCellStyle = dataGridViewCellStyle3;
-            dgvInvoicesList.EditableCellBackColor = Color.White;
-            dgvInvoicesList.EditableCellBorderColor = Color.FromArgb(203, 213, 225);
-            dgvInvoicesList.EditMode = DataGridViewEditMode.EditOnEnter;
-            dgvInvoicesList.EnableHeadersVisualStyles = false;
-            dgvInvoicesList.Font = new Font("Cairo", 10F);
-            dgvInvoicesList.GridColor = Color.FromArgb(226, 232, 240);
-            dgvInvoicesList.GridLineCustomColor = Color.FromArgb(226, 232, 240);
-            dgvInvoicesList.HeaderBackColor = Color.FromArgb(248, 250, 252);
-            dgvInvoicesList.HeaderForeColor = Color.FromArgb(30, 41, 59);
-            dgvInvoicesList.HeaderHeight = 4;
-            dgvInvoicesList.HoverBackColor = Color.FromArgb(241, 245, 249);
-            dgvInvoicesList.Location = new Point(10, 424);
-            dgvInvoicesList.MultiSelect = false;
-            dgvInvoicesList.Name = "dgvInvoicesList";
-            dgvInvoicesList.ReadOnly = true;
-            dgvInvoicesList.RightToLeft = RightToLeft.Yes;
-            dgvInvoicesList.RowAlternateBackColor = Color.FromArgb(248, 250, 252);
-            dgvInvoicesList.RowBackColor = Color.White;
-            dgvInvoicesList.RowForeColor = Color.FromArgb(51, 65, 85);
+            dgvExpenses.DefaultCellStyle = dataGridViewCellStyle3;
+            dgvExpenses.EditableCellBackColor = Color.White;
+            dgvExpenses.EditableCellBorderColor = Color.FromArgb(203, 213, 225);
+            dgvExpenses.EditMode = DataGridViewEditMode.EditOnEnter;
+            dgvExpenses.EnableHeadersVisualStyles = false;
+            dgvExpenses.Font = new Font("Cairo", 10F);
+            dgvExpenses.GridColor = Color.FromArgb(226, 232, 240);
+            dgvExpenses.GridLineCustomColor = Color.FromArgb(226, 232, 240);
+            dgvExpenses.HeaderBackColor = Color.FromArgb(248, 250, 252);
+            dgvExpenses.HeaderForeColor = Color.FromArgb(30, 41, 59);
+            dgvExpenses.HeaderHeight = 4;
+            dgvExpenses.HoverBackColor = Color.FromArgb(241, 245, 249);
+            dgvExpenses.Location = new Point(10, 424);
+            dgvExpenses.MultiSelect = false;
+            dgvExpenses.Name = "dgvExpenses";
+            dgvExpenses.ReadOnly = true;
+            dgvExpenses.RightToLeft = RightToLeft.Yes;
+            dgvExpenses.RowAlternateBackColor = Color.FromArgb(248, 250, 252);
+            dgvExpenses.RowBackColor = Color.White;
+            dgvExpenses.RowForeColor = Color.FromArgb(51, 65, 85);
             dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = SystemColors.Control;
             dataGridViewCellStyle4.Font = new Font("Cairo", 10F);
@@ -807,26 +783,26 @@
             dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(30, 58, 138);
             dataGridViewCellStyle4.SelectionForeColor = Color.White;
             dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-            dgvInvoicesList.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            dgvInvoicesList.RowHeadersVisible = false;
-            dgvInvoicesList.RowHeadersWidth = 51;
-            dgvInvoicesList.RowTemplate.Height = 42;
-            dgvInvoicesList.SelectionBackColor = Color.FromArgb(30, 58, 138);
-            dgvInvoicesList.SelectionForeColor = Color.White;
-            dgvInvoicesList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvInvoicesList.Size = new Size(1608, 603);
-            dgvInvoicesList.TabIndex = 15;
-            dgvInvoicesList.CellContentClick += dgvInvoicesList_CellContentClick;
+            dgvExpenses.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dgvExpenses.RowHeadersVisible = false;
+            dgvExpenses.RowHeadersWidth = 51;
+            dgvExpenses.RowTemplate.Height = 42;
+            dgvExpenses.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            dgvExpenses.SelectionForeColor = Color.White;
+            dgvExpenses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvExpenses.Size = new Size(1608, 603);
+            dgvExpenses.TabIndex = 15;
+            dgvExpenses.CellContentClick += dgvExpenses_CellContentClick;
             // 
-            // ucInvoicesList
+            // ucExpenses
             // 
             AutoScaleDimensions = new SizeF(9F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(dgvInvoicesList);
+            Controls.Add(dgvExpenses);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(spnlDataGridViewOPtions);
             Controls.Add(sabraPanel1);
-            Name = "ucInvoicesList";
+            Name = "ucExpenses";
             Size = new Size(1628, 1045);
             sabraPanel1.ResumeLayout(false);
             sabraPanel1.PerformLayout();
@@ -846,7 +822,7 @@
             sabraPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)iconPictureBox2).EndInit();
             tableLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvInvoicesList).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvExpenses).EndInit();
             ResumeLayout(false);
         }
 
@@ -857,34 +833,33 @@
         private SabraButton sbtnExportAsExcel;
         private FontAwesome.Sharp.IconPictureBox icnDecreasedParts;
         private SabraLabel slblTitleOfTopPanel;
-        private SabraLabel lblNumberOfInvoices;
-        private SabraButton sbtnAddNewInvoice;
+        private SabraLabel lblNameOfTheMonthAndYear;
+        private SabraButton sbtnAddNewExpense;
         private SabraPanel spnlDataGridViewOPtions;
         private SabraDateTimePicker dtpFrom;
         private SabraButton btnSearch;
         private SabraComboBox smbxPeriod;
-        private SabraTextBox stxbxInvoiceNumber;
         private SabraPanel pnlUnpaidInvoices;
-        private SabraLabel lblTotalInvoice;
+        private SabraLabel lblTotalExpenses;
         private SabraPanel pnlLowStock;
         private SabraLabel lblLowStockPartsDisc;
-        private SabraLabel lblTotalSales;
+        private SabraLabel lblReleaseFees;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox1;
         private SabraPanel pnlNetProfit;
         private SabraPanel sabraPanel2;
         private SabraLabel sabraLabel1;
-        private SabraLabel lblOutstandingDebts;
+        private SabraLabel lblOtherExpenses;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox2;
         private SabraLabel lblUnpaidInvoicesDisc;
         private TableLayoutPanel tableLayoutPanel1;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox4;
         private SabraLabel sabraLabel2;
-        private SabraLabel lblCollected;
+        private SabraLabel lblElectricity;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox3;
         private SabraDateTimePicker dtpTo;
-        private SabraComboBox cmbPaymentStatus;
+        private SabraComboBox cmbClassification;
         private SabraLabel sabraLabel4;
         private SabraLabel sabraLabel3;
-        private SabraDataGridView dgvInvoicesList;
+        private SabraDataGridView dgvExpenses;
     }
 }
