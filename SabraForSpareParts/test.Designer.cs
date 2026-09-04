@@ -30,33 +30,33 @@ namespace SabraForSpareParts
         /// </summary>
         private void InitializeComponent()
         {
-            ucUsers1 = new SabraForSpareParts.Screens.ucUsers();
+            ucActivityLog1 = new ucActivityLog();
             SuspendLayout();
             // 
-            // ucUsers1
+            // ucActivityLog1
             // 
-            ucUsers1.AutoScroll = true;
-            ucUsers1.AutoScrollMinSize = new Size(1502, 1000);
-            ucUsers1.BackColor = Color.WhiteSmoke;
-            ucUsers1.BorderColor = Color.Transparent;
-            ucUsers1.Dock = DockStyle.Fill;
-            ucUsers1.Font = new Font("Cairo", 10F);
-            ucUsers1.ForeColor = Color.FromArgb(40, 40, 40);
-            ucUsers1.Location = new Point(0, 0);
-            ucUsers1.Margin = new Padding(0);
-            ucUsers1.MinimumSize = new Size(900, 600);
-            ucUsers1.Name = "ucUsers1";
-            ucUsers1.Padding = new Padding(10);
-            ucUsers1.RightToLeft = RightToLeft.Yes;
-            ucUsers1.Size = new Size(1404, 670);
-            ucUsers1.TabIndex = 0;
+            ucActivityLog1.AutoScroll = true;
+            ucActivityLog1.AutoScrollMinSize = new Size(1502, 1000);
+            ucActivityLog1.BackColor = Color.White;
+            ucActivityLog1.BorderColor = Color.Transparent;
+            ucActivityLog1.Dock = DockStyle.Fill;
+            ucActivityLog1.Font = new Font("Cairo", 10F);
+            ucActivityLog1.ForeColor = Color.FromArgb(40, 40, 40);
+            ucActivityLog1.Location = new Point(0, 0);
+            ucActivityLog1.Margin = new Padding(0);
+            ucActivityLog1.MinimumSize = new Size(900, 600);
+            ucActivityLog1.Name = "ucActivityLog1";
+            ucActivityLog1.Padding = new Padding(10);
+            ucActivityLog1.RightToLeft = RightToLeft.Yes;
+            ucActivityLog1.Size = new Size(1404, 670);
+            ucActivityLog1.TabIndex = 0;
             // 
             // test
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1404, 670);
-            Controls.Add(ucUsers1);
+            Controls.Add(ucActivityLog1);
             Name = "test";
             Text = "test";
             ResumeLayout(false);
@@ -64,7 +64,6 @@ namespace SabraForSpareParts
 
         #endregion
 
-        private Screens.InventoryAlerts.ucInventoryAlertRow ucInventoryAlertRow1;
-        private Screens.ucUsers ucUsers1;
+        private ucActivityLog ucActivityLog1;
     }
 }

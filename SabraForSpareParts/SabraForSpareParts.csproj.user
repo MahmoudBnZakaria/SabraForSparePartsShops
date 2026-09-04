@@ -25,6 +25,9 @@
     <Compile Update="Screens\InventoryAlerts\ucInventoryAlerts.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Screens\ucActivityLog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Screens\ucAddPart.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -79,6 +82,12 @@
     <Compile Update="Screens\ucSalaries.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Screens\ucBackup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\ucSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Screens\ucSuppliers.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -106,10 +115,10 @@
     <Compile Update="ucPlaceHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="ucTopBar.cs">
+    <Compile Update="Screens\ucUsers.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Screens\ucUsers.cs">
+    <Compile Update="ucTopBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>
