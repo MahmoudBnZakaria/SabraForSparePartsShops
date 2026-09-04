@@ -36,15 +36,14 @@
             // 
             // lblCustomerName
             // 
+            lblCustomerName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblCustomerName.AutoSize = true;
             lblCustomerName.BackColor = Color.Transparent;
-            lblCustomerName.BorderColor = Color.DodgerBlue;
-            lblCustomerName.BorderRadius = 8;
-            lblCustomerName.BorderSize = 0;
             lblCustomerName.Font = new Font("Cairo", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblCustomerName.ForeColor = Color.FromArgb(71, 85, 105);
             lblCustomerName.Location = new Point(153, 8);
             lblCustomerName.Name = "lblCustomerName";
+            lblCustomerName.RightToLeft = RightToLeft.Yes;
             lblCustomerName.Size = new Size(75, 29);
             lblCustomerName.TabIndex = 0;
             lblCustomerName.Text = "ورشة النيل";
@@ -54,13 +53,11 @@
             // 
             lblAmount.AutoSize = true;
             lblAmount.BackColor = Color.Transparent;
-            lblAmount.BorderColor = Color.DodgerBlue;
-            lblAmount.BorderRadius = 8;
-            lblAmount.BorderSize = 0;
             lblAmount.Font = new Font("Cairo", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblAmount.ForeColor = Color.FromArgb(15, 23, 42);
             lblAmount.Location = new Point(76, 7);
             lblAmount.Name = "lblAmount";
+            lblAmount.RightToLeft = RightToLeft.Yes;
             lblAmount.Size = new Size(61, 29);
             lblAmount.TabIndex = 1;
             lblAmount.Text = "3,200 ج";
@@ -68,14 +65,15 @@
             // 
             // lblInvoiceID
             // 
+            lblInvoiceID.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblInvoiceID.BackColor = Color.FromArgb(239, 246, 255);
             lblInvoiceID.BorderColor = Color.Transparent;
             lblInvoiceID.BorderRadius = 14;
-            lblInvoiceID.BorderSize = 0;
             lblInvoiceID.Font = new Font("Cairo", 8.5F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblInvoiceID.ForeColor = Color.FromArgb(37, 99, 235);
             lblInvoiceID.Location = new Point(244, 9);
             lblInvoiceID.Name = "lblInvoiceID";
+            lblInvoiceID.RightToLeft = RightToLeft.Yes;
             lblInvoiceID.Size = new Size(55, 28);
             lblInvoiceID.TabIndex = 2;
             lblInvoiceID.Text = "1084";
@@ -86,11 +84,11 @@
             lblStatus.BackColor = Color.FromArgb(236, 253, 245);
             lblStatus.BorderColor = Color.Transparent;
             lblStatus.BorderRadius = 14;
-            lblStatus.BorderSize = 0;
             lblStatus.Font = new Font("Cairo", 8.5F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblStatus.ForeColor = Color.FromArgb(5, 150, 105);
             lblStatus.Location = new Point(10, 8);
             lblStatus.Name = "lblStatus";
+            lblStatus.RightToLeft = RightToLeft.Yes;
             lblStatus.Size = new Size(50, 28);
             lblStatus.TabIndex = 3;
             lblStatus.Text = "مسدد";

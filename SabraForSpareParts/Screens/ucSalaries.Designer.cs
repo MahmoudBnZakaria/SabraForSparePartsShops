@@ -204,7 +204,7 @@
             // 
             lblTotalSalaries.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblTotalSalaries.BackColor = Color.Transparent;
-            lblTotalSalaries.Font = new Font("Cairo", 15F, FontStyle.Bold);
+            lblTotalSalaries.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblTotalSalaries.ForeColor = Color.Brown;
             lblTotalSalaries.IsTitle = true;
             lblTotalSalaries.Location = new Point(37, 4);
@@ -223,13 +223,13 @@
             lblUnpaidInvoicesDisc.BackColor = Color.Transparent;
             lblUnpaidInvoicesDisc.Font = new Font("Cairo ExtraBold", 13F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblUnpaidInvoicesDisc.ForeColor = Color.DimGray;
-            lblUnpaidInvoicesDisc.Location = new Point(94, 44);
+            lblUnpaidInvoicesDisc.Location = new Point(119, 41);
             lblUnpaidInvoicesDisc.Margin = new Padding(0);
             lblUnpaidInvoicesDisc.Name = "lblUnpaidInvoicesDisc";
             lblUnpaidInvoicesDisc.RightToLeft = RightToLeft.Yes;
-            lblUnpaidInvoicesDisc.Size = new Size(229, 42);
+            lblUnpaidInvoicesDisc.Size = new Size(195, 42);
             lblUnpaidInvoicesDisc.TabIndex = 2;
-            lblUnpaidInvoicesDisc.Text = "إجمالي المشتريات (ج)";
+            lblUnpaidInvoicesDisc.Text = "إجمالي الرواتب (ج)";
             lblUnpaidInvoicesDisc.TextAlign = ContentAlignment.MiddleRight;
             // 
             // sabraPanel2
@@ -258,7 +258,7 @@
             // 
             lblNumberOfEmployees.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblNumberOfEmployees.BackColor = Color.Transparent;
-            lblNumberOfEmployees.Font = new Font("Cairo", 14F, FontStyle.Bold);
+            lblNumberOfEmployees.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblNumberOfEmployees.ForeColor = Color.DimGray;
             lblNumberOfEmployees.IsTitle = true;
             lblNumberOfEmployees.Location = new Point(51, 5);
@@ -311,7 +311,7 @@
             // 
             lblTotalAdvances.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblTotalAdvances.BackColor = Color.Transparent;
-            lblTotalAdvances.Font = new Font("Cairo", 14F, FontStyle.Bold);
+            lblTotalAdvances.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblTotalAdvances.ForeColor = Color.DarkGoldenrod;
             lblTotalAdvances.IsTitle = true;
             lblTotalAdvances.Location = new Point(44, 5);
@@ -381,7 +381,7 @@
             // 
             lblNetPaid.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblNetPaid.BackColor = Color.Transparent;
-            lblNetPaid.Font = new Font("Cairo ExtraBold", 13.7999992F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblNetPaid.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblNetPaid.ForeColor = Color.Red;
             lblNetPaid.IsTitle = true;
             lblNetPaid.Location = new Point(15, 5);

@@ -128,8 +128,12 @@
             sabraButton2.Font = new Font("Cairo", 10F, FontStyle.Bold);
             sabraButton2.ForeColor = Color.White;
             sabraButton2.HoverColor = Color.CornflowerBlue;
+            sabraButton2.IconChar = FontAwesome.Sharp.IconChar.None;
+            sabraButton2.IconColor = Color.Black;
+            sabraButton2.IconFont = FontAwesome.Sharp.IconFont.Auto;
             sabraButton2.Location = new Point(219, 73);
             sabraButton2.Name = "sabraButton2";
+            sabraButton2.NormalColor = Color.RoyalBlue;
             sabraButton2.Size = new Size(8, 8);
             sabraButton2.TabIndex = 4;
             sabraButton2.Text = "sabraButton2";
@@ -146,8 +150,12 @@
             sbtnRefresh.Font = new Font("Cairo", 10F, FontStyle.Bold);
             sbtnRefresh.ForeColor = Color.White;
             sbtnRefresh.HoverColor = Color.CornflowerBlue;
+            sbtnRefresh.IconChar = FontAwesome.Sharp.IconChar.None;
+            sbtnRefresh.IconColor = Color.Black;
+            sbtnRefresh.IconFont = FontAwesome.Sharp.IconFont.Auto;
             sbtnRefresh.Location = new Point(31, 26);
             sbtnRefresh.Name = "sbtnRefresh";
+            sbtnRefresh.NormalColor = Color.RoyalBlue;
             sbtnRefresh.Size = new Size(121, 41);
             sbtnRefresh.TabIndex = 3;
             sbtnRefresh.Text = "تحديث";
@@ -158,14 +166,12 @@
             lblLastRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblLastRefresh.AutoSize = true;
             lblLastRefresh.BackColor = Color.Transparent;
-            lblLastRefresh.BorderColor = Color.DodgerBlue;
-            lblLastRefresh.BorderRadius = 8;
-            lblLastRefresh.BorderSize = 0;
             lblLastRefresh.Font = new Font("Cairo", 10F);
             lblLastRefresh.ForeColor = Color.DimGray;
             lblLastRefresh.Location = new Point(1161, 58);
             lblLastRefresh.Margin = new Padding(0);
             lblLastRefresh.Name = "lblLastRefresh";
+            lblLastRefresh.RightToLeft = RightToLeft.Yes;
             lblLastRefresh.Size = new Size(152, 32);
             lblLastRefresh.TabIndex = 2;
             lblLastRefresh.Text = "آخر تحديث 11:23 ص";
@@ -177,13 +183,12 @@
             sabraLabel1.AutoSize = true;
             sabraLabel1.BackColor = Color.Transparent;
             sabraLabel1.BorderColor = Color.Firebrick;
-            sabraLabel1.BorderRadius = 8;
-            sabraLabel1.BorderSize = 0;
             sabraLabel1.Font = new Font("Cairo", 10F);
             sabraLabel1.ForeColor = Color.DimGray;
             sabraLabel1.Location = new Point(1326, 58);
             sabraLabel1.Margin = new Padding(0);
             sabraLabel1.Name = "sabraLabel1";
+            sabraLabel1.RightToLeft = RightToLeft.Yes;
             sabraLabel1.Size = new Size(161, 32);
             sabraLabel1.TabIndex = 1;
             sabraLabel1.Text = "الأربعاء 15 يناير 2025";
@@ -195,13 +200,12 @@
             slblTitleOfTopPanel.AutoSize = true;
             slblTitleOfTopPanel.BackColor = Color.Transparent;
             slblTitleOfTopPanel.BorderColor = Color.Black;
-            slblTitleOfTopPanel.BorderRadius = 8;
-            slblTitleOfTopPanel.BorderSize = 0;
             slblTitleOfTopPanel.Font = new Font("Cairo", 10F, FontStyle.Bold);
             slblTitleOfTopPanel.ForeColor = Color.Black;
             slblTitleOfTopPanel.Location = new Point(1380, 26);
             slblTitleOfTopPanel.Margin = new Padding(0);
             slblTitleOfTopPanel.Name = "slblTitleOfTopPanel";
+            slblTitleOfTopPanel.RightToLeft = RightToLeft.Yes;
             slblTitleOfTopPanel.Size = new Size(107, 32);
             slblTitleOfTopPanel.TabIndex = 0;
             slblTitleOfTopPanel.Text = "لوحة التحكم";
@@ -234,14 +238,12 @@
             // 
             lblSalesDisc.AutoSize = true;
             lblSalesDisc.BackColor = Color.Transparent;
-            lblSalesDisc.BorderColor = Color.DodgerBlue;
-            lblSalesDisc.BorderRadius = 8;
-            lblSalesDisc.BorderSize = 0;
             lblSalesDisc.Font = new Font("Cairo", 10F);
             lblSalesDisc.ForeColor = Color.DimGray;
             lblSalesDisc.Location = new Point(87, 53);
             lblSalesDisc.Margin = new Padding(0);
             lblSalesDisc.Name = "lblSalesDisc";
+            lblSalesDisc.RightToLeft = RightToLeft.Yes;
             lblSalesDisc.Size = new Size(143, 32);
             lblSalesDisc.TabIndex = 2;
             lblSalesDisc.Text = "مبيعات اليوم(جنية)";
@@ -251,15 +253,13 @@
             // 
             lblSales.AutoSize = true;
             lblSales.BackColor = Color.Transparent;
-            lblSales.BorderColor = Color.DodgerBlue;
-            lblSales.BorderRadius = 8;
-            lblSales.BorderSize = 0;
             lblSales.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblSales.ForeColor = Color.Black;
             lblSales.IsTitle = true;
             lblSales.Location = new Point(122, 16);
             lblSales.Margin = new Padding(0);
             lblSales.Name = "lblSales";
+            lblSales.RightToLeft = RightToLeft.Yes;
             lblSales.Size = new Size(72, 37);
             lblSales.TabIndex = 2;
             lblSales.Text = "20000";
@@ -307,14 +307,12 @@
             // 
             sabraLabel2.AutoSize = true;
             sabraLabel2.BackColor = Color.Transparent;
-            sabraLabel2.BorderColor = Color.DodgerBlue;
-            sabraLabel2.BorderRadius = 8;
-            sabraLabel2.BorderSize = 0;
             sabraLabel2.Font = new Font("Cairo", 10F);
             sabraLabel2.ForeColor = Color.DimGray;
             sabraLabel2.Location = new Point(92, 53);
             sabraLabel2.Margin = new Padding(0);
             sabraLabel2.Name = "sabraLabel2";
+            sabraLabel2.RightToLeft = RightToLeft.Yes;
             sabraLabel2.Size = new Size(117, 32);
             sabraLabel2.TabIndex = 2;
             sabraLabel2.Text = "ربح اليوم (جنية)";
@@ -324,15 +322,13 @@
             // 
             lblNetProfit.AutoSize = true;
             lblNetProfit.BackColor = Color.Transparent;
-            lblNetProfit.BorderColor = Color.DodgerBlue;
-            lblNetProfit.BorderRadius = 8;
-            lblNetProfit.BorderSize = 0;
             lblNetProfit.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblNetProfit.ForeColor = Color.Green;
             lblNetProfit.IsTitle = true;
             lblNetProfit.Location = new Point(136, 16);
             lblNetProfit.Margin = new Padding(0);
             lblNetProfit.Name = "lblNetProfit";
+            lblNetProfit.RightToLeft = RightToLeft.Yes;
             lblNetProfit.Size = new Size(50, 37);
             lblNetProfit.TabIndex = 2;
             lblNetProfit.Text = "310";
@@ -380,14 +376,12 @@
             // 
             lblUnpaidInvoicesDisc.AutoSize = true;
             lblUnpaidInvoicesDisc.BackColor = Color.Transparent;
-            lblUnpaidInvoicesDisc.BorderColor = Color.DodgerBlue;
-            lblUnpaidInvoicesDisc.BorderRadius = 8;
-            lblUnpaidInvoicesDisc.BorderSize = 0;
             lblUnpaidInvoicesDisc.Font = new Font("Cairo", 10F);
             lblUnpaidInvoicesDisc.ForeColor = Color.DimGray;
             lblUnpaidInvoicesDisc.Location = new Point(67, 53);
             lblUnpaidInvoicesDisc.Margin = new Padding(0);
             lblUnpaidInvoicesDisc.Name = "lblUnpaidInvoicesDisc";
+            lblUnpaidInvoicesDisc.RightToLeft = RightToLeft.Yes;
             lblUnpaidInvoicesDisc.Size = new Size(135, 32);
             lblUnpaidInvoicesDisc.TabIndex = 2;
             lblUnpaidInvoicesDisc.Text = "فواتير غير مسددة";
@@ -397,15 +391,13 @@
             // 
             lblUnpaidInvoices.AutoSize = true;
             lblUnpaidInvoices.BackColor = Color.Transparent;
-            lblUnpaidInvoices.BorderColor = Color.DodgerBlue;
-            lblUnpaidInvoices.BorderRadius = 8;
-            lblUnpaidInvoices.BorderSize = 0;
             lblUnpaidInvoices.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblUnpaidInvoices.ForeColor = Color.DarkGoldenrod;
             lblUnpaidInvoices.IsTitle = true;
             lblUnpaidInvoices.Location = new Point(125, 16);
             lblUnpaidInvoices.Margin = new Padding(0);
             lblUnpaidInvoices.Name = "lblUnpaidInvoices";
+            lblUnpaidInvoices.RightToLeft = RightToLeft.Yes;
             lblUnpaidInvoices.Size = new Size(28, 37);
             lblUnpaidInvoices.TabIndex = 2;
             lblUnpaidInvoices.Text = "1";
@@ -454,14 +446,12 @@
             // 
             lblLowStockPartsDisc.AutoSize = true;
             lblLowStockPartsDisc.BackColor = Color.Transparent;
-            lblLowStockPartsDisc.BorderColor = Color.DodgerBlue;
-            lblLowStockPartsDisc.BorderRadius = 8;
-            lblLowStockPartsDisc.BorderSize = 0;
             lblLowStockPartsDisc.Font = new Font("Cairo", 10F);
             lblLowStockPartsDisc.ForeColor = Color.DimGray;
             lblLowStockPartsDisc.Location = new Point(58, 53);
             lblLowStockPartsDisc.Margin = new Padding(0);
             lblLowStockPartsDisc.Name = "lblLowStockPartsDisc";
+            lblLowStockPartsDisc.RightToLeft = RightToLeft.Yes;
             lblLowStockPartsDisc.Size = new Size(160, 32);
             lblLowStockPartsDisc.TabIndex = 2;
             lblLowStockPartsDisc.Text = "قطع مخزون منخفض";
@@ -471,15 +461,13 @@
             // 
             lblLowStockParts.AutoSize = true;
             lblLowStockParts.BackColor = Color.Transparent;
-            lblLowStockParts.BorderColor = Color.DodgerBlue;
-            lblLowStockParts.BorderRadius = 8;
-            lblLowStockParts.BorderSize = 0;
             lblLowStockParts.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblLowStockParts.ForeColor = Color.DarkRed;
             lblLowStockParts.IsTitle = true;
             lblLowStockParts.Location = new Point(129, 16);
             lblLowStockParts.Margin = new Padding(0);
             lblLowStockParts.Name = "lblLowStockParts";
+            lblLowStockParts.RightToLeft = RightToLeft.Yes;
             lblLowStockParts.Size = new Size(39, 37);
             lblLowStockParts.TabIndex = 2;
             lblLowStockParts.Text = "22";
@@ -578,13 +566,12 @@
             // 
             lblDependingPO.AutoSize = true;
             lblDependingPO.BackColor = Color.Transparent;
-            lblDependingPO.BorderColor = Color.DodgerBlue;
-            lblDependingPO.BorderRadius = 8;
-            lblDependingPO.BorderSize = 0;
             lblDependingPO.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            lblDependingPO.ForeColor = Color.FromArgb(64, 64, 64);
             lblDependingPO.IsTitle = true;
             lblDependingPO.Location = new Point(241, 17);
             lblDependingPO.Name = "lblDependingPO";
+            lblDependingPO.RightToLeft = RightToLeft.Yes;
             lblDependingPO.Size = new Size(174, 37);
             lblDependingPO.TabIndex = 2;
             lblDependingPO.Text = " أوامر شراء معلقة";
@@ -628,13 +615,12 @@
             // 
             lblAlerts.AutoSize = true;
             lblAlerts.BackColor = Color.Transparent;
-            lblAlerts.BorderColor = Color.DodgerBlue;
-            lblAlerts.BorderRadius = 8;
-            lblAlerts.BorderSize = 0;
             lblAlerts.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            lblAlerts.ForeColor = Color.FromArgb(64, 64, 64);
             lblAlerts.IsTitle = true;
             lblAlerts.Location = new Point(300, 17);
             lblAlerts.Name = "lblAlerts";
+            lblAlerts.RightToLeft = RightToLeft.Yes;
             lblAlerts.Size = new Size(111, 37);
             lblAlerts.TabIndex = 2;
             lblAlerts.Text = "آخر الفواتير";
@@ -687,7 +673,6 @@
             cartesianChart1.Margin = new Padding(30);
             cartesianChart1.MatchAxesScreenDataRatio = false;
             cartesianChart1.Name = "cartesianChart1";
-            cartesianChart1.Padding = new Padding(2, 13, 2, 13);
             cartesianChart1.RightToLeft = RightToLeft.Yes;
             cartesianChart1.Size = new Size(760, 250);
             cartesianChart1.TabIndex = 1;
@@ -713,13 +698,12 @@
             // 
             sabraLabel3.AutoSize = true;
             sabraLabel3.BackColor = Color.Transparent;
-            sabraLabel3.BorderColor = Color.DodgerBlue;
-            sabraLabel3.BorderRadius = 8;
-            sabraLabel3.BorderSize = 0;
             sabraLabel3.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            sabraLabel3.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel3.IsTitle = true;
             sabraLabel3.Location = new Point(503, 16);
             sabraLabel3.Name = "sabraLabel3";
+            sabraLabel3.RightToLeft = RightToLeft.Yes;
             sabraLabel3.Size = new Size(274, 37);
             sabraLabel3.TabIndex = 0;
             sabraLabel3.Text = "مبيعات الأيام السبعة الماضية";
@@ -764,13 +748,12 @@
             // 
             lblLastInvoices.AutoSize = true;
             lblLastInvoices.BackColor = Color.Transparent;
-            lblLastInvoices.BorderColor = Color.DodgerBlue;
-            lblLastInvoices.BorderRadius = 8;
-            lblLastInvoices.BorderSize = 0;
             lblLastInvoices.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            lblLastInvoices.ForeColor = Color.FromArgb(64, 64, 64);
             lblLastInvoices.IsTitle = true;
             lblLastInvoices.Location = new Point(308, 17);
             lblLastInvoices.Name = "lblLastInvoices";
+            lblLastInvoices.RightToLeft = RightToLeft.Yes;
             lblLastInvoices.Size = new Size(111, 37);
             lblLastInvoices.TabIndex = 2;
             lblLastInvoices.Text = "آخر الفواتير";
@@ -804,13 +787,12 @@
             lblDis.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblDis.AutoSize = true;
             lblDis.BackColor = Color.Transparent;
-            lblDis.BorderColor = Color.DodgerBlue;
-            lblDis.BorderRadius = 8;
-            lblDis.BorderSize = 0;
             lblDis.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            lblDis.ForeColor = Color.FromArgb(64, 64, 64);
             lblDis.IsTitle = true;
             lblDis.Location = new Point(403, 16);
             lblDis.Name = "lblDis";
+            lblDis.RightToLeft = RightToLeft.Yes;
             lblDis.Size = new Size(146, 37);
             lblDis.TabIndex = 1;
             lblDis.Text = "توزيع المبيعات";
@@ -861,14 +843,10 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoScroll = true;
-            AutoScrollMinSize = new Size(1502, 1000);
             BackColor = Color.WhiteSmoke;
             Controls.Add(tableLayoutPanel1);
             Controls.Add(spnlTopPanel);
-            MinimumSize = new Size(900, 600);
             Name = "usDashboard";
-            Size = new Size(1502, 1045);
             spnlTopPanel.ResumeLayout(false);
             spnlTopPanel.PerformLayout();
             pnlSales.ResumeLayout(false);

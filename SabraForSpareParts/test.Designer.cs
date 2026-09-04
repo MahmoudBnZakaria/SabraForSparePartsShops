@@ -1,4 +1,6 @@
-﻿namespace SabraForSpareParts
+﻿using SabraForSpareParts.Screens;
+
+namespace SabraForSpareParts
 {
     partial class test
     {
@@ -28,33 +30,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            ucSalaries1 = new SabraForSpareParts.Screens.ucSalaries();
+            ucUsers1 = new SabraForSpareParts.Screens.ucUsers();
             SuspendLayout();
             // 
-            // ucSalaries1
+            // ucUsers1
             // 
-            ucSalaries1.AutoScroll = true;
-            ucSalaries1.AutoScrollMinSize = new Size(1502, 1000);
-            ucSalaries1.BackColor = Color.WhiteSmoke;
-            ucSalaries1.BorderColor = Color.Transparent;
-            ucSalaries1.Dock = DockStyle.Fill;
-            ucSalaries1.Font = new Font("Cairo", 10F);
-            ucSalaries1.ForeColor = Color.FromArgb(40, 40, 40);
-            ucSalaries1.Location = new Point(0, 0);
-            ucSalaries1.Margin = new Padding(0);
-            ucSalaries1.MinimumSize = new Size(900, 600);
-            ucSalaries1.Name = "ucSalaries1";
-            ucSalaries1.Padding = new Padding(10);
-            ucSalaries1.RightToLeft = RightToLeft.Yes;
-            ucSalaries1.Size = new Size(1404, 670);
-            ucSalaries1.TabIndex = 0;
+            ucUsers1.AutoScroll = true;
+            ucUsers1.AutoScrollMinSize = new Size(1502, 1000);
+            ucUsers1.BackColor = Color.WhiteSmoke;
+            ucUsers1.BorderColor = Color.Transparent;
+            ucUsers1.Dock = DockStyle.Fill;
+            ucUsers1.Font = new Font("Cairo", 10F);
+            ucUsers1.ForeColor = Color.FromArgb(40, 40, 40);
+            ucUsers1.Location = new Point(0, 0);
+            ucUsers1.Margin = new Padding(0);
+            ucUsers1.MinimumSize = new Size(900, 600);
+            ucUsers1.Name = "ucUsers1";
+            ucUsers1.Padding = new Padding(10);
+            ucUsers1.RightToLeft = RightToLeft.Yes;
+            ucUsers1.Size = new Size(1404, 670);
+            ucUsers1.TabIndex = 0;
             // 
             // test
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1404, 670);
-            Controls.Add(ucSalaries1);
+            Controls.Add(ucUsers1);
             Name = "test";
             Text = "test";
             ResumeLayout(false);
@@ -63,6 +65,6 @@
         #endregion
 
         private Screens.InventoryAlerts.ucInventoryAlertRow ucInventoryAlertRow1;
-        private Screens.ucSalaries ucSalaries1;
+        private Screens.ucUsers ucUsers1;
     }
 }
