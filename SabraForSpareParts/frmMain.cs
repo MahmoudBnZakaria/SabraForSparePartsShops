@@ -1,278 +1,51 @@
-﻿using System;
-using System.Drawing;
+﻿using SabraForSpareParts.Screens;
+using SabraForSpareParts.Screens.InventoryAlerts;
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace SabraForSpareParts
 {
     public partial class frmMain : Form
     {
-        // =========================================================
-        // Current Screen
-        // =========================================================
-
-        private Control _currentScreen;
-
-        // =========================================================
-        // Constructor
-        // =========================================================
-
         public frmMain()
         {
             InitializeComponent();
 
-            InitializeMainForm();
-            InitializeTopBar();
-            InitializeSidebar();
-            InitializeBottomBar();
+            // القائمة الجانبية
+            ucMenue1.ScreenSelected += UcMenue1_ScreenSelected;
 
-            ShowDashboard();
+            // التوب بار
+            WireTopBarEvents();
+
+            // الشاشة الافتراضية
+            LoadScreen(MenuScreen.Main);
         }
 
         // =========================================================
-        // Main Form Initialization
+        // ربط أحداث التوب بار
         // =========================================================
-
-        private void InitializeMainForm()
+        private void WireTopBarEvents()
         {
-            StartPosition = FormStartPosition.CenterScreen;
+            if (ucTopBar1 == null) return;
 
-            MinimumSize = new Size(1000, 650);
+            ucTopBar1.InventoryAlertsClicked += (s, e) => LoadScreen(MenuScreen.InventoryAlerts);
+            ucTopBar1.NewInvoiceClicked += (s, e) => LoadScreen(MenuScreen.NewInvoice);
+            ucTopBar1.AddNewPartClicked += (s, e) => LoadScreen(MenuScreen.AddPart);
 
-            WindowState = FormWindowState.Maximized;
-
-            KeyPreview = true;
-
-            RightToLeft = RightToLeft.Yes;
-
-            RightToLeftLayout = true;
-
-            BackColor = Color.WhiteSmoke;
-
-            FormBorderStyle = FormBorderStyle.Sizable;
-
-            ShowIcon = false;
-
-            ShowInTaskbar = true;
-
-            KeyDown += FrmMain_KeyDown;
-        }
-
-        // =========================================================
-        // Top Bar
-        // =========================================================
-
-        private void InitializeTopBar()
-        {
-            if (ucTopBar1 == null)
-                return;
-
-            ucTopBar1.Dock = DockStyle.Top;
-
-            ucTopBar1.Height = 83;
-
-            ucTopBar1.BringToFront();
-
-            ucTopBar1.SearchRequested -= UcTopBar1_SearchRequested;
+            // البحث
             ucTopBar1.SearchRequested += UcTopBar1_SearchRequested;
 
-            ucTopBar1.InventoryAlertsClicked -=
-                UcTopBar1_InventoryAlertsClicked;
-
-            ucTopBar1.InventoryAlertsClicked +=
-                UcTopBar1_InventoryAlertsClicked;
-
-            ucTopBar1.NewInvoiceClicked -=
-                UcTopBar1_NewInvoiceClicked;
-
-            ucTopBar1.NewInvoiceClicked +=
-                UcTopBar1_NewInvoiceClicked;
-
-            ucTopBar1.AddNewPartClicked -=
-                UcTopBar1_AddNewPartClicked;
-
-            ucTopBar1.AddNewPartClicked +=
-                UcTopBar1_AddNewPartClicked;
-
-            ucTopBar1.UserAvatarClicked -=
-                UcTopBar1_UserAvatarClicked;
-
-            ucTopBar1.UserAvatarClicked +=
-                UcTopBar1_UserAvatarClicked;
+            // صورة المستخدم (تقدر تفتح الإعدادات أو بروفايل)
+            ucTopBar1.UserAvatarClicked += (s, e) => LoadScreen(MenuScreen.Settings);
         }
 
         // =========================================================
-        // Sidebar
+        // حدث البحث من التوب بار
         // =========================================================
-
-        private void InitializeSidebar()
+        private void UcTopBar1_SearchRequested(object sender, EventArgs e)
         {
-            if (splitContainer2 == null)
-                return;
-
-            splitContainer2.Dock = DockStyle.Fill;
-
-            splitContainer2.Orientation =
-                Orientation.Vertical;
-
-            splitContainer2.IsSplitterFixed = true;
-
-            splitContainer2.SplitterWidth = 1;
-
-            splitContainer2.FixedPanel =
-                FixedPanel.Panel2;
-
-            splitContainer2.Panel2MinSize = 210;
-
-            splitContainer2.Panel1MinSize = 500;
-
-            // Sidebar width
-            splitContainer2.SplitterDistance =
-                Math.Max(
-                    700,
-                    ClientSize.Width - 260
-                );
-
-            ConfigureSidebarButton();
-        }
-
-        // =========================================================
-        // Sidebar Button
-        // =========================================================
-
-        private void ConfigureSidebarButton()
-        {
-            if (sabraButton1 == null)
-                return;
-
-            sabraButton1.Dock =
-                DockStyle.Top;
-
-            sabraButton1.Height = 55;
-
-            sabraButton1.Margin =
-                new Padding(10);
-
-            sabraButton1.Text =
-                "الرئيسية";
-
-            sabraButton1.IconChar =
-                FontAwesome.Sharp.IconChar.House;
-
-            sabraButton1.IconColor =
-                Color.White;
-
-            sabraButton1.IconFont =
-                FontAwesome.Sharp.IconFont.Auto;
-
-            sabraButton1.IconSize =
-                24;
-
-            sabraButton1.TextAlign =
-                ContentAlignment.MiddleCenter;
-
-            sabraButton1.Cursor =
-                Cursors.Hand;
-
-            sabraButton1.TabStop = true;
-
-            sabraButton1.Click -=
-                sabraButton1_Click;
-
-            sabraButton1.Click +=
-                sabraButton1_Click;
-        }
-
-        // =========================================================
-        // Bottom Bar
-        // =========================================================
-
-        private void InitializeBottomBar()
-        {
-            if (ucBottomBar1 == null)
-                return;
-
-            ucBottomBar1.Dock =
-                DockStyle.Bottom;
-
-            ucBottomBar1.Height = 42;
-
-            ucBottomBar1.BringToFront();
-        }
-
-        // =========================================================
-        // Dashboard
-        // =========================================================
-
-        private void ShowDashboard()
-        {
-            if (ucMain1 == null)
-                return;
-
-            ShowScreen(ucMain1);
-
-            UpdateSidebarSelection(
-                sabraButton1
-            );
-        }
-
-        // =========================================================
-        // Show Screen
-        // =========================================================
-
-        public void ShowScreen(Control screen)
-        {
-            if (screen == null)
-                return;
-
-            if (splitContainer2 == null)
-                return;
-
-            Control contentPanel =
-                splitContainer2.Panel1;
-
-            if (contentPanel == null)
-                return;
-
-            // Remove current screen
-            if (_currentScreen != null &&
-                _currentScreen != screen)
-            {
-                contentPanel.Controls.Remove(
-                    _currentScreen
-                );
-
-                if (_currentScreen != ucMain1)
-                {
-                    _currentScreen.Dispose();
-                }
-            }
-
-            _currentScreen = screen;
-
-            if (!contentPanel.Controls.Contains(screen))
-            {
-                contentPanel.Controls.Add(screen);
-            }
-
-            screen.Dock =
-                DockStyle.Fill;
-
-            screen.BringToFront();
-
-            contentPanel.BackColor =
-                Color.WhiteSmoke;
-        }
-
-        // =========================================================
-        // TopBar - Search
-        // =========================================================
-
-        private void UcTopBar1_SearchRequested(
-            object sender,
-            EventArgs e)
-        {
-            string searchText =
-                ucTopBar1.SearchText;
+            string searchText = ucTopBar1.SearchText;
 
             if (string.IsNullOrWhiteSpace(searchText))
             {
@@ -280,343 +53,108 @@ namespace SabraForSpareParts
                 return;
             }
 
-            ExecuteGlobalSearch(searchText);
+            // هنا تقدر تعمل اللي انت عايزه بالبحث
+            // مثال بسيط: افتح شاشة المخزون وابحث فيها (لو عندك ميثود بحث)
+            // أو افتح شاشة الفواتير... حسب منطق برنامجك
+
+            // حالياً هفتح شاشة المخزون كمثال:
+            LoadScreen(MenuScreen.InventoryList);
+
+            // لو عايز تبعت نص البحث للشاشات، تقدر تعمل كده:
+            // if (pnlContent.Controls.Count > 0 && pnlContent.Controls[0] is ucInventory inv)
+            // {
+            //     inv.Search(searchText);
+            // }
         }
 
         // =========================================================
-        // Global Search
+        // حدث اختيار شاشة من القائمة الجانبية
         // =========================================================
-
-        private void ExecuteGlobalSearch(
-            string searchText)
+        private void UcMenue1_ScreenSelected(object sender, MenuScreenSelectedEventArgs e)
         {
-            searchText =
-                searchText?.Trim() ?? string.Empty;
-
-            if (string.IsNullOrWhiteSpace(searchText))
-                return;
-
-            // هنا مكان البحث الحقيقي.
-            //
-            // مثال:
-            //
-            // البحث عن:
-            // فاتورة
-            // عميل
-            // قطعة غيار
-            // رقم هاتف
-            // كود قطعة
-            //
-            // وبعدها نعرض النتيجة في Screen مخصص.
-
-            MessageBox.Show(
-                $"البحث عن:\n{searchText}",
-                "البحث",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
+            LoadScreen(e.Screen);
         }
 
         // =========================================================
-        // Inventory Alerts
+        // تطبيق الصلاحيات بعد تسجيل الدخول
         // =========================================================
-
-        private void UcTopBar1_InventoryAlertsClicked(
-            object sender,
-            EventArgs e)
+        private void OnUserLoggedIn(List<string> userPermissionCodes)
         {
-            OpenInventoryAlerts();
-        }
+            ucMenue1.ApplyPermissions(userPermissionCodes);
 
-        private void OpenInventoryAlerts()
-        {
-            // ضع هنا Screen تنبيهات المخزون
-            //
-            // مثال مستقبلاً:
-            //
-            // ShowScreen(new ucInventoryAlerts());
+            // تقدر كمان تحدث بيانات المستخدم في التوب بار
+            // ucTopBar1.SetUserSettings(userId, userName, userRole);
         }
 
         // =========================================================
-        // New Invoice
+        // تحميل الشاشة
         // =========================================================
-
-        private void UcTopBar1_NewInvoiceClicked(
-            object sender,
-            EventArgs e)
+        private void LoadScreen(MenuScreen screen)
         {
-            OpenNewInvoice();
-        }
-
-        private void OpenNewInvoice()
-        {
-            // ضع هنا Screen إنشاء فاتورة جديدة
-            //
-            // مثال مستقبلاً:
-            //
-            // ShowScreen(new ucNewInvoice());
-        }
-
-        // =========================================================
-        // Add New Part
-        // =========================================================
-
-        private void UcTopBar1_AddNewPartClicked(
-            object sender,
-            EventArgs e)
-        {
-            OpenAddNewPart();
-        }
-
-        private void OpenAddNewPart()
-        {
-            // ضع هنا Screen إضافة قطعة جديدة
-            //
-            // مثال مستقبلاً:
-            //
-            // ShowScreen(new ucAddNewPart());
-        }
-
-        // =========================================================
-        // User Avatar
-        // =========================================================
-
-        private void UcTopBar1_UserAvatarClicked(
-            object sender,
-            EventArgs e)
-        {
-            ShowUserMenu();
-        }
-
-        // =========================================================
-        // User Menu
-        // =========================================================
-
-        private void ShowUserMenu()
-        {
-            using (ContextMenuStrip menu =
-                   new ContextMenuStrip())
+            UserControl uc = screen switch
             {
-                ToolStripMenuItem userInfo =
-                    new ToolStripMenuItem(
-                        ucTopBar1.UserName
-                    );
+                MenuScreen.Main => new usDashboard(),
+                MenuScreen.InventoryList => new ucInventory(),
+                MenuScreen.AddPart => new ucAddPart(),
+                MenuScreen.InventoryAlerts => new ucInventoryAlerts(),
+                MenuScreen.CarCompatibility => new ucVehicleCompatibility(),
+                MenuScreen.InventoryTransaction => new ucInventoryTransactions(),
+                MenuScreen.NewInvoice => new ucNewInvoice(),
+                MenuScreen.InvoicesList => new ucInvoicesList(),
+                MenuScreen.Returns => new ucReturns(),
+                MenuScreen.NewPurchaseOrder => new ucNewPurchaseOrder(),
+                MenuScreen.PurchaseOrdersList => new ucPurchaseOrdersList(),
+                MenuScreen.ReceiveGoods => new ucGoodsReceipt(),
+                MenuScreen.Customers => new ucCustomers(),
+                MenuScreen.CustomerStatement => new ucCustomerStatement(),
+                MenuScreen.Suppliers => new ucSuppliers(),
+                MenuScreen.SupplierStatement => new ucSupplierStatement(),
+                MenuScreen.Treasury => new ucTreasury(),
+                MenuScreen.Expenses => new ucExpenses(),
+                MenuScreen.Salaries => new ucSalaries(),
+                MenuScreen.Advances => new ucAdvances(),
+                MenuScreen.Reports => new ucFinancialReports(),
+                MenuScreen.CashFlow => new ucCashFlow(),
+                MenuScreen.Employees => new ucEmployees(),
+                MenuScreen.Users => new ucUsers(),
+                MenuScreen.Settings => new ucSettings(),
+                MenuScreen.Backup => new ucBackup(),
+                MenuScreen.ActivityLog => new ucActivityLog(),
+                _ => null
+            };
 
-                userInfo.Enabled = false;
+            if (uc == null) return;
 
-                ToolStripMenuItem settings =
-                    new ToolStripMenuItem(
-                        "الإعدادات"
-                    );
+            ShowScreen(uc);
 
-                ToolStripMenuItem logout =
-                    new ToolStripMenuItem(
-                        "تسجيل الخروج"
-                    );
-
-                settings.Click +=
-                    Settings_Click;
-
-                logout.Click +=
-                    Logout_Click;
-
-                menu.Items.Add(userInfo);
-
-                menu.Items.Add(
-                    new ToolStripSeparator()
-                );
-
-                menu.Items.Add(settings);
-
-                menu.Items.Add(logout);
-
-                menu.Show(
-                    fwGetAvatarLocation(),
-                    ToolStripDropDownDirection.BelowLeft
-                );
-            }
-        }
-
-        private Point fwGetAvatarLocation()
-        {
-            if (ucTopBar1 == null)
-                return Point.Empty;
-
-            Point location =
-                ucTopBar1.PointToScreen(
-                    new Point(
-                        ucTopBar1.Width - 80,
-                        ucTopBar1.Height
-                    )
-                );
-
-            return location;
+            // مهم جدًا: خلي الزرار في القائمة الجانبية يتلون
+            ucMenue1.SetActiveScreen(screen);
         }
 
         // =========================================================
-        // Settings
+        // عرض الشاشة جوه البانل
         // =========================================================
-
-        private void Settings_Click(
-            object sender,
-            EventArgs e)
+        private void ShowScreen(UserControl screen)
         {
-            // افتح شاشة الإعدادات هنا
-        }
+            if (screen == null) return;
 
-        // =========================================================
-        // Logout
-        // =========================================================
-
-        private void Logout_Click(
-            object sender,
-            EventArgs e)
-        {
-            DialogResult result =
-                MessageBox.Show(
-                    "هل أنت متأكد من تسجيل الخروج؟",
-                    "تسجيل الخروج",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
-                );
-
-            if (result != DialogResult.Yes)
-                return;
-
-            // هنا تقدر تمسح Session المستخدم
-            //
-            // ثم ترجع لشاشة Login.
-
-            Close();
-        }
-
-        // =========================================================
-        // Sidebar Button
-        // =========================================================
-
-        private void sabraButton1_Click(
-            object sender,
-            EventArgs e)
-        {
-            ShowDashboard();
-        }
-
-        // =========================================================
-        // Sidebar Selection
-        // =========================================================
-
-        private void UpdateSidebarSelection(
-            Control selectedControl)
-        {
-            if (selectedControl == null)
-                return;
-
-            if (selectedControl is SabraButton button)
+            pnlContent.SuspendLayout();
+            try
             {
-                button.BackColor =
-                    Color.FromArgb(
-                        37,
-                        99,
-                        235
-                    );
+                foreach (Control control in pnlContent.Controls)
+                    control.Dispose();
+
+                pnlContent.Controls.Clear();
+
+                screen.Dock = DockStyle.Fill;
+                screen.Margin = new Padding(0);
+                pnlContent.Controls.Add(screen);
+                screen.BringToFront();
             }
-        }
-
-        // =========================================================
-        // Keyboard
-        // =========================================================
-
-        private void FrmMain_KeyDown(
-            object sender,
-            KeyEventArgs e)
-        {
-            // Escape
-            if (e.KeyCode == Keys.Escape)
+            finally
             {
-                if (ucTopBar1 != null)
-                    ucTopBar1.ClearSearch();
-
-                e.Handled = true;
+                pnlContent.ResumeLayout(true);
             }
-        }
-
-        // =========================================================
-        // Login User Settings
-        // =========================================================
-
-        public void SetLoggedInUser(
-            int userId,
-            string userName,
-            string userRole,
-            string customerName = "",
-            decimal creditLimit = 0)
-        {
-            if (ucTopBar1 == null)
-                return;
-
-            ucTopBar1.SetUserSettings(
-                userId,
-                userName,
-                userRole,
-                customerName,
-                creditLimit
-            );
-        }
-
-        // =========================================================
-        // Session Properties
-        // =========================================================
-
-        public int CurrentUserId
-        {
-            get
-            {
-                return ucTopBar1?.UserId ?? 0;
-            }
-        }
-
-        public string CurrentUserName
-        {
-            get
-            {
-                return ucTopBar1?.UserName ?? "User";
-            }
-        }
-
-        public string CurrentUserRole
-        {
-            get
-            {
-                return ucTopBar1?.UserRole ?? "User";
-            }
-        }
-
-        // =========================================================
-        // Form Closing
-        // =========================================================
-
-        protected override void OnFormClosed(
-            FormClosedEventArgs e)
-        {
-            if (ucTopBar1 != null)
-            {
-                ucTopBar1.SearchRequested -=
-                    UcTopBar1_SearchRequested;
-
-                ucTopBar1.InventoryAlertsClicked -=
-                    UcTopBar1_InventoryAlertsClicked;
-
-                ucTopBar1.NewInvoiceClicked -=
-                    UcTopBar1_NewInvoiceClicked;
-
-                ucTopBar1.AddNewPartClicked -=
-                    UcTopBar1_AddNewPartClicked;
-
-                ucTopBar1.UserAvatarClicked -=
-                    UcTopBar1_UserAvatarClicked;
-            }
-
-            base.OnFormClosed(e);
         }
     }
 }

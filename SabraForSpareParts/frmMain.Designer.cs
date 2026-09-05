@@ -2,8 +2,15 @@
 {
     partial class frmMain
     {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -14,112 +21,106 @@
             base.Dispose(disposing);
         }
 
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
-            splitContainer2 = new SplitContainer();
-            ucMain1 = new SabraForSpareParts.Screens.usDashboard();
-            sabraButton1 = new SabraButton();
             ucTopBar1 = new ucTopBar();
             ucBottomBar1 = new ucBottomBar();
-            ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
-            splitContainer2.Panel1.SuspendLayout();
-            splitContainer2.Panel2.SuspendLayout();
-            splitContainer2.SuspendLayout();
+            ucMenue1 = new ucMenue();
+            pnlContent = new Panel();
             SuspendLayout();
+
+
             // 
-            // splitContainer2
+            // pnlContent
             // 
-            resources.ApplyResources(splitContainer2, "splitContainer2");
-            splitContainer2.Name = "splitContainer2";
-            // 
-            // splitContainer2.Panel1
-            // 
-            resources.ApplyResources(splitContainer2.Panel1, "splitContainer2.Panel1");
-            splitContainer2.Panel1.BackColor = Color.WhiteSmoke;
-            splitContainer2.Panel1.Controls.Add(ucMain1);
-            // 
-            // splitContainer2.Panel2
-            // 
-            resources.ApplyResources(splitContainer2.Panel2, "splitContainer2.Panel2");
-            splitContainer2.Panel2.BackColor = Color.FromArgb(15, 23, 42);
-            splitContainer2.Panel2.Controls.Add(sabraButton1);
-            // 
-            // ucMain1
-            // 
-            resources.ApplyResources(ucMain1, "ucMain1");
-            ucMain1.BackColor = Color.WhiteSmoke;
-            ucMain1.BorderColor = Color.Transparent;
-            ucMain1.ForeColor = Color.FromArgb(40, 40, 40);
-            ucMain1.Name = "ucMain1";
-            // 
-            // sabraButton1
-            // 
-            resources.ApplyResources(sabraButton1, "sabraButton1");
-            sabraButton1.BackColor = Color.FromArgb(30, 41, 59);
-            sabraButton1.BorderColor = Color.Transparent;
-            sabraButton1.BorderRadius = 12;
-            sabraButton1.BorderSize = 0;
-            sabraButton1.Cursor = Cursors.Hand;
-            sabraButton1.FlatAppearance.BorderSize = 0;
-            sabraButton1.ForeColor = Color.White;
-            sabraButton1.HoverColor = Color.FromArgb(37, 99, 235);
-            sabraButton1.IconChar = FontAwesome.Sharp.IconChar.House;
-            sabraButton1.IconColor = Color.White;
-            sabraButton1.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sabraButton1.IconSize = 24;
-            sabraButton1.Name = "sabraButton1";
-            sabraButton1.NormalColor = Color.FromArgb(30, 41, 59);
-            sabraButton1.UseVisualStyleBackColor = false;
-            sabraButton1.Click += sabraButton1_Click;
+            pnlContent.BackColor = Color.WhiteSmoke;
+            pnlContent.Dock = DockStyle.Fill;
+            pnlContent.Location = new Point(0, 93);
+            pnlContent.Name = "pnlContent";
+            pnlContent.Padding = new Padding(0);
+            pnlContent.Size = new Size(1493, 912);
+            pnlContent.TabIndex = 3;
+
+
             // 
             // ucTopBar1
             // 
-            resources.ApplyResources(ucTopBar1, "ucTopBar1");
+            ucTopBar1.AutoScroll = true;
             ucTopBar1.BackColor = Color.White;
             ucTopBar1.BorderColor = Color.Transparent;
             ucTopBar1.BorderRadius = 15;
             ucTopBar1.BorderStyle = BorderStyle.FixedSingle;
+            ucTopBar1.Dock = DockStyle.Top;
+            ucTopBar1.Font = new Font("Cairo", 10F);
             ucTopBar1.ForeColor = Color.FromArgb(40, 40, 40);
+            ucTopBar1.Location = new Point(0, 0);
+            ucTopBar1.Margin = new Padding(0);
+            ucTopBar1.MinimumSize = new Size(900, 83);
             ucTopBar1.Name = "ucTopBar1";
+            ucTopBar1.Padding = new Padding(10);
+            ucTopBar1.RightToLeft = RightToLeft.Yes;
             ucTopBar1.SearchText = "";
+            ucTopBar1.Size = new Size(1804, 93);
+            ucTopBar1.TabIndex = 0;
+
             // 
             // ucBottomBar1
             // 
-            resources.ApplyResources(ucBottomBar1, "ucBottomBar1");
             ucBottomBar1.BackColor = Color.FromArgb(15, 23, 42);
+            ucBottomBar1.Dock = DockStyle.Bottom;
+            ucBottomBar1.Location = new Point(0, 1005);
+            ucBottomBar1.Margin = new Padding(0);
             ucBottomBar1.Name = "ucBottomBar1";
+            ucBottomBar1.Size = new Size(1804, 50);
+            ucBottomBar1.TabIndex = 1;
+
+            // 
+            // ucMenue1
+            // 
+            ucMenue1.AutoScroll = true;
+            ucMenue1.AutoScrollMinSize = new Size(280, 3015);
+            ucMenue1.BackColor = Color.FromArgb(15, 23, 42);
+            ucMenue1.BorderColor = Color.Transparent;
+            ucMenue1.Dock = DockStyle.Right;
+            ucMenue1.Font = new Font("Cairo", 10F);
+            ucMenue1.ForeColor = Color.FromArgb(40, 40, 40);
+            ucMenue1.Location = new Point(1493, 93);
+            ucMenue1.Margin = new Padding(0);
+            ucMenue1.Name = "ucMenue1";
+            ucMenue1.RightToLeft = RightToLeft.Yes;
+            ucMenue1.Size = new Size(311, 912);
+            ucMenue1.TabIndex = 2;
+
             // 
             // frmMain
             // 
-            resources.ApplyResources(this, "$this");
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.WhiteSmoke;
-            Controls.Add(splitContainer2);
+            ClientSize = new Size(1804, 1055);
+            Controls.Add(pnlContent);
             Controls.Add(ucBottomBar1);
             Controls.Add(ucTopBar1);
+            Controls.Add(ucMenue1); 
+            MinimumSize = new Size(1200, 700);
             Name = "frmMain";
-            ShowIcon = false;
-            WindowState = FormWindowState.Maximized;
-            splitContainer2.Panel1.ResumeLayout(false);
-            splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
-            splitContainer2.ResumeLayout(false);
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Sabra For Spare Parts";
+
             ResumeLayout(false);
         }
 
-        // =========================================================
-        // Controls
-        // =========================================================
-
-        private SplitContainer splitContainer2;
+        #endregion
 
         private ucTopBar ucTopBar1;
-
         private ucBottomBar ucBottomBar1;
-
-        private Screens.usDashboard ucMain1;
-
-        private SabraButton sabraButton1;
+        private ucMenue ucMenue1;
+        private Panel pnlContent;
     }
 }

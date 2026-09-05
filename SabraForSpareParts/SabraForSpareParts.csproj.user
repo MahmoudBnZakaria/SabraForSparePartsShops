@@ -1,11 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Compile Update="frmMain.cs">
+    <Compile Update="CustomControls\SabraNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="CustomControls\SabraCalendar.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="SabraCustomControl.cs">
+    <Compile Update="CustomControls\SabraDateTimePicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CustomControls\SabraFlowLayoutPanel.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="CustomControls\SabraUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CustomControls\SabraTableLayoutPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="CustomControls\SabraPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="CustomControls\SabraDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="CustomControls\SabraComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="CustomControls\SabraTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="CustomControls\SabraLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="CustomControls\SabraButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="frmMain.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="Screens\Dashboard\ucAlertRow.cs">
       <SubType>UserControl</SubType>
@@ -103,13 +136,13 @@
     <Compile Update="Screens\ucVehicleCompatibility.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="test.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="ucBottomBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Screens\ucCashFlow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ucMenue.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="ucPlaceHolder.cs">
