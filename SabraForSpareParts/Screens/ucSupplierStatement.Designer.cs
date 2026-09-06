@@ -33,6 +33,8 @@
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             sabraPanel1 = new SabraPanel();
+            sbtnSearch = new SabraButton();
+            stbxSearchForCustomer = new SabraTextBox();
             sbtnPurchaseOrder = new SabraButton();
             sbtnPrint = new SabraButton();
             sbtnExportAsExcel = new SabraButton();
@@ -53,8 +55,6 @@
             sabraLabel2 = new SabraLabel();
             lblDebitBalance = new SabraLabel();
             dgvSupplierStatement = new SabraDataGridView();
-            sbtnSearch = new SabraButton();
-            stbxSearchForCustomer = new SabraTextBox();
             sabraPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).BeginInit();
             tableLayoutPanel1.SuspendLayout();
@@ -92,6 +92,52 @@
             sabraPanel1.Name = "sabraPanel1";
             sabraPanel1.Size = new Size(1502, 111);
             sabraPanel1.TabIndex = 4;
+            // 
+            // sbtnSearch
+            // 
+            sbtnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            sbtnSearch.BackColor = Color.RoyalBlue;
+            sbtnSearch.BorderColor = Color.DodgerBlue;
+            sbtnSearch.BorderRadius = 10;
+            sbtnSearch.BorderSize = 0;
+            sbtnSearch.FlatAppearance.BorderSize = 0;
+            sbtnSearch.FlatStyle = FlatStyle.Flat;
+            sbtnSearch.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sbtnSearch.ForeColor = Color.White;
+            sbtnSearch.HoverColor = Color.CornflowerBlue;
+            sbtnSearch.IconChar = FontAwesome.Sharp.IconChar.Search;
+            sbtnSearch.IconColor = Color.Beige;
+            sbtnSearch.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sbtnSearch.IconSize = 30;
+            sbtnSearch.ImageAlign = ContentAlignment.MiddleRight;
+            sbtnSearch.Location = new Point(564, 24);
+            sbtnSearch.Name = "sbtnSearch";
+            sbtnSearch.NormalColor = Color.RoyalBlue;
+            sbtnSearch.Padding = new Padding(10, 0, 10, 0);
+            sbtnSearch.Size = new Size(65, 61);
+            sbtnSearch.TabIndex = 22;
+            sbtnSearch.TextAlign = ContentAlignment.MiddleLeft;
+            sbtnSearch.UseVisualStyleBackColor = false;
+            // 
+            // stbxSearchForCustomer
+            // 
+            stbxSearchForCustomer.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            stbxSearchForCustomer.AutoSize = true;
+            stbxSearchForCustomer.BackColor = Color.White;
+            stbxSearchForCustomer.Font = new Font("Cairo", 15F);
+            stbxSearchForCustomer.ForeColor = Color.FromArgb(64, 64, 64);
+            stbxSearchForCustomer.Location = new Point(635, 23);
+            stbxSearchForCustomer.Name = "stbxSearchForCustomer";
+            stbxSearchForCustomer.Padding = new Padding(10, 7, 25, 7);
+            stbxSearchForCustomer.PlaceholderText = "بحث عن مورد ";
+            stbxSearchForCustomer.Required = true;
+            stbxSearchForCustomer.RightToLeft = RightToLeft.Yes;
+            stbxSearchForCustomer.SelectedText = "";
+            stbxSearchForCustomer.SelectionLength = 0;
+            stbxSearchForCustomer.SelectionStart = 0;
+            stbxSearchForCustomer.Size = new Size(444, 62);
+            stbxSearchForCustomer.TabIndex = 21;
+            stbxSearchForCustomer.Texts = "بحث عن مرود ...";
             // 
             // sbtnPurchaseOrder
             // 
@@ -247,7 +293,7 @@
             pnlUnpaidInvoices.BackColor = Color.White;
             pnlUnpaidInvoices.BorderColor = Color.LightGray;
             pnlUnpaidInvoices.BorderRadius = 15;
-            pnlUnpaidInvoices.BorderSize = 0;
+            pnlUnpaidInvoices.BorderSize = 1;
             pnlUnpaidInvoices.Controls.Add(lblUnpaidInvoicesDisc);
             pnlUnpaidInvoices.Controls.Add(lblTotalPurchases);
             pnlUnpaidInvoices.EnableHover = true;
@@ -302,7 +348,7 @@
             sabraPanel2.BackColor = Color.White;
             sabraPanel2.BorderColor = Color.LightGray;
             sabraPanel2.BorderRadius = 15;
-            sabraPanel2.BorderSize = 0;
+            sabraPanel2.BorderSize = 1;
             sabraPanel2.Controls.Add(sabraLabel1);
             sabraPanel2.Controls.Add(lblNumberOfOrdars);
             sabraPanel2.EnableHover = true;
@@ -358,7 +404,7 @@
             pnlLowStock.BackColor = Color.White;
             pnlLowStock.BorderColor = Color.LightGray;
             pnlLowStock.BorderRadius = 15;
-            pnlLowStock.BorderSize = 0;
+            pnlLowStock.BorderSize = 1;
             pnlLowStock.Controls.Add(lblLowStockPartsDisc);
             pnlLowStock.Controls.Add(lblTotalPaid);
             pnlLowStock.EnableHover = true;
@@ -413,7 +459,7 @@
             pnlNetProfit.BackColor = Color.White;
             pnlNetProfit.BorderColor = Color.LightGray;
             pnlNetProfit.BorderRadius = 15;
-            pnlNetProfit.BorderSize = 0;
+            pnlNetProfit.BorderSize = 1;
             pnlNetProfit.Controls.Add(sabraLabel2);
             pnlNetProfit.Controls.Add(lblDebitBalance);
             pnlNetProfit.EnableHover = true;
@@ -536,52 +582,6 @@
             dgvSupplierStatement.Size = new Size(1472, 522);
             dgvSupplierStatement.TabIndex = 6;
             dgvSupplierStatement.CellContentClick += dgvSupplierStatement_CellContentClick;
-            // 
-            // sbtnSearch
-            // 
-            sbtnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            sbtnSearch.BackColor = Color.RoyalBlue;
-            sbtnSearch.BorderColor = Color.DodgerBlue;
-            sbtnSearch.BorderRadius = 10;
-            sbtnSearch.BorderSize = 0;
-            sbtnSearch.FlatAppearance.BorderSize = 0;
-            sbtnSearch.FlatStyle = FlatStyle.Flat;
-            sbtnSearch.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            sbtnSearch.ForeColor = Color.White;
-            sbtnSearch.HoverColor = Color.CornflowerBlue;
-            sbtnSearch.IconChar = FontAwesome.Sharp.IconChar.Search;
-            sbtnSearch.IconColor = Color.Beige;
-            sbtnSearch.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sbtnSearch.IconSize = 30;
-            sbtnSearch.ImageAlign = ContentAlignment.MiddleRight;
-            sbtnSearch.Location = new Point(564, 24);
-            sbtnSearch.Name = "sbtnSearch";
-            sbtnSearch.NormalColor = Color.RoyalBlue;
-            sbtnSearch.Padding = new Padding(10, 0, 10, 0);
-            sbtnSearch.Size = new Size(65, 61);
-            sbtnSearch.TabIndex = 22;
-            sbtnSearch.TextAlign = ContentAlignment.MiddleLeft;
-            sbtnSearch.UseVisualStyleBackColor = false;
-            // 
-            // stbxSearchForCustomer
-            // 
-            stbxSearchForCustomer.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            stbxSearchForCustomer.AutoSize = true;
-            stbxSearchForCustomer.BackColor = Color.White;
-            stbxSearchForCustomer.Font = new Font("Cairo", 15F);
-            stbxSearchForCustomer.ForeColor = Color.FromArgb(64, 64, 64);
-            stbxSearchForCustomer.Location = new Point(635, 23);
-            stbxSearchForCustomer.Name = "stbxSearchForCustomer";
-            stbxSearchForCustomer.Padding = new Padding(10, 7, 25, 7);
-            stbxSearchForCustomer.PlaceholderText = "بحث عن مورد ";
-            stbxSearchForCustomer.Required = true;
-            stbxSearchForCustomer.RightToLeft = RightToLeft.Yes;
-            stbxSearchForCustomer.SelectedText = "";
-            stbxSearchForCustomer.SelectionLength = 0;
-            stbxSearchForCustomer.SelectionStart = 0;
-            stbxSearchForCustomer.Size = new Size(444, 62);
-            stbxSearchForCustomer.TabIndex = 21;
-            stbxSearchForCustomer.Texts = "بحث عن مرود ...";
             // 
             // ucSupplierStatement
             // 

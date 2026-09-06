@@ -253,7 +253,7 @@
             pnlUnpaidInvoices.BackColor = Color.White;
             pnlUnpaidInvoices.BorderColor = Color.LightGray;
             pnlUnpaidInvoices.BorderRadius = 15;
-            pnlUnpaidInvoices.BorderSize = 0;
+            pnlUnpaidInvoices.BorderSize = 1;
             pnlUnpaidInvoices.Controls.Add(lblUnpaidInvoicesDisc);
             pnlUnpaidInvoices.Controls.Add(lblTotalSales);
             pnlUnpaidInvoices.EnableHover = true;
@@ -308,7 +308,7 @@
             sabraPanel2.BackColor = Color.White;
             sabraPanel2.BorderColor = Color.LightGray;
             sabraPanel2.BorderRadius = 15;
-            sabraPanel2.BorderSize = 0;
+            sabraPanel2.BorderSize = 1;
             sabraPanel2.Controls.Add(sabraLabel1);
             sabraPanel2.Controls.Add(lblNetProfit);
             sabraPanel2.EnableHover = true;
@@ -363,7 +363,7 @@
             pnlLowStock.BackColor = Color.White;
             pnlLowStock.BorderColor = Color.LightGray;
             pnlLowStock.BorderRadius = 15;
-            pnlLowStock.BorderSize = 0;
+            pnlLowStock.BorderSize = 1;
             pnlLowStock.Controls.Add(lbl);
             pnlLowStock.Controls.Add(lblGrossProfit);
             pnlLowStock.EnableHover = true;
@@ -418,7 +418,7 @@
             pnlNetProfit.BackColor = Color.White;
             pnlNetProfit.BorderColor = Color.LightGray;
             pnlNetProfit.BorderRadius = 15;
-            pnlNetProfit.BorderSize = 0;
+            pnlNetProfit.BorderSize = 1;
             pnlNetProfit.Controls.Add(sabraLabel2);
             pnlNetProfit.Controls.Add(lblTotalExpenses);
             pnlNetProfit.EnableHover = true;
@@ -473,7 +473,7 @@
             spnlWeeklySales.BackColor = Color.White;
             spnlWeeklySales.BorderColor = Color.LightGray;
             spnlWeeklySales.BorderRadius = 15;
-            spnlWeeklySales.BorderSize = 0;
+            spnlWeeklySales.BorderSize = 1;
             tableLayoutPanel1.SetColumnSpan(spnlWeeklySales, 2);
             spnlWeeklySales.Controls.Add(sabraLabel3);
             spnlWeeklySales.Controls.Add(cartesianChart1);
@@ -487,9 +487,9 @@
             spnlWeeklySales.HoverBorderColor = Color.FromArgb(37, 99, 235);
             spnlWeeklySales.HoverBorderSize = 2;
             spnlWeeklySales.Location = new Point(781, 216);
-            spnlWeeklySales.Margin = new Padding(30);
+            spnlWeeklySales.Margin = new Padding(0, 30, 30, 30);
             spnlWeeklySales.Name = "spnlWeeklySales";
-            spnlWeeklySales.Size = new Size(668, 487);
+            spnlWeeklySales.Size = new Size(698, 487);
             spnlWeeklySales.TabIndex = 19;
             // 
             // sabraLabel3
@@ -503,7 +503,7 @@
             sabraLabel3.Name = "sabraLabel3";
             sabraLabel3.Padding = new Padding(0, 0, 30, 0);
             sabraLabel3.RightToLeft = RightToLeft.Yes;
-            sabraLabel3.Size = new Size(668, 47);
+            sabraLabel3.Size = new Size(698, 47);
             sabraLabel3.TabIndex = 6;
             sabraLabel3.Text = "مبيعات الأسبوع";
             sabraLabel3.TextAlign = ContentAlignment.MiddleRight;
@@ -532,7 +532,7 @@
             cartesianChart1.MatchAxesScreenDataRatio = false;
             cartesianChart1.Name = "cartesianChart1";
             cartesianChart1.Padding = new Padding(30);
-            cartesianChart1.Size = new Size(610, 375);
+            cartesianChart1.Size = new Size(640, 375);
             cartesianChart1.TabIndex = 0;
             skDefaultTooltip1.AnimationsSpeed = TimeSpan.Parse("00:00:00.1500000");
             skDefaultTooltip1.Content = null;
@@ -558,7 +558,7 @@
             spnlSaleDistribution.BackColor = Color.White;
             spnlSaleDistribution.BorderColor = Color.LightGray;
             spnlSaleDistribution.BorderRadius = 15;
-            spnlSaleDistribution.BorderSize = 0;
+            spnlSaleDistribution.BorderSize = 1;
             spnlSaleDistribution.Controls.Add(pieChart1);
             spnlSaleDistribution.Controls.Add(sabraLabel4);
             spnlSaleDistribution.Dock = DockStyle.Fill;
@@ -638,7 +638,7 @@
             pnlBestSellingItems.BackColor = Color.White;
             pnlBestSellingItems.BorderColor = Color.LightGray;
             pnlBestSellingItems.BorderRadius = 15;
-            pnlBestSellingItems.BorderSize = 0;
+            pnlBestSellingItems.BorderSize = 1;
             pnlBestSellingItems.Controls.Add(sabraFlowLayoutPanelBestSellingItems);
             pnlBestSellingItems.Controls.Add(sabraLabel5);
             pnlBestSellingItems.Dock = DockStyle.Fill;

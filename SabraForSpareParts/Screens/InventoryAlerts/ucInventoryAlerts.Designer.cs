@@ -48,7 +48,7 @@
             icnDecreasedParts.IconColor = Color.DarkGoldenrod;
             icnDecreasedParts.IconFont = FontAwesome.Sharp.IconFont.Auto;
             icnDecreasedParts.IconSize = 65;
-            icnDecreasedParts.Location = new Point(1530, 18);
+            icnDecreasedParts.Location = new Point(1509, 18);
             icnDecreasedParts.Name = "icnDecreasedParts";
             icnDecreasedParts.Size = new Size(72, 65);
             icnDecreasedParts.SizeMode = PictureBoxSizeMode.Zoom;
@@ -57,7 +57,6 @@
             // 
             // sabraPanel1
             // 
-            sabraPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             sabraPanel1.BackColor = Color.White;
             sabraPanel1.BorderColor = Color.LightGray;
             sabraPanel1.BorderRadius = 15;
@@ -66,6 +65,7 @@
             sabraPanel1.Controls.Add(slblTitleOfTopPanel);
             sabraPanel1.Controls.Add(lblAlertsCount);
             sabraPanel1.Controls.Add(sbtnExport);
+            sabraPanel1.Dock = DockStyle.Top;
             sabraPanel1.EnableHover = true;
             sabraPanel1.ForeColor = Color.Black;
             sabraPanel1.GradientAngle = 90F;
@@ -76,7 +76,7 @@
             sabraPanel1.HoverBorderSize = 2;
             sabraPanel1.Location = new Point(30, 30);
             sabraPanel1.Name = "sabraPanel1";
-            sabraPanel1.Size = new Size(1625, 100);
+            sabraPanel1.Size = new Size(1604, 100);
             sabraPanel1.TabIndex = 0;
             // 
             // slblTitleOfTopPanel
@@ -84,13 +84,11 @@
             slblTitleOfTopPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             slblTitleOfTopPanel.AutoSize = true;
             slblTitleOfTopPanel.BackColor = Color.Transparent;
-            slblTitleOfTopPanel.BorderColor = Color.DodgerBlue;
-            slblTitleOfTopPanel.BorderRadius = 8;
-            slblTitleOfTopPanel.BorderSize = 0;
             slblTitleOfTopPanel.Font = new Font("Cairo", 18F, FontStyle.Bold);
             slblTitleOfTopPanel.ForeColor = Color.FromArgb(40, 40, 40);
-            slblTitleOfTopPanel.Location = new Point(1302, 19);
+            slblTitleOfTopPanel.Location = new Point(1281, 19);
             slblTitleOfTopPanel.Name = "slblTitleOfTopPanel";
+            slblTitleOfTopPanel.RightToLeft = RightToLeft.Yes;
             slblTitleOfTopPanel.Size = new Size(222, 56);
             slblTitleOfTopPanel.TabIndex = 15;
             slblTitleOfTopPanel.Text = "تنبيهات المخزن";
@@ -101,13 +99,11 @@
             lblAlertsCount.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblAlertsCount.AutoSize = true;
             lblAlertsCount.BackColor = Color.Transparent;
-            lblAlertsCount.BorderColor = Color.DodgerBlue;
-            lblAlertsCount.BorderRadius = 8;
-            lblAlertsCount.BorderSize = 0;
             lblAlertsCount.Font = new Font("Cairo", 12F);
             lblAlertsCount.ForeColor = Color.IndianRed;
-            lblAlertsCount.Location = new Point(1182, 32);
+            lblAlertsCount.Location = new Point(1161, 32);
             lblAlertsCount.Name = "lblAlertsCount";
+            lblAlertsCount.RightToLeft = RightToLeft.Yes;
             lblAlertsCount.Size = new Size(96, 37);
             lblAlertsCount.TabIndex = 16;
             lblAlertsCount.Text = "(0 أصناف)";
@@ -142,22 +138,22 @@
             sabraFlowLayoutPanel1.BackColor = SystemColors.Control;
             sabraFlowLayoutPanel1.BorderColor = Color.DimGray;
             sabraFlowLayoutPanel1.BorderRadius = 15;
-            sabraFlowLayoutPanel1.BorderSize = 1;
+            sabraFlowLayoutPanel1.BorderSize = 0;
             sabraFlowLayoutPanel1.Location = new Point(30, 160);
             sabraFlowLayoutPanel1.Name = "sabraFlowLayoutPanel1";
-            sabraFlowLayoutPanel1.Size = new Size(1622, 635);
+            sabraFlowLayoutPanel1.Size = new Size(1601, 635);
             sabraFlowLayoutPanel1.TabIndex = 1;
             sabraFlowLayoutPanel1.SizeChanged += sabraFlowLayoutPanel1_SizeChanged;
             // 
             // ucInventoryAlerts
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(9F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(sabraFlowLayoutPanel1);
             Controls.Add(sabraPanel1);
             Name = "ucInventoryAlerts";
             Padding = new Padding(30);
-            Size = new Size(1685, 828);
+            Size = new Size(1664, 828);
             Load += ucInventoryAlerts_Load;
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).EndInit();
             sabraPanel1.ResumeLayout(false);

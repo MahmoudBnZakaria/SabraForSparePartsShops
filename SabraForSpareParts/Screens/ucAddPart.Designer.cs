@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            sabraTableLayoutPanel1 = new SabraTableLayoutPanel();
             spnSave = new SabraPanel();
             sbtnSave = new SabraButton();
             sbtnSaveAndAdd = new SabraButton();
@@ -75,182 +74,18 @@
             stbxPurchasePrice = new SabraTextBox();
             panel2 = new Panel();
             sabraLabel8 = new SabraLabel();
-            sabraTableLayoutPanel1.SuspendLayout();
             spnSave.SuspendLayout();
             spnlTopPanel.SuspendLayout();
             sabraPanel1.SuspendLayout();
             sabraPanel2.SuspendLayout();
             SuspendLayout();
             // 
-            // sabraTableLayoutPanel1
-            // 
-            sabraTableLayoutPanel1.AutoScroll = true;
-            sabraTableLayoutPanel1.BackColor = Color.Transparent;
-            sabraTableLayoutPanel1.ColumnCount = 12;
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
-            sabraTableLayoutPanel1.Controls.Add(spnSave, 0, 7);
-            sabraTableLayoutPanel1.Controls.Add(spnlTopPanel, 0, 0);
-            sabraTableLayoutPanel1.Controls.Add(sabraPanel1, 0, 1);
-            sabraTableLayoutPanel1.Controls.Add(sabraPanel2, 0, 4);
-            sabraTableLayoutPanel1.Dock = DockStyle.Fill;
-            sabraTableLayoutPanel1.ForeColor = Color.FromArgb(40, 40, 40);
-            sabraTableLayoutPanel1.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            sabraTableLayoutPanel1.Location = new Point(10, 10);
-            sabraTableLayoutPanel1.Margin = new Padding(0);
-            sabraTableLayoutPanel1.Name = "sabraTableLayoutPanel1";
-            sabraTableLayoutPanel1.Padding = new Padding(30);
-            sabraTableLayoutPanel1.RightToLeft = RightToLeft.Yes;
-            sabraTableLayoutPanel1.RowCount = 8;
-            sabraTableLayoutPanel1.Rows = 8;
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 18.4455967F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 1.76165807F));
-            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 1.96891189F));
-            sabraTableLayoutPanel1.Size = new Size(1502, 1025);
-            sabraTableLayoutPanel1.TabIndex = 0;
-            // 
             // spnSave
             // 
             spnSave.BackColor = Color.White;
             spnSave.BorderColor = Color.LightGray;
             spnSave.BorderRadius = 15;
-            spnSave.BorderSize = 0;
-            sabraTableLayoutPanel1.SetColumnSpan(spnSave, 12);
+            spnSave.BorderSize = 1;
             spnSave.Controls.Add(sbtnSave);
             spnSave.Controls.Add(sbtnSaveAndAdd);
             spnSave.Controls.Add(stbnCancel);
@@ -263,10 +98,10 @@
             spnSave.HoverBackColor = Color.FromArgb(245, 248, 255);
             spnSave.HoverBorderColor = Color.FromArgb(37, 99, 235);
             spnSave.HoverBorderSize = 2;
-            spnSave.Location = new Point(30, 870);
+            spnSave.Location = new Point(10, 990);
             spnSave.Margin = new Padding(0);
             spnSave.Name = "spnSave";
-            spnSave.Size = new Size(1442, 125);
+            spnSave.Size = new Size(1502, 123);
             spnSave.TabIndex = 5;
             // 
             // sbtnSave
@@ -350,11 +185,10 @@
             spnlTopPanel.BackColor = Color.White;
             spnlTopPanel.BorderColor = Color.LightGray;
             spnlTopPanel.BorderRadius = 15;
-            spnlTopPanel.BorderSize = 0;
-            sabraTableLayoutPanel1.SetColumnSpan(spnlTopPanel, 12);
+            spnlTopPanel.BorderSize = 1;
             spnlTopPanel.Controls.Add(sabraButton1);
             spnlTopPanel.Controls.Add(slblTitleOfTopPanel);
-            spnlTopPanel.Dock = DockStyle.Fill;
+            spnlTopPanel.Dock = DockStyle.Top;
             spnlTopPanel.EnableHover = true;
             spnlTopPanel.ForeColor = Color.Black;
             spnlTopPanel.GradientAngle = 90F;
@@ -363,10 +197,10 @@
             spnlTopPanel.HoverBackColor = Color.FromArgb(245, 248, 255);
             spnlTopPanel.HoverBorderColor = Color.FromArgb(37, 99, 235);
             spnlTopPanel.HoverBorderSize = 2;
-            spnlTopPanel.Location = new Point(30, 30);
+            spnlTopPanel.Location = new Point(10, 10);
             spnlTopPanel.Margin = new Padding(0);
             spnlTopPanel.Name = "spnlTopPanel";
-            spnlTopPanel.Size = new Size(1442, 120);
+            spnlTopPanel.Size = new Size(1502, 130);
             spnlTopPanel.TabIndex = 2;
             // 
             // sabraButton1
@@ -404,7 +238,7 @@
             slblTitleOfTopPanel.Font = new Font("Cairo", 12F, FontStyle.Bold);
             slblTitleOfTopPanel.ForeColor = Color.Black;
             slblTitleOfTopPanel.IsTitle = true;
-            slblTitleOfTopPanel.Location = new Point(1290, 46);
+            slblTitleOfTopPanel.Location = new Point(1350, 46);
             slblTitleOfTopPanel.Margin = new Padding(0);
             slblTitleOfTopPanel.Name = "slblTitleOfTopPanel";
             slblTitleOfTopPanel.RightToLeft = RightToLeft.Yes;
@@ -415,11 +249,11 @@
             // 
             // sabraPanel1
             // 
+            sabraPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             sabraPanel1.BackColor = Color.White;
             sabraPanel1.BorderColor = Color.LightGray;
             sabraPanel1.BorderRadius = 15;
-            sabraPanel1.BorderSize = 0;
-            sabraTableLayoutPanel1.SetColumnSpan(sabraPanel1, 12);
+            sabraPanel1.BorderSize = 1;
             sabraPanel1.Controls.Add(addBrand);
             sabraPanel1.Controls.Add(addClassification);
             sabraPanel1.Controls.Add(scbxClassification);
@@ -446,11 +280,10 @@
             sabraPanel1.HoverBackColor = Color.FromArgb(245, 248, 255);
             sabraPanel1.HoverBorderColor = Color.FromArgb(37, 99, 235);
             sabraPanel1.HoverBorderSize = 2;
-            sabraPanel1.Location = new Point(50, 170);
+            sabraPanel1.Location = new Point(10, 180);
             sabraPanel1.Margin = new Padding(20);
             sabraPanel1.Name = "sabraPanel1";
-            sabraTableLayoutPanel1.SetRowSpan(sabraPanel1, 3);
-            sabraPanel1.Size = new Size(1402, 320);
+            sabraPanel1.Size = new Size(1480, 320);
             sabraPanel1.TabIndex = 3;
             // 
             // addBrand
@@ -495,7 +328,7 @@
             scbxClassification.Location = new Point(1119, 235);
             scbxClassification.Name = "scbxClassification";
             scbxClassification.RightToLeft = RightToLeft.Yes;
-            scbxClassification.Size = new Size(254, 36);
+            scbxClassification.Size = new Size(314, 36);
             scbxClassification.TabIndex = 22;
             scbxClassification.Tag = "";
             // 
@@ -626,7 +459,7 @@
             sabraLabel2.BackColor = Color.Transparent;
             sabraLabel2.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel2.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel2.Location = new Point(1301, 200);
+            sabraLabel2.Location = new Point(1361, 200);
             sabraLabel2.Name = "sabraLabel2";
             sabraLabel2.RightToLeft = RightToLeft.Yes;
             sabraLabel2.Size = new Size(72, 32);
@@ -640,7 +473,7 @@
             sabraLabel1.BackColor = Color.Transparent;
             sabraLabel1.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel1.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel1.Location = new Point(1270, 95);
+            sabraLabel1.Location = new Point(1345, 95);
             sabraLabel1.Name = "sabraLabel1";
             sabraLabel1.RightToLeft = RightToLeft.Yes;
             sabraLabel1.Size = new Size(103, 32);
@@ -696,7 +529,7 @@
             stxbxPartName.SelectedText = "";
             stxbxPartName.SelectionLength = 0;
             stxbxPartName.SelectionStart = 0;
-            stxbxPartName.Size = new Size(612, 47);
+            stxbxPartName.Size = new Size(687, 47);
             stxbxPartName.TabIndex = 6;
             stxbxPartName.TextAlign = HorizontalAlignment.Center;
             stxbxPartName.Texts = "";
@@ -707,7 +540,7 @@
             panel1.BackColor = Color.LightGray;
             panel1.Location = new Point(3, 55);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1396, 1);
+            panel1.Size = new Size(1474, 1);
             panel1.TabIndex = 5;
             // 
             // slblBasicInfoTitle
@@ -716,7 +549,7 @@
             slblBasicInfoTitle.BackColor = Color.Transparent;
             slblBasicInfoTitle.Font = new Font("Cairo", 10F, FontStyle.Bold);
             slblBasicInfoTitle.ForeColor = Color.FromArgb(64, 64, 64);
-            slblBasicInfoTitle.Location = new Point(1243, 16);
+            slblBasicInfoTitle.Location = new Point(1320, 20);
             slblBasicInfoTitle.Name = "slblBasicInfoTitle";
             slblBasicInfoTitle.RightToLeft = RightToLeft.Yes;
             slblBasicInfoTitle.Size = new Size(143, 32);
@@ -726,11 +559,11 @@
             // 
             // sabraPanel2
             // 
+            sabraPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             sabraPanel2.BackColor = Color.White;
             sabraPanel2.BorderColor = Color.LightGray;
             sabraPanel2.BorderRadius = 15;
-            sabraPanel2.BorderSize = 0;
-            sabraTableLayoutPanel1.SetColumnSpan(sabraPanel2, 12);
+            sabraPanel2.BorderSize = 1;
             sabraPanel2.Controls.Add(sabraButton2);
             sabraPanel2.Controls.Add(sabraLabel15);
             sabraPanel2.Controls.Add(stbxNotes);
@@ -758,11 +591,10 @@
             sabraPanel2.HoverBackColor = Color.FromArgb(245, 248, 255);
             sabraPanel2.HoverBorderColor = Color.FromArgb(37, 99, 235);
             sabraPanel2.HoverBorderSize = 2;
-            sabraPanel2.Location = new Point(50, 530);
+            sabraPanel2.Location = new Point(13, 570);
             sabraPanel2.Margin = new Padding(20);
             sabraPanel2.Name = "sabraPanel2";
-            sabraTableLayoutPanel1.SetRowSpan(sabraPanel2, 3);
-            sabraPanel2.Size = new Size(1402, 320);
+            sabraPanel2.Size = new Size(1477, 360);
             sabraPanel2.TabIndex = 4;
             // 
             // sabraButton2
@@ -781,7 +613,7 @@
             sabraButton2.IconFont = FontAwesome.Sharp.IconFont.Auto;
             sabraButton2.IconSize = 30;
             sabraButton2.ImageAlign = ContentAlignment.MiddleRight;
-            sabraButton2.Location = new Point(993, 260);
+            sabraButton2.Location = new Point(1002, 296);
             sabraButton2.Name = "sabraButton2";
             sabraButton2.NormalColor = Color.RoyalBlue;
             sabraButton2.Padding = new Padding(10, 0, 10, 0);
@@ -796,7 +628,7 @@
             sabraLabel15.BackColor = Color.Transparent;
             sabraLabel15.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel15.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel15.Location = new Point(824, 225);
+            sabraLabel15.Location = new Point(833, 261);
             sabraLabel15.Name = "sabraLabel15";
             sabraLabel15.RightToLeft = RightToLeft.Yes;
             sabraLabel15.Size = new Size(78, 32);
@@ -810,7 +642,7 @@
             stbxNotes.BorderSize = 2;
             stbxNotes.Font = new Font("Cairo", 10F);
             stbxNotes.ForeColor = Color.FromArgb(64, 64, 64);
-            stbxNotes.Location = new Point(419, 260);
+            stbxNotes.Location = new Point(428, 296);
             stbxNotes.Name = "stbxNotes";
             stbxNotes.Padding = new Padding(10, 7, 10, 7);
             stbxNotes.PlaceholderText = "لا تصرف إلا لورشة كذا كذا";
@@ -828,7 +660,7 @@
             sabraLabel16.BackColor = Color.Transparent;
             sabraLabel16.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel16.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel16.Location = new Point(1286, 226);
+            sabraLabel16.Location = new Point(1295, 262);
             sabraLabel16.Name = "sabraLabel16";
             sabraLabel16.RightToLeft = RightToLeft.Yes;
             sabraLabel16.Size = new Size(96, 32);
@@ -842,7 +674,7 @@
             stbxAlternativePart.BorderSize = 2;
             stbxAlternativePart.Font = new Font("Cairo", 10F);
             stbxAlternativePart.ForeColor = Color.FromArgb(64, 64, 64);
-            stbxAlternativePart.Location = new Point(1065, 260);
+            stbxAlternativePart.Location = new Point(1074, 296);
             stbxAlternativePart.Name = "stbxAlternativePart";
             stbxAlternativePart.Padding = new Padding(10, 7, 10, 7);
             stbxAlternativePart.PlaceholderText = "بحث باسم أو باركود ";
@@ -858,9 +690,9 @@
             // 
             panel3.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             panel3.BackColor = Color.LightGray;
-            panel3.Location = new Point(3, 222);
+            panel3.Location = new Point(3, 242);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1396, 1);
+            panel3.Size = new Size(1471, 1);
             panel3.TabIndex = 26;
             // 
             // sabraLabel14
@@ -869,7 +701,7 @@
             sabraLabel14.BackColor = Color.Transparent;
             sabraLabel14.Font = new Font("Cairo", 10F, FontStyle.Bold);
             sabraLabel14.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel14.Location = new Point(1240, 176);
+            sabraLabel14.Location = new Point(1320, 207);
             sabraLabel14.Name = "sabraLabel14";
             sabraLabel14.RightToLeft = RightToLeft.Yes;
             sabraLabel14.Size = new Size(142, 32);
@@ -1011,7 +843,7 @@
             sabraLabel9.BackColor = Color.Transparent;
             sabraLabel9.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel9.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel9.Location = new Point(1293, 82);
+            sabraLabel9.Location = new Point(1368, 82);
             sabraLabel9.Name = "sabraLabel9";
             sabraLabel9.RightToLeft = RightToLeft.Yes;
             sabraLabel9.Size = new Size(92, 32);
@@ -1034,7 +866,7 @@
             stbxPurchasePrice.SelectedText = "";
             stbxPurchasePrice.SelectionLength = 0;
             stbxPurchasePrice.SelectionStart = 0;
-            stbxPurchasePrice.Size = new Size(254, 47);
+            stbxPurchasePrice.Size = new Size(332, 47);
             stbxPurchasePrice.TabIndex = 17;
             stbxPurchasePrice.TextAlign = HorizontalAlignment.Right;
             stbxPurchasePrice.Texts = "";
@@ -1043,9 +875,9 @@
             // 
             panel2.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             panel2.BackColor = Color.LightGray;
-            panel2.Location = new Point(6, 63);
+            panel2.Location = new Point(6, 83);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1396, 1);
+            panel2.Size = new Size(1471, 1);
             panel2.TabIndex = 7;
             // 
             // sabraLabel8
@@ -1054,7 +886,7 @@
             sabraLabel8.BackColor = Color.Transparent;
             sabraLabel8.Font = new Font("Cairo", 10F, FontStyle.Bold);
             sabraLabel8.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel8.Location = new Point(1243, 17);
+            sabraLabel8.Location = new Point(1300, 18);
             sabraLabel8.Name = "sabraLabel8";
             sabraLabel8.RightToLeft = RightToLeft.Yes;
             sabraLabel8.Size = new Size(145, 32);
@@ -1066,9 +898,12 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(sabraTableLayoutPanel1);
+            Controls.Add(spnlTopPanel);
+            Controls.Add(sabraPanel2);
+            Controls.Add(sabraPanel1);
+            Controls.Add(spnSave);
             Name = "ucAddPart";
-            sabraTableLayoutPanel1.ResumeLayout(false);
+            Size = new Size(1418, 961);
             spnSave.ResumeLayout(false);
             spnlTopPanel.ResumeLayout(false);
             spnlTopPanel.PerformLayout();
@@ -1080,8 +915,6 @@
         }
 
         #endregion
-
-        private SabraTableLayoutPanel sabraTableLayoutPanel1;
         private SabraPanel spnlTopPanel;
         private SabraButton sabraButton1;
         private SabraLabel slblTitleOfTopPanel;

@@ -219,7 +219,7 @@
             sabraPanel2.BackColor = Color.White;
             sabraPanel2.BorderColor = Color.LightGray;
             sabraPanel2.BorderRadius = 15;
-            sabraPanel2.BorderSize = 0;
+            sabraPanel2.BorderSize = 1;
             sabraPanel2.Controls.Add(dgvPurchaseOrderDetails);
             sabraPanel2.Controls.Add(lblNewPurchaseOrderReciveDate);
             sabraPanel2.Controls.Add(lblNewPurchaseOrderSupplier);
@@ -246,6 +246,7 @@
             // 
             dgvPurchaseOrderDetails.AllowUserToAddRows = false;
             dgvPurchaseOrderDetails.AllowUserToDeleteRows = false;
+            dgvPurchaseOrderDetails.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 250, 252);
             dataGridViewCellStyle1.ForeColor = Color.FromArgb(51, 65, 85);
             dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(30, 58, 138);
@@ -281,6 +282,7 @@
             dgvPurchaseOrderDetails.DefaultCellStyle = dataGridViewCellStyle3;
             dgvPurchaseOrderDetails.EditableCellBackColor = Color.White;
             dgvPurchaseOrderDetails.EditableCellBorderColor = Color.FromArgb(203, 213, 225);
+            dgvPurchaseOrderDetails.EditMode = DataGridViewEditMode.EditOnEnter;
             dgvPurchaseOrderDetails.EnableHeadersVisualStyles = false;
             dgvPurchaseOrderDetails.Font = new Font("Cairo", 10F);
             dgvPurchaseOrderDetails.GridColor = Color.FromArgb(226, 232, 240);
@@ -440,7 +442,7 @@
             sabraPanel3.BackColor = Color.White;
             sabraPanel3.BorderColor = Color.LightGray;
             sabraPanel3.BorderRadius = 15;
-            sabraPanel3.BorderSize = 0;
+            sabraPanel3.BorderSize = 1;
             sabraPanel3.Controls.Add(scbtnCancel);
             sabraPanel3.Controls.Add(sabraButton1);
             sabraPanel3.EnableHover = true;

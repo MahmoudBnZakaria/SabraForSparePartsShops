@@ -31,8 +31,9 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             sabraTableLayoutPanel1 = new SabraTableLayoutPanel();
             spnlDataGridViewOPtions = new SabraPanel();
             scbtnDeleteFilters = new SabraButton();
@@ -90,6 +91,18 @@
             sabraTableLayoutPanel1.AutoScroll = true;
             sabraTableLayoutPanel1.BackColor = Color.Transparent;
             sabraTableLayoutPanel1.ColumnCount = 12;
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
@@ -367,6 +380,14 @@
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.Size = new Size(1608, 1025);
             sabraTableLayoutPanel1.TabIndex = 0;
             sabraTableLayoutPanel1.Paint += sabraTableLayoutPanel1_Paint;
@@ -377,7 +398,7 @@
             spnlDataGridViewOPtions.BackColor = Color.White;
             spnlDataGridViewOPtions.BorderColor = Color.LightGray;
             spnlDataGridViewOPtions.BorderRadius = 15;
-            spnlDataGridViewOPtions.BorderSize = 0;
+            spnlDataGridViewOPtions.BorderSize = 1;
             sabraTableLayoutPanel1.SetColumnSpan(spnlDataGridViewOPtions, 12);
             spnlDataGridViewOPtions.Controls.Add(scbtnDeleteFilters);
             spnlDataGridViewOPtions.Controls.Add(btnSearch);
@@ -394,9 +415,9 @@
             spnlDataGridViewOPtions.HoverBorderColor = Color.FromArgb(37, 99, 235);
             spnlDataGridViewOPtions.HoverBorderSize = 2;
             spnlDataGridViewOPtions.Location = new Point(50, 290);
-            spnlDataGridViewOPtions.Margin = new Padding(20);
+            spnlDataGridViewOPtions.Margin = new Padding(0, 20, 20, 20);
             spnlDataGridViewOPtions.Name = "spnlDataGridViewOPtions";
-            spnlDataGridViewOPtions.Size = new Size(1508, 80);
+            spnlDataGridViewOPtions.Size = new Size(1528, 80);
             spnlDataGridViewOPtions.TabIndex = 11;
             // 
             // scbtnDeleteFilters
@@ -416,7 +437,7 @@
             scbtnDeleteFilters.IconFont = FontAwesome.Sharp.IconFont.Auto;
             scbtnDeleteFilters.IconSize = 30;
             scbtnDeleteFilters.ImageAlign = ContentAlignment.MiddleRight;
-            scbtnDeleteFilters.Location = new Point(104, 20);
+            scbtnDeleteFilters.Location = new Point(124, 20);
             scbtnDeleteFilters.Name = "scbtnDeleteFilters";
             scbtnDeleteFilters.NormalColor = Color.DimGray;
             scbtnDeleteFilters.Padding = new Padding(10, 0, 10, 0);
@@ -444,7 +465,7 @@
             btnSearch.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnSearch.IconSize = 30;
             btnSearch.ImageAlign = ContentAlignment.MiddleRight;
-            btnSearch.Location = new Point(227, 20);
+            btnSearch.Location = new Point(247, 20);
             btnSearch.Name = "btnSearch";
             btnSearch.NormalColor = Color.RoyalBlue;
             btnSearch.Size = new Size(90, 43);
@@ -466,7 +487,7 @@
             cmbInventoryStatus.FormattingEnabled = true;
             cmbInventoryStatus.ItemHeight = 30;
             cmbInventoryStatus.Items.AddRange(new object[] { "كل التصنيفات", "فرامل", "بواجي", "تعليق" });
-            cmbInventoryStatus.Location = new Point(374, 21);
+            cmbInventoryStatus.Location = new Point(394, 21);
             cmbInventoryStatus.Name = "cmbInventoryStatus";
             cmbInventoryStatus.RightToLeft = RightToLeft.Yes;
             cmbInventoryStatus.Size = new Size(254, 36);
@@ -485,7 +506,7 @@
             scbxBrand.FormattingEnabled = true;
             scbxBrand.ItemHeight = 30;
             scbxBrand.Items.AddRange(new object[] { "كل التصنيفات", "فرامل", "بواجي", "تعليق" });
-            scbxBrand.Location = new Point(655, 21);
+            scbxBrand.Location = new Point(675, 21);
             scbxBrand.Name = "scbxBrand";
             scbxBrand.RightToLeft = RightToLeft.Yes;
             scbxBrand.Size = new Size(254, 36);
@@ -504,7 +525,7 @@
             scbxClassification.FormattingEnabled = true;
             scbxClassification.ItemHeight = 30;
             scbxClassification.Items.AddRange(new object[] { "كل التصنيفات", "فرامل", "بواجي", "تعليق" });
-            scbxClassification.Location = new Point(936, 21);
+            scbxClassification.Location = new Point(956, 21);
             scbxClassification.Name = "scbxClassification";
             scbxClassification.RightToLeft = RightToLeft.Yes;
             scbxClassification.Size = new Size(254, 36);
@@ -518,13 +539,18 @@
             stxbxSearch.BorderSize = 2;
             stxbxSearch.Font = new Font("Cairo", 10F);
             stxbxSearch.ForeColor = Color.FromArgb(64, 64, 64);
-            stxbxSearch.Location = new Point(1206, 20);
+            stxbxSearch.Location = new Point(1226, 20);
             stxbxSearch.Name = "stxbxSearch";
+            stxbxSearch.Padding = new Padding(10, 7, 25, 7);
             stxbxSearch.PlaceholderText = "اسم / باركود / رقم فني..";
             stxbxSearch.RightToLeft = RightToLeft.Yes;
-            stxbxSearch.Size = new Size(284, 39);
+            stxbxSearch.SelectedText = "";
+            stxbxSearch.SelectionLength = 0;
+            stxbxSearch.SelectionStart = 0;
+            stxbxSearch.Size = new Size(284, 47);
             stxbxSearch.TabIndex = 12;
             stxbxSearch.TabStop = false;
+            stxbxSearch.Texts = "";
             stxbxSearch.TextChanged += stxbxSearch_TextChanged;
             // 
             // sabraDataGridView1
@@ -533,51 +559,79 @@
             sabraDataGridView1.AllowUserToDeleteRows = false;
             sabraDataGridView1.AllowUserToOrderColumns = true;
             sabraDataGridView1.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 248, 248);
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 250, 252);
+            dataGridViewCellStyle1.ForeColor = Color.FromArgb(51, 65, 85);
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            dataGridViewCellStyle1.SelectionForeColor = Color.White;
             sabraDataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             sabraDataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             sabraDataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             sabraDataGridView1.BackgroundColor = Color.White;
             sabraDataGridView1.BorderStyle = BorderStyle.None;
+            sabraDataGridView1.ButtonBackColor = Color.FromArgb(241, 245, 249);
+            sabraDataGridView1.ButtonForeColor = Color.FromArgb(51, 65, 85);
+            sabraDataGridView1.ButtonHoverColor = Color.FromArgb(226, 232, 240);
             sabraDataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             sabraDataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle2.BackColor = Color.White;
             dataGridViewCellStyle2.Font = new Font("Cairo", 10F, FontStyle.Bold);
             dataGridViewCellStyle2.ForeColor = Color.FromArgb(64, 64, 64);
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.Padding = new Padding(8, 0, 8, 0);
+            dataGridViewCellStyle2.SelectionBackColor = Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = Color.FromArgb(64, 64, 64);
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             sabraDataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             sabraDataGridView1.ColumnHeadersHeight = 45;
             sabraDataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             sabraDataGridView1.Columns.AddRange(new DataGridViewColumn[] { dataGridViewButtonColumn1 });
             sabraTableLayoutPanel1.SetColumnSpan(sabraDataGridView1, 12);
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle4.BackColor = Color.White;
             dataGridViewCellStyle4.Font = new Font("Cairo", 10F);
-            dataGridViewCellStyle4.ForeColor = Color.FromArgb(64, 64, 64);
-            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(235, 245, 255);
-            dataGridViewCellStyle4.SelectionForeColor = Color.Black;
+            dataGridViewCellStyle4.ForeColor = Color.FromArgb(51, 65, 85);
+            dataGridViewCellStyle4.Padding = new Padding(8, 0, 8, 0);
+            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            dataGridViewCellStyle4.SelectionForeColor = Color.White;
             dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
             sabraDataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
+            sabraDataGridView1.EditableCellBackColor = Color.White;
+            sabraDataGridView1.EditableCellBorderColor = Color.FromArgb(203, 213, 225);
+            sabraDataGridView1.EditMode = DataGridViewEditMode.EditOnEnter;
             sabraDataGridView1.EnableHeadersVisualStyles = false;
             sabraDataGridView1.Font = new Font("Cairo", 10F);
-            sabraDataGridView1.GridColor = Color.LightGray;
+            sabraDataGridView1.GridColor = Color.FromArgb(226, 232, 240);
+            sabraDataGridView1.GridLineCustomColor = Color.FromArgb(226, 232, 240);
             sabraDataGridView1.HeaderBackColor = Color.White;
             sabraDataGridView1.HeaderForeColor = Color.FromArgb(64, 64, 64);
+            sabraDataGridView1.HeaderHeight = 45;
+            sabraDataGridView1.HoverBackColor = Color.FromArgb(241, 245, 249);
             sabraDataGridView1.Location = new Point(50, 410);
-            sabraDataGridView1.Margin = new Padding(20);
+            sabraDataGridView1.Margin = new Padding(0, 20, 20, 20);
             sabraDataGridView1.MultiSelect = false;
             sabraDataGridView1.Name = "sabraDataGridView1";
             sabraDataGridView1.ReadOnly = true;
             sabraDataGridView1.RightToLeft = RightToLeft.Yes;
+            sabraDataGridView1.RowAlternateBackColor = Color.FromArgb(248, 250, 252);
+            sabraDataGridView1.RowBackColor = Color.White;
+            sabraDataGridView1.RowForeColor = Color.FromArgb(51, 65, 85);
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = SystemColors.Control;
+            dataGridViewCellStyle5.Font = new Font("Cairo", 10F);
+            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            dataGridViewCellStyle5.SelectionForeColor = Color.White;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            sabraDataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             sabraDataGridView1.RowHeadersVisible = false;
             sabraDataGridView1.RowHeadersWidth = 51;
+            sabraDataGridView1.RowHeight = 40;
             sabraTableLayoutPanel1.SetRowSpan(sabraDataGridView1, 5);
             sabraDataGridView1.RowTemplate.Height = 40;
+            sabraDataGridView1.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            sabraDataGridView1.SelectionForeColor = Color.White;
             sabraDataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            sabraDataGridView1.Size = new Size(1508, 565);
+            sabraDataGridView1.Size = new Size(1528, 565);
             sabraDataGridView1.TabIndex = 10;
             sabraDataGridView1.CellContentClick += sabraDataGridView1_CellContentClick;
             // 
@@ -602,7 +656,7 @@
             pnlUnpaidInvoices.BackColor = Color.White;
             pnlUnpaidInvoices.BorderColor = Color.LightGray;
             pnlUnpaidInvoices.BorderRadius = 15;
-            pnlUnpaidInvoices.BorderSize = 0;
+            pnlUnpaidInvoices.BorderSize = 1;
             sabraTableLayoutPanel1.SetColumnSpan(pnlUnpaidInvoices, 2);
             pnlUnpaidInvoices.Controls.Add(lblUnpaidInvoicesDisc);
             pnlUnpaidInvoices.Controls.Add(lblTotalParts);
@@ -615,8 +669,8 @@
             pnlUnpaidInvoices.HoverBackColor = Color.FromArgb(245, 248, 255);
             pnlUnpaidInvoices.HoverBorderColor = Color.FromArgb(37, 99, 235);
             pnlUnpaidInvoices.HoverBorderSize = 2;
-            pnlUnpaidInvoices.Location = new Point(1338, 166);
-            pnlUnpaidInvoices.Margin = new Padding(16);
+            pnlUnpaidInvoices.Location = new Point(1354, 166);
+            pnlUnpaidInvoices.Margin = new Padding(0, 16, 16, 16);
             pnlUnpaidInvoices.Name = "pnlUnpaidInvoices";
             pnlUnpaidInvoices.Size = new Size(224, 88);
             pnlUnpaidInvoices.TabIndex = 9;
@@ -625,14 +679,12 @@
             // 
             lblUnpaidInvoicesDisc.AutoSize = true;
             lblUnpaidInvoicesDisc.BackColor = Color.Transparent;
-            lblUnpaidInvoicesDisc.BorderColor = Color.DodgerBlue;
-            lblUnpaidInvoicesDisc.BorderRadius = 8;
-            lblUnpaidInvoicesDisc.BorderSize = 0;
             lblUnpaidInvoicesDisc.Font = new Font("Cairo", 10F);
             lblUnpaidInvoicesDisc.ForeColor = Color.DimGray;
             lblUnpaidInvoicesDisc.Location = new Point(28, 52);
             lblUnpaidInvoicesDisc.Margin = new Padding(0);
             lblUnpaidInvoicesDisc.Name = "lblUnpaidInvoicesDisc";
+            lblUnpaidInvoicesDisc.RightToLeft = RightToLeft.Yes;
             lblUnpaidInvoicesDisc.Size = new Size(110, 32);
             lblUnpaidInvoicesDisc.TabIndex = 2;
             lblUnpaidInvoicesDisc.Text = "إجمالي القطع";
@@ -642,15 +694,13 @@
             // 
             lblTotalParts.AutoSize = true;
             lblTotalParts.BackColor = Color.Transparent;
-            lblTotalParts.BorderColor = Color.DodgerBlue;
-            lblTotalParts.BorderRadius = 8;
-            lblTotalParts.BorderSize = 0;
             lblTotalParts.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblTotalParts.ForeColor = Color.DimGray;
             lblTotalParts.IsTitle = true;
             lblTotalParts.Location = new Point(70, 16);
             lblTotalParts.Margin = new Padding(0);
             lblTotalParts.Name = "lblTotalParts";
+            lblTotalParts.RightToLeft = RightToLeft.Yes;
             lblTotalParts.Size = new Size(28, 37);
             lblTotalParts.TabIndex = 2;
             lblTotalParts.Text = "1";
@@ -677,7 +727,7 @@
             sabraPanel1.BackColor = Color.White;
             sabraPanel1.BorderColor = Color.LightGray;
             sabraPanel1.BorderRadius = 15;
-            sabraPanel1.BorderSize = 0;
+            sabraPanel1.BorderSize = 1;
             sabraTableLayoutPanel1.SetColumnSpan(sabraPanel1, 2);
             sabraPanel1.Controls.Add(sabraLabel1);
             sabraPanel1.Controls.Add(lblLowStock);
@@ -701,14 +751,12 @@
             // 
             sabraLabel1.AutoSize = true;
             sabraLabel1.BackColor = Color.Transparent;
-            sabraLabel1.BorderColor = Color.DodgerBlue;
-            sabraLabel1.BorderRadius = 8;
-            sabraLabel1.BorderSize = 0;
             sabraLabel1.Font = new Font("Cairo", 10F);
             sabraLabel1.ForeColor = Color.DimGray;
             sabraLabel1.Location = new Point(26, 53);
             sabraLabel1.Margin = new Padding(0);
             sabraLabel1.Name = "sabraLabel1";
+            sabraLabel1.RightToLeft = RightToLeft.Yes;
             sabraLabel1.Size = new Size(122, 32);
             sabraLabel1.TabIndex = 2;
             sabraLabel1.Text = "مخزون منخفض";
@@ -718,15 +766,13 @@
             // 
             lblLowStock.AutoSize = true;
             lblLowStock.BackColor = Color.Transparent;
-            lblLowStock.BorderColor = Color.DodgerBlue;
-            lblLowStock.BorderRadius = 8;
-            lblLowStock.BorderSize = 0;
             lblLowStock.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblLowStock.ForeColor = Color.Firebrick;
             lblLowStock.IsTitle = true;
             lblLowStock.Location = new Point(49, 19);
             lblLowStock.Margin = new Padding(0);
             lblLowStock.Name = "lblLowStock";
+            lblLowStock.RightToLeft = RightToLeft.Yes;
             lblLowStock.Size = new Size(72, 37);
             lblLowStock.TabIndex = 2;
             lblLowStock.Text = "20000";
@@ -752,7 +798,7 @@
             pnlLowStock.BackColor = Color.White;
             pnlLowStock.BorderColor = Color.LightGray;
             pnlLowStock.BorderRadius = 15;
-            pnlLowStock.BorderSize = 0;
+            pnlLowStock.BorderSize = 1;
             sabraTableLayoutPanel1.SetColumnSpan(pnlLowStock, 2);
             pnlLowStock.Controls.Add(lblLowStockPartsDisc);
             pnlLowStock.Controls.Add(lblZeroStock);
@@ -775,14 +821,12 @@
             // 
             lblLowStockPartsDisc.AutoSize = true;
             lblLowStockPartsDisc.BackColor = Color.Transparent;
-            lblLowStockPartsDisc.BorderColor = Color.DodgerBlue;
-            lblLowStockPartsDisc.BorderRadius = 8;
-            lblLowStockPartsDisc.BorderSize = 0;
             lblLowStockPartsDisc.Font = new Font("Cairo", 10F);
             lblLowStockPartsDisc.ForeColor = Color.DimGray;
             lblLowStockPartsDisc.Location = new Point(40, 53);
             lblLowStockPartsDisc.Margin = new Padding(0);
             lblLowStockPartsDisc.Name = "lblLowStockPartsDisc";
+            lblLowStockPartsDisc.RightToLeft = RightToLeft.Yes;
             lblLowStockPartsDisc.Size = new Size(94, 32);
             lblLowStockPartsDisc.TabIndex = 2;
             lblLowStockPartsDisc.Text = "مخزون صفر";
@@ -792,15 +836,13 @@
             // 
             lblZeroStock.AutoSize = true;
             lblZeroStock.BackColor = Color.Transparent;
-            lblZeroStock.BorderColor = Color.DodgerBlue;
-            lblZeroStock.BorderRadius = 8;
-            lblZeroStock.BorderSize = 0;
             lblZeroStock.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblZeroStock.ForeColor = Color.DarkRed;
             lblZeroStock.IsTitle = true;
             lblZeroStock.Location = new Point(72, 19);
             lblZeroStock.Margin = new Padding(0);
             lblZeroStock.Name = "lblZeroStock";
+            lblZeroStock.RightToLeft = RightToLeft.Yes;
             lblZeroStock.Size = new Size(39, 37);
             lblZeroStock.TabIndex = 2;
             lblZeroStock.Text = "22";
@@ -827,7 +869,7 @@
             pnlNetProfit.BackColor = Color.White;
             pnlNetProfit.BorderColor = Color.LightGray;
             pnlNetProfit.BorderRadius = 15;
-            pnlNetProfit.BorderSize = 0;
+            pnlNetProfit.BorderSize = 1;
             sabraTableLayoutPanel1.SetColumnSpan(pnlNetProfit, 2);
             pnlNetProfit.Controls.Add(sabraLabel2);
             pnlNetProfit.Controls.Add(lblDiedStock);
@@ -850,14 +892,12 @@
             // 
             sabraLabel2.AutoSize = true;
             sabraLabel2.BackColor = Color.Transparent;
-            sabraLabel2.BorderColor = Color.DodgerBlue;
-            sabraLabel2.BorderRadius = 8;
-            sabraLabel2.BorderSize = 0;
             sabraLabel2.Font = new Font("Cairo", 10F);
             sabraLabel2.ForeColor = Color.DimGray;
             sabraLabel2.Location = new Point(34, 53);
             sabraLabel2.Margin = new Padding(0);
             sabraLabel2.Name = "sabraLabel2";
+            sabraLabel2.RightToLeft = RightToLeft.Yes;
             sabraLabel2.Size = new Size(94, 32);
             sabraLabel2.TabIndex = 2;
             sabraLabel2.Text = "مخزون ميت";
@@ -867,15 +907,13 @@
             // 
             lblDiedStock.AutoSize = true;
             lblDiedStock.BackColor = Color.Transparent;
-            lblDiedStock.BorderColor = Color.DodgerBlue;
-            lblDiedStock.BorderRadius = 8;
-            lblDiedStock.BorderSize = 0;
             lblDiedStock.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblDiedStock.ForeColor = Color.DarkGoldenrod;
             lblDiedStock.IsTitle = true;
             lblDiedStock.Location = new Point(60, 19);
             lblDiedStock.Margin = new Padding(0);
             lblDiedStock.Name = "lblDiedStock";
+            lblDiedStock.RightToLeft = RightToLeft.Yes;
             lblDiedStock.Size = new Size(50, 37);
             lblDiedStock.TabIndex = 2;
             lblDiedStock.Text = "310";
@@ -901,7 +939,7 @@
             pnlSales.BackColor = Color.White;
             pnlSales.BorderColor = Color.LightGray;
             pnlSales.BorderRadius = 15;
-            pnlSales.BorderSize = 0;
+            pnlSales.BorderSize = 1;
             sabraTableLayoutPanel1.SetColumnSpan(pnlSales, 4);
             pnlSales.Controls.Add(lblSalesDisc);
             pnlSales.Controls.Add(lblInventoryValue);
@@ -924,14 +962,12 @@
             // 
             lblSalesDisc.AutoSize = true;
             lblSalesDisc.BackColor = Color.Transparent;
-            lblSalesDisc.BorderColor = Color.DodgerBlue;
-            lblSalesDisc.BorderRadius = 8;
-            lblSalesDisc.BorderSize = 0;
             lblSalesDisc.Font = new Font("Cairo", 10F);
             lblSalesDisc.ForeColor = Color.DimGray;
             lblSalesDisc.Location = new Point(147, 52);
             lblSalesDisc.Margin = new Padding(0);
             lblSalesDisc.Name = "lblSalesDisc";
+            lblSalesDisc.RightToLeft = RightToLeft.Yes;
             lblSalesDisc.Size = new Size(114, 32);
             lblSalesDisc.TabIndex = 2;
             lblSalesDisc.Text = "قيمة المخزون ";
@@ -941,15 +977,13 @@
             // 
             lblInventoryValue.AutoSize = true;
             lblInventoryValue.BackColor = Color.Transparent;
-            lblInventoryValue.BorderColor = Color.DodgerBlue;
-            lblInventoryValue.BorderRadius = 8;
-            lblInventoryValue.BorderSize = 0;
             lblInventoryValue.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblInventoryValue.ForeColor = Color.RoyalBlue;
             lblInventoryValue.IsTitle = true;
             lblInventoryValue.Location = new Point(169, 15);
             lblInventoryValue.Margin = new Padding(0);
             lblInventoryValue.Name = "lblInventoryValue";
+            lblInventoryValue.RightToLeft = RightToLeft.Yes;
             lblInventoryValue.Size = new Size(72, 37);
             lblInventoryValue.TabIndex = 2;
             lblInventoryValue.Text = "20000";
@@ -972,12 +1006,12 @@
             // 
             // dataGridViewButtonColumn2
             // 
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = Color.White;
-            dataGridViewCellStyle5.ForeColor = Color.Black;
-            dataGridViewCellStyle5.SelectionBackColor = Color.White;
-            dataGridViewCellStyle5.SelectionForeColor = Color.Black;
-            dataGridViewButtonColumn2.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.BackColor = Color.White;
+            dataGridViewCellStyle6.ForeColor = Color.Black;
+            dataGridViewCellStyle6.SelectionBackColor = Color.White;
+            dataGridViewCellStyle6.SelectionForeColor = Color.Black;
+            dataGridViewButtonColumn2.DefaultCellStyle = dataGridViewCellStyle6;
             dataGridViewButtonColumn2.FlatStyle = FlatStyle.Flat;
             dataGridViewButtonColumn2.HeaderText = "الإجراءات";
             dataGridViewButtonColumn2.MinimumWidth = 6;
@@ -1094,14 +1128,13 @@
             slblTitleOfTopPanel.AutoSize = true;
             slblTitleOfTopPanel.BackColor = Color.Transparent;
             slblTitleOfTopPanel.BorderColor = Color.Black;
-            slblTitleOfTopPanel.BorderRadius = 8;
-            slblTitleOfTopPanel.BorderSize = 0;
             slblTitleOfTopPanel.Font = new Font("Cairo", 12F, FontStyle.Bold);
             slblTitleOfTopPanel.ForeColor = Color.Black;
             slblTitleOfTopPanel.IsTitle = true;
             slblTitleOfTopPanel.Location = new Point(1445, 30);
             slblTitleOfTopPanel.Margin = new Padding(0);
             slblTitleOfTopPanel.Name = "slblTitleOfTopPanel";
+            slblTitleOfTopPanel.RightToLeft = RightToLeft.Yes;
             slblTitleOfTopPanel.Size = new Size(144, 37);
             slblTitleOfTopPanel.TabIndex = 0;
             slblTitleOfTopPanel.Text = "قائمة المخزون";
@@ -1118,7 +1151,6 @@
             Load += ucInventory_Load;
             sabraTableLayoutPanel1.ResumeLayout(false);
             spnlDataGridViewOPtions.ResumeLayout(false);
-            spnlDataGridViewOPtions.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)sabraDataGridView1).EndInit();
             pnlUnpaidInvoices.ResumeLayout(false);
             pnlUnpaidInvoices.PerformLayout();

@@ -183,7 +183,7 @@
             pnlUnpaidInvoices.BackColor = Color.White;
             pnlUnpaidInvoices.BorderColor = Color.LightGray;
             pnlUnpaidInvoices.BorderRadius = 15;
-            pnlUnpaidInvoices.BorderSize = 0;
+            pnlUnpaidInvoices.BorderSize = 1;
             pnlUnpaidInvoices.Controls.Add(lblTotalSalaries);
             pnlUnpaidInvoices.Controls.Add(lblUnpaidInvoicesDisc);
             pnlUnpaidInvoices.EnableHover = true;
@@ -194,8 +194,8 @@
             pnlUnpaidInvoices.HoverBackColor = Color.FromArgb(245, 248, 255);
             pnlUnpaidInvoices.HoverBorderColor = Color.FromArgb(37, 99, 235);
             pnlUnpaidInvoices.HoverBorderSize = 2;
-            pnlUnpaidInvoices.Location = new Point(1131, 16);
-            pnlUnpaidInvoices.Margin = new Padding(16);
+            pnlUnpaidInvoices.Location = new Point(1147, 16);
+            pnlUnpaidInvoices.Margin = new Padding(0, 16, 16, 16);
             pnlUnpaidInvoices.Name = "pnlUnpaidInvoices";
             pnlUnpaidInvoices.Size = new Size(332, 96);
             pnlUnpaidInvoices.TabIndex = 18;
@@ -237,7 +237,7 @@
             sabraPanel2.BackColor = Color.White;
             sabraPanel2.BorderColor = Color.LightGray;
             sabraPanel2.BorderRadius = 15;
-            sabraPanel2.BorderSize = 0;
+            sabraPanel2.BorderSize = 1;
             sabraPanel2.Controls.Add(lblNumberOfEmployees);
             sabraPanel2.Controls.Add(sabraLabel1);
             sabraPanel2.EnableHover = true;
@@ -248,10 +248,10 @@
             sabraPanel2.HoverBackColor = Color.FromArgb(245, 248, 255);
             sabraPanel2.HoverBorderColor = Color.FromArgb(37, 99, 235);
             sabraPanel2.HoverBorderSize = 2;
-            sabraPanel2.Location = new Point(35, 15);
+            sabraPanel2.Location = new Point(63, 15);
             sabraPanel2.Margin = new Padding(15);
             sabraPanel2.Name = "sabraPanel2";
-            sabraPanel2.Size = new Size(337, 97);
+            sabraPanel2.Size = new Size(309, 97);
             sabraPanel2.TabIndex = 18;
             // 
             // lblNumberOfEmployees
@@ -261,7 +261,7 @@
             lblNumberOfEmployees.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblNumberOfEmployees.ForeColor = Color.DimGray;
             lblNumberOfEmployees.IsTitle = true;
-            lblNumberOfEmployees.Location = new Point(51, 5);
+            lblNumberOfEmployees.Location = new Point(23, 5);
             lblNumberOfEmployees.Margin = new Padding(0);
             lblNumberOfEmployees.Name = "lblNumberOfEmployees";
             lblNumberOfEmployees.RightToLeft = RightToLeft.Yes;
@@ -276,7 +276,7 @@
             sabraLabel1.BackColor = Color.Transparent;
             sabraLabel1.Font = new Font("Cairo Black", 13F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel1.ForeColor = Color.DimGray;
-            sabraLabel1.Location = new Point(28, 40);
+            sabraLabel1.Location = new Point(0, 40);
             sabraLabel1.Margin = new Padding(0);
             sabraLabel1.Name = "sabraLabel1";
             sabraLabel1.RightToLeft = RightToLeft.Yes;
@@ -290,7 +290,7 @@
             pnlLowStock.BackColor = Color.White;
             pnlLowStock.BorderColor = Color.LightGray;
             pnlLowStock.BorderRadius = 15;
-            pnlLowStock.BorderSize = 0;
+            pnlLowStock.BorderSize = 1;
             pnlLowStock.Controls.Add(lblTotalAdvances);
             pnlLowStock.Controls.Add(lblLowStockPartsDisc);
             pnlLowStock.EnableHover = true;
@@ -344,7 +344,7 @@
             pnlNetProfit.BackColor = Color.White;
             pnlNetProfit.BorderColor = Color.LightGray;
             pnlNetProfit.BorderRadius = 15;
-            pnlNetProfit.BorderSize = 0;
+            pnlNetProfit.BorderSize = 1;
             pnlNetProfit.Controls.Add(sabraLabel2);
             pnlNetProfit.Controls.Add(lblNetPaid);
             pnlNetProfit.EnableHover = true;
@@ -401,9 +401,10 @@
             sabraFlowLayoutPanelContainerOfCards.BorderColor = Color.Transparent;
             sabraFlowLayoutPanelContainerOfCards.BorderRadius = 20;
             sabraFlowLayoutPanelContainerOfCards.BorderSize = 1;
-            sabraFlowLayoutPanelContainerOfCards.Location = new Point(62, 338);
+            sabraFlowLayoutPanelContainerOfCards.Location = new Point(73, 338);
+            sabraFlowLayoutPanelContainerOfCards.Margin = new Padding(0);
             sabraFlowLayoutPanelContainerOfCards.Name = "sabraFlowLayoutPanelContainerOfCards";
-            sabraFlowLayoutPanelContainerOfCards.Size = new Size(1411, 571);
+            sabraFlowLayoutPanelContainerOfCards.Size = new Size(1416, 571);
             sabraFlowLayoutPanelContainerOfCards.TabIndex = 6;
             // 
             // ucSalaries

@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             sabraPanel1 = new SabraPanel();
+            sbtnSearch = new SabraButton();
+            stbxSearchForCustomer = new SabraTextBox();
             sbtnAddNewInvoice = new SabraButton();
             sbtnPrint = new SabraButton();
             sbtnExportAsExcel = new SabraButton();
@@ -53,8 +55,6 @@
             sabraLabel2 = new SabraLabel();
             lblDebitBalance = new SabraLabel();
             dgvCustomerStatement = new SabraDataGridView();
-            stbxSearchForCustomer = new SabraTextBox();
-            sbtnSearch = new SabraButton();
             sabraPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).BeginInit();
             tableLayoutPanel1.SuspendLayout();
@@ -92,6 +92,54 @@
             sabraPanel1.Name = "sabraPanel1";
             sabraPanel1.Size = new Size(1502, 111);
             sabraPanel1.TabIndex = 4;
+            // 
+            // sbtnSearch
+            // 
+            sbtnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            sbtnSearch.BackColor = Color.RoyalBlue;
+            sbtnSearch.BorderColor = Color.DodgerBlue;
+            sbtnSearch.BorderRadius = 10;
+            sbtnSearch.BorderSize = 0;
+            sbtnSearch.FlatAppearance.BorderSize = 0;
+            sbtnSearch.FlatStyle = FlatStyle.Flat;
+            sbtnSearch.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sbtnSearch.ForeColor = Color.White;
+            sbtnSearch.HoverColor = Color.CornflowerBlue;
+            sbtnSearch.IconChar = FontAwesome.Sharp.IconChar.Search;
+            sbtnSearch.IconColor = Color.Beige;
+            sbtnSearch.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sbtnSearch.IconSize = 30;
+            sbtnSearch.ImageAlign = ContentAlignment.MiddleRight;
+            sbtnSearch.Location = new Point(553, 24);
+            sbtnSearch.Name = "sbtnSearch";
+            sbtnSearch.NormalColor = Color.RoyalBlue;
+            sbtnSearch.Padding = new Padding(10, 0, 10, 0);
+            sbtnSearch.Size = new Size(65, 61);
+            sbtnSearch.TabIndex = 20;
+            sbtnSearch.TextAlign = ContentAlignment.MiddleLeft;
+            sbtnSearch.UseVisualStyleBackColor = false;
+            sbtnSearch.Click += sbtnSearch_Click;
+            // 
+            // stbxSearchForCustomer
+            // 
+            stbxSearchForCustomer.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            stbxSearchForCustomer.AutoSize = true;
+            stbxSearchForCustomer.BackColor = Color.White;
+            stbxSearchForCustomer.Font = new Font("Cairo", 15F);
+            stbxSearchForCustomer.ForeColor = Color.FromArgb(64, 64, 64);
+            stbxSearchForCustomer.Location = new Point(624, 23);
+            stbxSearchForCustomer.Name = "stbxSearchForCustomer";
+            stbxSearchForCustomer.Padding = new Padding(10, 7, 25, 7);
+            stbxSearchForCustomer.PlaceholderText = "بحث عن المرود ";
+            stbxSearchForCustomer.Required = true;
+            stbxSearchForCustomer.RightToLeft = RightToLeft.Yes;
+            stbxSearchForCustomer.SelectedText = "";
+            stbxSearchForCustomer.SelectionLength = 0;
+            stbxSearchForCustomer.SelectionStart = 0;
+            stbxSearchForCustomer.Size = new Size(444, 62);
+            stbxSearchForCustomer.TabIndex = 7;
+            stbxSearchForCustomer.Texts = "بحث عن عميل..";
+            stbxSearchForCustomer.Load += stbxSearchForSupplier_Load;
             // 
             // sbtnAddNewInvoice
             // 
@@ -247,7 +295,7 @@
             pnlUnpaidInvoices.BackColor = Color.White;
             pnlUnpaidInvoices.BorderColor = Color.LightGray;
             pnlUnpaidInvoices.BorderRadius = 15;
-            pnlUnpaidInvoices.BorderSize = 0;
+            pnlUnpaidInvoices.BorderSize = 1;
             pnlUnpaidInvoices.Controls.Add(lblUnpaidInvoicesDisc);
             pnlUnpaidInvoices.Controls.Add(lblTotalPurchases);
             pnlUnpaidInvoices.EnableHover = true;
@@ -339,6 +387,7 @@
             // 
             lblNumberOfInvoices.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblNumberOfInvoices.BackColor = Color.Transparent;
+            lblNumberOfInvoices.BorderSize = 1;
             lblNumberOfInvoices.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblNumberOfInvoices.ForeColor = Color.Black;
             lblNumberOfInvoices.IsTitle = true;
@@ -357,7 +406,7 @@
             pnlLowStock.BackColor = Color.White;
             pnlLowStock.BorderColor = Color.LightGray;
             pnlLowStock.BorderRadius = 15;
-            pnlLowStock.BorderSize = 0;
+            pnlLowStock.BorderSize = 1;
             pnlLowStock.Controls.Add(lblLowStockPartsDisc);
             pnlLowStock.Controls.Add(lblTotalPaid);
             pnlLowStock.EnableHover = true;
@@ -467,11 +516,11 @@
             dgvCustomerStatement.AllowUserToAddRows = false;
             dgvCustomerStatement.AllowUserToDeleteRows = false;
             dgvCustomerStatement.AllowUserToResizeRows = false;
-            dataGridViewCellStyle5.BackColor = Color.FromArgb(248, 250, 252);
-            dataGridViewCellStyle5.ForeColor = Color.FromArgb(51, 65, 85);
-            dataGridViewCellStyle5.SelectionBackColor = Color.FromArgb(30, 58, 138);
-            dataGridViewCellStyle5.SelectionForeColor = Color.White;
-            dgvCustomerStatement.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 250, 252);
+            dataGridViewCellStyle1.ForeColor = Color.FromArgb(51, 65, 85);
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            dataGridViewCellStyle1.SelectionForeColor = Color.White;
+            dgvCustomerStatement.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvCustomerStatement.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvCustomerStatement.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvCustomerStatement.BackgroundColor = Color.White;
@@ -481,25 +530,25 @@
             dgvCustomerStatement.ButtonHoverColor = Color.FromArgb(226, 232, 240);
             dgvCustomerStatement.CellBorderStyle = DataGridViewCellBorderStyle.None;
             dgvCustomerStatement.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.BackColor = Color.FromArgb(248, 250, 252);
-            dataGridViewCellStyle6.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            dataGridViewCellStyle6.ForeColor = Color.FromArgb(30, 41, 59);
-            dataGridViewCellStyle6.Padding = new Padding(8, 0, 8, 0);
-            dataGridViewCellStyle6.SelectionBackColor = Color.FromArgb(248, 250, 252);
-            dataGridViewCellStyle6.SelectionForeColor = Color.FromArgb(30, 41, 59);
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
-            dgvCustomerStatement.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(248, 250, 252);
+            dataGridViewCellStyle2.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.FromArgb(30, 41, 59);
+            dataGridViewCellStyle2.Padding = new Padding(8, 0, 8, 0);
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(248, 250, 252);
+            dataGridViewCellStyle2.SelectionForeColor = Color.FromArgb(30, 41, 59);
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvCustomerStatement.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvCustomerStatement.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.BackColor = Color.White;
-            dataGridViewCellStyle7.Font = new Font("Cairo", 10F);
-            dataGridViewCellStyle7.ForeColor = Color.FromArgb(51, 65, 85);
-            dataGridViewCellStyle7.Padding = new Padding(8, 0, 8, 0);
-            dataGridViewCellStyle7.SelectionBackColor = Color.FromArgb(30, 58, 138);
-            dataGridViewCellStyle7.SelectionForeColor = Color.White;
-            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.False;
-            dgvCustomerStatement.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = Color.White;
+            dataGridViewCellStyle3.Font = new Font("Cairo", 10F);
+            dataGridViewCellStyle3.ForeColor = Color.FromArgb(51, 65, 85);
+            dataGridViewCellStyle3.Padding = new Padding(8, 0, 8, 0);
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            dataGridViewCellStyle3.SelectionForeColor = Color.White;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            dgvCustomerStatement.DefaultCellStyle = dataGridViewCellStyle3;
             dgvCustomerStatement.EditableCellBackColor = Color.White;
             dgvCustomerStatement.EditableCellBorderColor = Color.FromArgb(203, 213, 225);
             dgvCustomerStatement.EditMode = DataGridViewEditMode.EditOnEnter;
@@ -518,14 +567,14 @@
             dgvCustomerStatement.RowAlternateBackColor = Color.FromArgb(248, 250, 252);
             dgvCustomerStatement.RowBackColor = Color.White;
             dgvCustomerStatement.RowForeColor = Color.FromArgb(51, 65, 85);
-            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = SystemColors.Control;
-            dataGridViewCellStyle8.Font = new Font("Cairo", 10F);
-            dataGridViewCellStyle8.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = Color.FromArgb(30, 58, 138);
-            dataGridViewCellStyle8.SelectionForeColor = Color.White;
-            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
-            dgvCustomerStatement.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Control;
+            dataGridViewCellStyle4.Font = new Font("Cairo", 10F);
+            dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(30, 58, 138);
+            dataGridViewCellStyle4.SelectionForeColor = Color.White;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            dgvCustomerStatement.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             dgvCustomerStatement.RowHeadersVisible = false;
             dgvCustomerStatement.RowHeadersWidth = 51;
             dgvCustomerStatement.RowTemplate.Height = 42;
@@ -535,54 +584,6 @@
             dgvCustomerStatement.Size = new Size(1472, 649);
             dgvCustomerStatement.TabIndex = 6;
             dgvCustomerStatement.CellContentClick += dgvCustomerStatement_CellContentClick;
-            // 
-            // stbxSearchForCustomer
-            // 
-            stbxSearchForCustomer.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            stbxSearchForCustomer.AutoSize = true;
-            stbxSearchForCustomer.BackColor = Color.White;
-            stbxSearchForCustomer.Font = new Font("Cairo", 15F);
-            stbxSearchForCustomer.ForeColor = Color.FromArgb(64, 64, 64);
-            stbxSearchForCustomer.Location = new Point(624, 23);
-            stbxSearchForCustomer.Name = "stbxSearchForCustomer";
-            stbxSearchForCustomer.Padding = new Padding(10, 7, 25, 7);
-            stbxSearchForCustomer.PlaceholderText = "بحث عن المرود ";
-            stbxSearchForCustomer.Required = true;
-            stbxSearchForCustomer.RightToLeft = RightToLeft.Yes;
-            stbxSearchForCustomer.SelectedText = "";
-            stbxSearchForCustomer.SelectionLength = 0;
-            stbxSearchForCustomer.SelectionStart = 0;
-            stbxSearchForCustomer.Size = new Size(444, 62);
-            stbxSearchForCustomer.TabIndex = 7;
-            stbxSearchForCustomer.Texts = "بحث عن عميل..";
-            stbxSearchForCustomer.Load += stbxSearchForSupplier_Load;
-            // 
-            // sbtnSearch
-            // 
-            sbtnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            sbtnSearch.BackColor = Color.RoyalBlue;
-            sbtnSearch.BorderColor = Color.DodgerBlue;
-            sbtnSearch.BorderRadius = 10;
-            sbtnSearch.BorderSize = 0;
-            sbtnSearch.FlatAppearance.BorderSize = 0;
-            sbtnSearch.FlatStyle = FlatStyle.Flat;
-            sbtnSearch.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            sbtnSearch.ForeColor = Color.White;
-            sbtnSearch.HoverColor = Color.CornflowerBlue;
-            sbtnSearch.IconChar = FontAwesome.Sharp.IconChar.Search;
-            sbtnSearch.IconColor = Color.Beige;
-            sbtnSearch.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sbtnSearch.IconSize = 30;
-            sbtnSearch.ImageAlign = ContentAlignment.MiddleRight;
-            sbtnSearch.Location = new Point(553, 24);
-            sbtnSearch.Name = "sbtnSearch";
-            sbtnSearch.NormalColor = Color.RoyalBlue;
-            sbtnSearch.Padding = new Padding(10, 0, 10, 0);
-            sbtnSearch.Size = new Size(65, 61);
-            sbtnSearch.TabIndex = 20;
-            sbtnSearch.TextAlign = ContentAlignment.MiddleLeft;
-            sbtnSearch.UseVisualStyleBackColor = false;
-            sbtnSearch.Click += sbtnSearch_Click;
             // 
             // ucCustomerStatement
             // 

@@ -156,13 +156,11 @@
             slblTitleOfTopPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             slblTitleOfTopPanel.AutoSize = true;
             slblTitleOfTopPanel.BackColor = Color.Transparent;
-            slblTitleOfTopPanel.BorderColor = Color.DodgerBlue;
-            slblTitleOfTopPanel.BorderRadius = 8;
-            slblTitleOfTopPanel.BorderSize = 0;
             slblTitleOfTopPanel.Font = new Font("Cairo", 18F, FontStyle.Bold);
             slblTitleOfTopPanel.ForeColor = Color.FromArgb(40, 40, 40);
             slblTitleOfTopPanel.Location = new Point(1105, 10);
             slblTitleOfTopPanel.Name = "slblTitleOfTopPanel";
+            slblTitleOfTopPanel.RightToLeft = RightToLeft.Yes;
             slblTitleOfTopPanel.Size = new Size(281, 56);
             slblTitleOfTopPanel.TabIndex = 15;
             slblTitleOfTopPanel.Text = "سجل حركة المخزون";
@@ -174,13 +172,11 @@
             lblAlertsCount.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblAlertsCount.AutoSize = true;
             lblAlertsCount.BackColor = Color.Transparent;
-            lblAlertsCount.BorderColor = Color.DodgerBlue;
-            lblAlertsCount.BorderRadius = 8;
-            lblAlertsCount.BorderSize = 0;
             lblAlertsCount.Font = new Font("Cairo", 12F);
             lblAlertsCount.ForeColor = SystemColors.WindowFrame;
             lblAlertsCount.Location = new Point(1211, 66);
             lblAlertsCount.Name = "lblAlertsCount";
+            lblAlertsCount.RightToLeft = RightToLeft.Yes;
             lblAlertsCount.Size = new Size(178, 37);
             lblAlertsCount.TabIndex = 16;
             lblAlertsCount.Text = "كل تغير في الكميات";
@@ -192,7 +188,7 @@
             spnlDataGridViewOPtions.BackColor = Color.White;
             spnlDataGridViewOPtions.BorderColor = Color.LightGray;
             spnlDataGridViewOPtions.BorderRadius = 15;
-            spnlDataGridViewOPtions.BorderSize = 0;
+            spnlDataGridViewOPtions.BorderSize = 1;
             spnlDataGridViewOPtions.Controls.Add(sabraDateTimePicker1);
             spnlDataGridViewOPtions.Controls.Add(scbtnRestFilters);
             spnlDataGridViewOPtions.Controls.Add(btnSearch);
@@ -337,11 +333,16 @@
             stxbxPartName.ForeColor = Color.FromArgb(64, 64, 64);
             stxbxPartName.Location = new Point(1192, 34);
             stxbxPartName.Name = "stxbxPartName";
+            stxbxPartName.Padding = new Padding(10, 7, 25, 7);
             stxbxPartName.PlaceholderText = "اسم القعطة";
             stxbxPartName.RightToLeft = RightToLeft.Yes;
-            stxbxPartName.Size = new Size(243, 39);
+            stxbxPartName.SelectedText = "";
+            stxbxPartName.SelectionLength = 0;
+            stxbxPartName.SelectionStart = 0;
+            stxbxPartName.Size = new Size(243, 47);
             stxbxPartName.TabIndex = 15;
             stxbxPartName.TabStop = false;
+            stxbxPartName.Texts = "";
             stxbxPartName.TextChanged += stxbxPartName_TextChanged;
             // 
             // dgvInventoryTransactions
@@ -385,6 +386,9 @@
             dataGridViewCellStyle4.SelectionForeColor = Color.White;
             dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
             dgvInventoryTransactions.DefaultCellStyle = dataGridViewCellStyle4;
+            dgvInventoryTransactions.EditableCellBackColor = Color.White;
+            dgvInventoryTransactions.EditableCellBorderColor = Color.FromArgb(203, 213, 225);
+            dgvInventoryTransactions.EditMode = DataGridViewEditMode.EditOnEnter;
             dgvInventoryTransactions.EnableHeadersVisualStyles = false;
             dgvInventoryTransactions.Font = new Font("Cairo", 10F);
             dgvInventoryTransactions.GridColor = Color.FromArgb(226, 232, 240);
@@ -448,7 +452,6 @@
             sabraPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).EndInit();
             spnlDataGridViewOPtions.ResumeLayout(false);
-            spnlDataGridViewOPtions.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvInventoryTransactions).EndInit();
             ResumeLayout(false);
         }

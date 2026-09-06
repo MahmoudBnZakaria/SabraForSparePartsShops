@@ -256,7 +256,7 @@
             sabraPanel2.BackColor = SystemColors.Window;
             sabraPanel2.BorderColor = Color.LightGray;
             sabraPanel2.BorderRadius = 10;
-            sabraPanel2.BorderSize = 0;
+            sabraPanel2.BorderSize = 1;
             sabraPanel2.Controls.Add(sbtnSearch);
             sabraPanel2.Controls.Add(sabraLabel4);
             sabraPanel2.Controls.Add(sabraLabel3);
@@ -411,7 +411,7 @@
             sabraPanel3.BackColor = Color.White;
             sabraPanel3.BorderColor = Color.LightGray;
             sabraPanel3.BorderRadius = 7;
-            sabraPanel3.BorderSize = 0;
+            sabraPanel3.BorderSize = 1;
             sabraPanel3.Controls.Add(lblNetBalance);
             sabraPanel3.Controls.Add(TotalWithdrawals);
             sabraPanel3.Controls.Add(lblTotalDeposits);

@@ -90,7 +90,8 @@
             ucTopBar1.AutoScroll = true;
             ucTopBar1.BackColor = Color.White;
             ucTopBar1.BorderColor = Color.Gray;
-            ucTopBar1.BorderSize = 3;
+            ucTopBar1.BorderSize = 4;
+            ucTopBar1.BorderRadius = 0;
             ucTopBar1.Dock = DockStyle.Top;
             ucTopBar1.Font = new Font("Cairo", 10F);
             ucTopBar1.ForeColor = Color.FromArgb(40, 40, 40);

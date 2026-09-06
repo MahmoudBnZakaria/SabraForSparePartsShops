@@ -2,6 +2,52 @@
 
 namespace SabraForSpareParts
 {
+
+
+    using System;
+
+    namespace SabraForSpareParts
+    {
+        public static class MenuScreenExtensions
+        {
+            public static string GetDisplayName(this MenuScreen screen)
+            {
+                return screen switch
+                {
+                    MenuScreen.Main => "الرئيسية",
+                    MenuScreen.InventoryList => "قائمة المخزون",
+                    MenuScreen.AddPart => "إضافة قطعة",
+                    MenuScreen.InventoryAlerts => "تنبيهات المخزون",
+                    MenuScreen.CarCompatibility => "توافق السيارات",
+                    MenuScreen.InventoryTransaction => "سجل الحركة",
+                    MenuScreen.NewInvoice => "فاتورة جديدة",
+                    MenuScreen.InvoicesList => "قائمة الفواتير",
+                    MenuScreen.Returns => "المرتجعات",
+                    MenuScreen.NewPurchaseOrder => "أمر شراء جديد",
+                    MenuScreen.PurchaseOrdersList => "قائمة الأوامر",
+                    MenuScreen.ReceiveGoods => "استلام بضاعة",
+                    MenuScreen.Customers => "العملاء",
+                    MenuScreen.CustomerStatement => "كشف حساب عميل",
+                    MenuScreen.Suppliers => "الموردين",
+                    MenuScreen.SupplierStatement => "كشف حساب مورد",
+                    MenuScreen.Treasury => "الخزانة",
+                    MenuScreen.Expenses => "المصروفات",
+                    MenuScreen.Salaries => "الرواتب",
+                    MenuScreen.Advances => "السلف",
+                    MenuScreen.Reports => "التقارير",
+                    MenuScreen.CashFlow => "التدفق النقدي (Cash Flow)",
+                    MenuScreen.Employees => "الموظفين",
+                    MenuScreen.Users => "المستخدمين",
+                    MenuScreen.Settings => "الإعدادات",
+                    MenuScreen.Backup => "النسخ الاحتياطي",
+                    MenuScreen.ActivityLog => "سجل الأنشطة",
+                    _ => "غير محدد"
+                };
+            }
+        }
+    }
+
+
     /// <summary>
     /// كل شاشة (وبالتبعية كل صلاحية) موجودة في القائمة الجانبية ucMenue.
     /// اسم كل قيمة هنا هو نفسه المفروض يتخزن في جدول الصلاحيات بالداتابيز

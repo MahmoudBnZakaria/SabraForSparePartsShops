@@ -55,7 +55,7 @@
             AddNewPart.BackColor = Color.White;
             AddNewPart.ForeColor = Color.Violet;
             AddNewPart.IconChar = FontAwesome.Sharp.IconChar.Add;
-            AddNewPart.IconColor = Color.FromArgb(15, 23, 42);
+            AddNewPart.IconColor = Color.RoyalBlue;
             AddNewPart.IconFont = FontAwesome.Sharp.IconFont.Auto;
             AddNewPart.Location = new Point(486, 9);
             AddNewPart.Name = "AddNewPart";
@@ -68,7 +68,7 @@
             // 
             btnNewInvoice.BackColor = Color.White;
             btnNewInvoice.IconChar = FontAwesome.Sharp.IconChar.FileInvoiceDollar;
-            btnNewInvoice.IconColor = Color.FromArgb(15, 23, 42);
+            btnNewInvoice.IconColor = Color.RoyalBlue;
             btnNewInvoice.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnNewInvoice.Location = new Point(414, 9);
             btnNewInvoice.Name = "btnNewInvoice";
@@ -81,7 +81,7 @@
             // 
             btnInverntoryAlerts.BackColor = Color.White;
             btnInverntoryAlerts.IconChar = FontAwesome.Sharp.IconChar.Warning;
-            btnInverntoryAlerts.IconColor = Color.FromArgb(15, 23, 42);
+            btnInverntoryAlerts.IconColor = Color.RoyalBlue;
             btnInverntoryAlerts.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnInverntoryAlerts.Location = new Point(342, 9);
             btnInverntoryAlerts.Name = "btnInverntoryAlerts";
@@ -93,9 +93,9 @@
             // fwPbxUserAvatar
             // 
             fwPbxUserAvatar.BackColor = Color.White;
-            fwPbxUserAvatar.ForeColor = Color.FromArgb(15, 23, 42);
+            fwPbxUserAvatar.ForeColor = Color.RoyalBlue;
             fwPbxUserAvatar.IconChar = FontAwesome.Sharp.IconChar.UserLarge;
-            fwPbxUserAvatar.IconColor = Color.FromArgb(15, 23, 42);
+            fwPbxUserAvatar.IconColor = Color.RoyalBlue;
             fwPbxUserAvatar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             fwPbxUserAvatar.IconSize = 45;
             fwPbxUserAvatar.Location = new Point(200, 20);
@@ -112,7 +112,7 @@
             slblUsername.BorderRadius = 20;
             slblUsername.BorderSize = 1;
             slblUsername.Font = new Font("Cairo", 15F);
-            slblUsername.ForeColor = Color.FromArgb(15, 23, 42);
+            slblUsername.ForeColor = Color.RoyalBlue;
             slblUsername.Location = new Point(18, 15);
             slblUsername.Name = "slblUsername";
             slblUsername.RightToLeft = RightToLeft.Yes;

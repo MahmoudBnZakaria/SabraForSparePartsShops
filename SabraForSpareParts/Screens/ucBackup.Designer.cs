@@ -73,7 +73,7 @@
             sabraPanel1.BackColor = Color.White;
             sabraPanel1.BorderColor = Color.LightGray;
             sabraPanel1.BorderRadius = 15;
-            sabraPanel1.BorderSize = 0;
+            sabraPanel1.BorderSize = 1;
             sabraPanel1.Controls.Add(lblDateTimeAndSizeOfTheLastSuccBackUp);
             sabraPanel1.Controls.Add(slblCustomerNameAndCreditLimit);
             sabraPanel1.Controls.Add(panel1);
@@ -89,7 +89,7 @@
             sabraPanel1.Location = new Point(44, 144);
             sabraPanel1.Margin = new Padding(20);
             sabraPanel1.Name = "sabraPanel1";
-            sabraPanel1.Size = new Size(1410, 153);
+            sabraPanel1.Size = new Size(1440, 153);
             sabraPanel1.TabIndex = 4;
             // 
             // lblDateTimeAndSizeOfTheLastSuccBackUp
@@ -99,7 +99,7 @@
             lblDateTimeAndSizeOfTheLastSuccBackUp.BackColor = Color.Transparent;
             lblDateTimeAndSizeOfTheLastSuccBackUp.Font = new Font("Cairo", 10F, FontStyle.Bold);
             lblDateTimeAndSizeOfTheLastSuccBackUp.ForeColor = Color.FromArgb(64, 64, 64);
-            lblDateTimeAndSizeOfTheLastSuccBackUp.Location = new Point(810, 91);
+            lblDateTimeAndSizeOfTheLastSuccBackUp.Location = new Point(840, 91);
             lblDateTimeAndSizeOfTheLastSuccBackUp.Name = "lblDateTimeAndSizeOfTheLastSuccBackUp";
             lblDateTimeAndSizeOfTheLastSuccBackUp.RightToLeft = RightToLeft.Yes;
             lblDateTimeAndSizeOfTheLastSuccBackUp.Size = new Size(329, 32);
@@ -117,7 +117,7 @@
             slblCustomerNameAndCreditLimit.BorderSize = 1;
             slblCustomerNameAndCreditLimit.Font = new Font("Cairo", 15F);
             slblCustomerNameAndCreditLimit.ForeColor = Color.Green;
-            slblCustomerNameAndCreditLimit.Location = new Point(1169, 80);
+            slblCustomerNameAndCreditLimit.Location = new Point(1199, 80);
             slblCustomerNameAndCreditLimit.Name = "slblCustomerNameAndCreditLimit";
             slblCustomerNameAndCreditLimit.RightToLeft = RightToLeft.Yes;
             slblCustomerNameAndCreditLimit.Size = new Size(226, 47);
@@ -131,7 +131,7 @@
             panel1.BackColor = Color.LightGray;
             panel1.Location = new Point(-11, 57);
             panel1.Name = "panel1";
-            panel1.Size = new Size(2633, 1);
+            panel1.Size = new Size(2663, 1);
             panel1.TabIndex = 5;
             // 
             // slblBasicInfoTitle
@@ -141,7 +141,7 @@
             slblBasicInfoTitle.BackColor = Color.Transparent;
             slblBasicInfoTitle.Font = new Font("Cairo", 10F, FontStyle.Bold);
             slblBasicInfoTitle.ForeColor = Color.FromArgb(64, 64, 64);
-            slblBasicInfoTitle.Location = new Point(1243, 16);
+            slblBasicInfoTitle.Location = new Point(1273, 16);
             slblBasicInfoTitle.Name = "slblBasicInfoTitle";
             slblBasicInfoTitle.RightToLeft = RightToLeft.Yes;
             slblBasicInfoTitle.Size = new Size(152, 32);
@@ -191,7 +191,7 @@
             sabraPanel3.BackColor = Color.White;
             sabraPanel3.BorderColor = Color.LightGray;
             sabraPanel3.BorderRadius = 15;
-            sabraPanel3.BorderSize = 0;
+            sabraPanel3.BorderSize = 1;
             sabraPanel3.Controls.Add(btnBackupToGoogleDrive);
             sabraPanel3.Controls.Add(sabraButton1);
             sabraPanel3.Controls.Add(btnOpenLocationInComputer);
@@ -210,7 +210,7 @@
             sabraPanel3.Location = new Point(44, 320);
             sabraPanel3.Margin = new Padding(20);
             sabraPanel3.Name = "sabraPanel3";
-            sabraPanel3.Size = new Size(1410, 263);
+            sabraPanel3.Size = new Size(1440, 263);
             sabraPanel3.TabIndex = 6;
             // 
             // btnBackupToGoogleDrive
@@ -230,7 +230,7 @@
             btnBackupToGoogleDrive.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnBackupToGoogleDrive.IconSize = 30;
             btnBackupToGoogleDrive.ImageAlign = ContentAlignment.MiddleRight;
-            btnBackupToGoogleDrive.Location = new Point(965, 190);
+            btnBackupToGoogleDrive.Location = new Point(995, 190);
             btnBackupToGoogleDrive.Name = "btnBackupToGoogleDrive";
             btnBackupToGoogleDrive.NormalColor = Color.Gray;
             btnBackupToGoogleDrive.Size = new Size(199, 52);
@@ -257,7 +257,7 @@
             sabraButton1.IconFont = FontAwesome.Sharp.IconFont.Auto;
             sabraButton1.IconSize = 30;
             sabraButton1.ImageAlign = ContentAlignment.MiddleRight;
-            sabraButton1.Location = new Point(1185, 190);
+            sabraButton1.Location = new Point(1215, 190);
             sabraButton1.Name = "sabraButton1";
             sabraButton1.NormalColor = Color.RoyalBlue;
             sabraButton1.Size = new Size(199, 52);
@@ -300,7 +300,7 @@
             sabraLabel1.BackColor = Color.Transparent;
             sabraLabel1.Font = new Font("Cairo", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             sabraLabel1.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel1.Location = new Point(1283, 82);
+            sabraLabel1.Location = new Point(1313, 82);
             sabraLabel1.Name = "sabraLabel1";
             sabraLabel1.RightToLeft = RightToLeft.Yes;
             sabraLabel1.Size = new Size(101, 32);
@@ -322,7 +322,7 @@
             stbxSaveLocationPath.SelectedText = "";
             stbxSaveLocationPath.SelectionLength = 0;
             stbxSaveLocationPath.SelectionStart = 0;
-            stbxSaveLocationPath.Size = new Size(1127, 47);
+            stbxSaveLocationPath.Size = new Size(1157, 47);
             stbxSaveLocationPath.TabIndex = 17;
             stbxSaveLocationPath.Texts = "C:\\Backups\\SparePartsShop\\";
             stbxSaveLocationPath.Load += stbxSaveLocationPath_Load;
@@ -333,7 +333,7 @@
             panel2.BackColor = Color.LightGray;
             panel2.Location = new Point(-11, 57);
             panel2.Name = "panel2";
-            panel2.Size = new Size(3843, 1);
+            panel2.Size = new Size(3873, 1);
             panel2.TabIndex = 5;
             // 
             // sabraLabel3
@@ -343,7 +343,7 @@
             sabraLabel3.BackColor = Color.Transparent;
             sabraLabel3.Font = new Font("Cairo", 10F, FontStyle.Bold);
             sabraLabel3.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel3.Location = new Point(1222, 11);
+            sabraLabel3.Location = new Point(1252, 11);
             sabraLabel3.Name = "sabraLabel3";
             sabraLabel3.RightToLeft = RightToLeft.Yes;
             sabraLabel3.Size = new Size(173, 32);
@@ -357,7 +357,7 @@
             sabraPanel5.BackColor = Color.White;
             sabraPanel5.BorderColor = Color.LightGray;
             sabraPanel5.BorderRadius = 15;
-            sabraPanel5.BorderSize = 0;
+            sabraPanel5.BorderSize = 1;
             sabraPanel5.Controls.Add(TimePicker);
             sabraPanel5.Controls.Add(sabraLabel10);
             sabraPanel5.Controls.Add(sabraLabel7);
@@ -376,14 +376,14 @@
             sabraPanel5.Location = new Point(44, 623);
             sabraPanel5.Margin = new Padding(20);
             sabraPanel5.Name = "sabraPanel5";
-            sabraPanel5.Size = new Size(1410, 159);
+            sabraPanel5.Size = new Size(1440, 159);
             sabraPanel5.TabIndex = 24;
             // 
             // TimePicker
             // 
             TimePicker.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             TimePicker.Format = DateTimePickerFormat.Time;
-            TimePicker.Location = new Point(555, 81);
+            TimePicker.Location = new Point(585, 81);
             TimePicker.Name = "TimePicker";
             TimePicker.Size = new Size(146, 39);
             TimePicker.TabIndex = 25;
@@ -396,7 +396,7 @@
             sabraLabel10.BackColor = Color.Transparent;
             sabraLabel10.Font = new Font("Cairo", 13.7999992F, FontStyle.Regular, GraphicsUnit.Point, 0);
             sabraLabel10.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel10.Location = new Point(707, 77);
+            sabraLabel10.Location = new Point(737, 77);
             sabraLabel10.Name = "sabraLabel10";
             sabraLabel10.RightToLeft = RightToLeft.Yes;
             sabraLabel10.Size = new Size(82, 43);
@@ -411,7 +411,7 @@
             sabraLabel7.BackColor = Color.Transparent;
             sabraLabel7.Font = new Font("Cairo", 13.7999992F, FontStyle.Regular, GraphicsUnit.Point, 0);
             sabraLabel7.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel7.Location = new Point(1063, 77);
+            sabraLabel7.Location = new Point(1093, 77);
             sabraLabel7.Name = "sabraLabel7";
             sabraLabel7.RightToLeft = RightToLeft.Yes;
             sabraLabel7.Size = new Size(77, 43);
@@ -432,7 +432,7 @@
             cmbxRepition.FormattingEnabled = true;
             cmbxRepition.ItemHeight = 41;
             cmbxRepition.Items.AddRange(new object[] { "يومي", "أسبوعي" });
-            cmbxRepition.Location = new Point(919, 77);
+            cmbxRepition.Location = new Point(949, 77);
             cmbxRepition.Name = "cmbxRepition";
             cmbxRepition.RightToLeft = RightToLeft.Yes;
             cmbxRepition.Size = new Size(138, 47);
@@ -447,7 +447,7 @@
             checkBoxActiveAutomaticBackup.Checked = true;
             checkBoxActiveAutomaticBackup.CheckState = CheckState.Checked;
             checkBoxActiveAutomaticBackup.ForeColor = Color.Black;
-            checkBoxActiveAutomaticBackup.Location = new Point(1208, 77);
+            checkBoxActiveAutomaticBackup.Location = new Point(1238, 77);
             checkBoxActiveAutomaticBackup.Name = "checkBoxActiveAutomaticBackup";
             checkBoxActiveAutomaticBackup.Size = new Size(185, 36);
             checkBoxActiveAutomaticBackup.TabIndex = 21;
@@ -461,7 +461,7 @@
             panel4.BackColor = Color.LightGray;
             panel4.Location = new Point(-11, 57);
             panel4.Name = "panel4";
-            panel4.Size = new Size(6263, 1);
+            panel4.Size = new Size(6293, 1);
             panel4.TabIndex = 5;
             // 
             // sabraLabel9
@@ -471,7 +471,7 @@
             sabraLabel9.BackColor = Color.Transparent;
             sabraLabel9.Font = new Font("Cairo", 10F, FontStyle.Bold);
             sabraLabel9.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel9.Location = new Point(1222, 11);
+            sabraLabel9.Location = new Point(1252, 11);
             sabraLabel9.Name = "sabraLabel9";
             sabraLabel9.RightToLeft = RightToLeft.Yes;
             sabraLabel9.Size = new Size(171, 32);
@@ -504,7 +504,7 @@
             sabraPanel6.Location = new Point(44, 809);
             sabraPanel6.Margin = new Padding(20);
             sabraPanel6.Name = "sabraPanel6";
-            sabraPanel6.Size = new Size(1410, 313);
+            sabraPanel6.Size = new Size(1440, 313);
             sabraPanel6.TabIndex = 25;
             // 
             // btnRestore
@@ -524,7 +524,7 @@
             btnRestore.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnRestore.IconSize = 30;
             btnRestore.ImageAlign = ContentAlignment.MiddleRight;
-            btnRestore.Location = new Point(1256, 243);
+            btnRestore.Location = new Point(1286, 243);
             btnRestore.Name = "btnRestore";
             btnRestore.NormalColor = Color.RoyalBlue;
             btnRestore.Size = new Size(137, 52);
@@ -541,7 +541,7 @@
             sabraLabel12.BackColor = Color.Transparent;
             sabraLabel12.Font = new Font("Cairo", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             sabraLabel12.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel12.Location = new Point(1182, 140);
+            sabraLabel12.Location = new Point(1212, 140);
             sabraLabel12.Name = "sabraLabel12";
             sabraLabel12.RightToLeft = RightToLeft.Yes;
             sabraLabel12.Size = new Size(202, 32);
@@ -590,7 +590,7 @@
             sabraTextBox1.SelectedText = "";
             sabraTextBox1.SelectionLength = 0;
             sabraTextBox1.SelectionStart = 0;
-            sabraTextBox1.Size = new Size(1127, 47);
+            sabraTextBox1.Size = new Size(1157, 47);
             sabraTextBox1.TabIndex = 21;
             sabraTextBox1.Texts = "أختر ملف bak. أو  zip....";
             sabraTextBox1.Load += sabraTextBox1_Load;
@@ -607,7 +607,7 @@
             sabraLabel11.Location = new Point(13, 72);
             sabraLabel11.Name = "sabraLabel11";
             sabraLabel11.RightToLeft = RightToLeft.Yes;
-            sabraLabel11.Size = new Size(1382, 47);
+            sabraLabel11.Size = new Size(1412, 47);
             sabraLabel11.TabIndex = 16;
             sabraLabel11.Text = "تحذير: الاستعادة ستمسح كل البيانات الحالية وتستبدلها بالنسخة القديمة.";
             sabraLabel11.TextAlign = ContentAlignment.MiddleCenter;
@@ -618,7 +618,7 @@
             panel5.BackColor = Color.LightGray;
             panel5.Location = new Point(-11, 57);
             panel5.Name = "panel5";
-            panel5.Size = new Size(7473, 1);
+            panel5.Size = new Size(7503, 1);
             panel5.TabIndex = 5;
             // 
             // sabraLabel14
@@ -628,7 +628,7 @@
             sabraLabel14.BackColor = Color.Transparent;
             sabraLabel14.Font = new Font("Cairo", 10F, FontStyle.Bold);
             sabraLabel14.ForeColor = Color.FromArgb(64, 64, 64);
-            sabraLabel14.Location = new Point(1222, 11);
+            sabraLabel14.Location = new Point(1252, 11);
             sabraLabel14.Name = "sabraLabel14";
             sabraLabel14.RightToLeft = RightToLeft.Yes;
             sabraLabel14.Size = new Size(171, 32);

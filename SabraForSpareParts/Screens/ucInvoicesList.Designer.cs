@@ -241,7 +241,7 @@
             spnlDataGridViewOPtions.BackColor = Color.White;
             spnlDataGridViewOPtions.BorderColor = Color.LightGray;
             spnlDataGridViewOPtions.BorderRadius = 15;
-            spnlDataGridViewOPtions.BorderSize = 0;
+            spnlDataGridViewOPtions.BorderSize = 1;
             spnlDataGridViewOPtions.Controls.Add(cmbPaymentStatus);
             spnlDataGridViewOPtions.Controls.Add(sabraLabel4);
             spnlDataGridViewOPtions.Controls.Add(sabraLabel3);
@@ -434,7 +434,7 @@
             pnlUnpaidInvoices.BackColor = Color.White;
             pnlUnpaidInvoices.BorderColor = Color.LightGray;
             pnlUnpaidInvoices.BorderRadius = 15;
-            pnlUnpaidInvoices.BorderSize = 0;
+            pnlUnpaidInvoices.BorderSize = 1;
             pnlUnpaidInvoices.Controls.Add(iconPictureBox4);
             pnlUnpaidInvoices.Controls.Add(lblUnpaidInvoicesDisc);
             pnlUnpaidInvoices.Controls.Add(lblTotalInvoice);
@@ -507,7 +507,7 @@
             pnlLowStock.BackColor = Color.White;
             pnlLowStock.BorderColor = Color.LightGray;
             pnlLowStock.BorderRadius = 15;
-            pnlLowStock.BorderSize = 0;
+            pnlLowStock.BorderSize = 1;
             pnlLowStock.Controls.Add(lblLowStockPartsDisc);
             pnlLowStock.Controls.Add(lblTotalSales);
             pnlLowStock.Controls.Add(iconPictureBox1);
@@ -580,7 +580,7 @@
             pnlNetProfit.BackColor = Color.White;
             pnlNetProfit.BorderColor = Color.LightGray;
             pnlNetProfit.BorderRadius = 15;
-            pnlNetProfit.BorderSize = 0;
+            pnlNetProfit.BorderSize = 1;
             pnlNetProfit.Controls.Add(sabraLabel2);
             pnlNetProfit.Controls.Add(lblCollected);
             pnlNetProfit.Controls.Add(iconPictureBox3);
@@ -653,7 +653,7 @@
             sabraPanel2.BackColor = Color.White;
             sabraPanel2.BorderColor = Color.LightGray;
             sabraPanel2.BorderRadius = 15;
-            sabraPanel2.BorderSize = 0;
+            sabraPanel2.BorderSize = 1;
             sabraPanel2.Controls.Add(sabraLabel1);
             sabraPanel2.Controls.Add(lblOutstandingDebts);
             sabraPanel2.Controls.Add(iconPictureBox2);

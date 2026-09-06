@@ -253,7 +253,7 @@ namespace SabraForSpareParts.Screens
             pnlUnpaidInvoices.BackColor = Color.White;
             pnlUnpaidInvoices.BorderColor = Color.LightGray;
             pnlUnpaidInvoices.BorderRadius = 15;
-            pnlUnpaidInvoices.BorderSize = 0;
+            pnlUnpaidInvoices.BorderSize = 1;
             pnlUnpaidInvoices.Controls.Add(lblUnpaidInvoicesDisc);
             pnlUnpaidInvoices.Controls.Add(lblTotalInflows);
             pnlUnpaidInvoices.EnableHover = true;
@@ -308,7 +308,7 @@ namespace SabraForSpareParts.Screens
             sabraPanel2.BackColor = Color.White;
             sabraPanel2.BorderColor = Color.LightGray;
             sabraPanel2.BorderRadius = 15;
-            sabraPanel2.BorderSize = 0;
+            sabraPanel2.BorderSize = 1;
             sabraPanel2.Controls.Add(sabraLabel1);
             sabraPanel2.Controls.Add(lblCurrentBalance);
             sabraPanel2.EnableHover = true;
@@ -363,7 +363,7 @@ namespace SabraForSpareParts.Screens
             pnlLowStock.BackColor = Color.White;
             pnlLowStock.BorderColor = Color.LightGray;
             pnlLowStock.BorderRadius = 15;
-            pnlLowStock.BorderSize = 0;
+            pnlLowStock.BorderSize = 1;
             pnlLowStock.Controls.Add(lbl);
             pnlLowStock.Controls.Add(lblTotalOutflows);
             pnlLowStock.EnableHover = true;
@@ -418,7 +418,7 @@ namespace SabraForSpareParts.Screens
             pnlNetProfit.BackColor = Color.White;
             pnlNetProfit.BorderColor = Color.LightGray;
             pnlNetProfit.BorderRadius = 15;
-            pnlNetProfit.BorderSize = 0;
+            pnlNetProfit.BorderSize = 1;
             pnlNetProfit.Controls.Add(sabraLabel2);
             pnlNetProfit.Controls.Add(lblMonthlyNet);
             pnlNetProfit.EnableHover = true;
@@ -474,7 +474,7 @@ namespace SabraForSpareParts.Screens
             spnlWeeklySales.BackColor = Color.White;
             spnlWeeklySales.BorderColor = Color.LightGray;
             spnlWeeklySales.BorderRadius = 15;
-            spnlWeeklySales.BorderSize = 0;
+            spnlWeeklySales.BorderSize = 1;
             tableLayoutPanel1.SetColumnSpan(spnlWeeklySales, 3);
             spnlWeeklySales.Controls.Add(sabraLabel3);
             spnlWeeklySales.Controls.Add(cartesianChart1);
@@ -487,10 +487,10 @@ namespace SabraForSpareParts.Screens
             spnlWeeklySales.HoverBackColor = Color.FromArgb(245, 248, 255);
             spnlWeeklySales.HoverBorderColor = Color.FromArgb(37, 99, 235);
             spnlWeeklySales.HoverBorderSize = 2;
-            spnlWeeklySales.Location = new Point(417, 170);
-            spnlWeeklySales.Margin = new Padding(30);
+            spnlWeeklySales.Location = new Point(387, 140);
+            spnlWeeklySales.Margin = new Padding(0);
             spnlWeeklySales.Name = "spnlWeeklySales";
-            spnlWeeklySales.Size = new Size(1032, 533);
+            spnlWeeklySales.Size = new Size(1092, 593);
             spnlWeeklySales.TabIndex = 19;
             // 
             // sabraLabel3
@@ -504,7 +504,7 @@ namespace SabraForSpareParts.Screens
             sabraLabel3.Name = "sabraLabel3";
             sabraLabel3.Padding = new Padding(0, 0, 30, 0);
             sabraLabel3.RightToLeft = RightToLeft.Yes;
-            sabraLabel3.Size = new Size(1032, 47);
+            sabraLabel3.Size = new Size(1092, 47);
             sabraLabel3.TabIndex = 6;
             sabraLabel3.Text = "الوارد و الصادر اليومي";
             sabraLabel3.TextAlign = ContentAlignment.MiddleRight;
@@ -532,7 +532,7 @@ namespace SabraForSpareParts.Screens
             cartesianChart1.Margin = new Padding(0);
             cartesianChart1.MatchAxesScreenDataRatio = false;
             cartesianChart1.Name = "cartesianChart1";
-            cartesianChart1.Size = new Size(966, 353);
+            cartesianChart1.Size = new Size(1026, 413);
             cartesianChart1.TabIndex = 0;
             skDefaultTooltip1.AnimationsSpeed = TimeSpan.Parse("00:00:00.1500000");
             skDefaultTooltip1.Content = null;
@@ -558,7 +558,7 @@ namespace SabraForSpareParts.Screens
             pnlBestSellingItems.BackColor = Color.White;
             pnlBestSellingItems.BorderColor = Color.LightGray;
             pnlBestSellingItems.BorderRadius = 15;
-            pnlBestSellingItems.BorderSize = 0;
+            pnlBestSellingItems.BorderSize = 1;
             pnlBestSellingItems.Controls.Add(FlowLayoutPanelOutflowBreakdown);
             pnlBestSellingItems.Controls.Add(sabraLabel5);
             pnlBestSellingItems.Dock = DockStyle.Fill;
@@ -596,7 +596,7 @@ namespace SabraForSpareParts.Screens
             sabraLabel5.Font = new Font("Cairo Black", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel5.ForeColor = Color.DimGray;
             sabraLabel5.Location = new Point(0, 0);
-            sabraLabel5.Margin = new Padding(30);
+            sabraLabel5.Margin = new Padding(30, 0, 30, 0);
             sabraLabel5.Name = "sabraLabel5";
             sabraLabel5.Padding = new Padding(0, 0, 30, 0);
             sabraLabel5.RightToLeft = RightToLeft.Yes;

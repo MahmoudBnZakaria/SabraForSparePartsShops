@@ -172,9 +172,9 @@
             sabraFlowLayoutPanelContainerOfCards.BorderColor = Color.Transparent;
             sabraFlowLayoutPanelContainerOfCards.BorderRadius = 20;
             sabraFlowLayoutPanelContainerOfCards.BorderSize = 1;
-            sabraFlowLayoutPanelContainerOfCards.Location = new Point(44, 148);
+            sabraFlowLayoutPanelContainerOfCards.Location = new Point(13, 148);
             sabraFlowLayoutPanelContainerOfCards.Name = "sabraFlowLayoutPanelContainerOfCards";
-            sabraFlowLayoutPanelContainerOfCards.Size = new Size(1411, 723);
+            sabraFlowLayoutPanelContainerOfCards.Size = new Size(1476, 723);
             sabraFlowLayoutPanelContainerOfCards.TabIndex = 6;
             // 
             // ucUsers

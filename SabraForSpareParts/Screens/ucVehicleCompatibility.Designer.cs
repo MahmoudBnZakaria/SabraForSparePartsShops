@@ -90,13 +90,11 @@
             slblTitleOfTopPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             slblTitleOfTopPanel.AutoSize = true;
             slblTitleOfTopPanel.BackColor = Color.Transparent;
-            slblTitleOfTopPanel.BorderColor = Color.DodgerBlue;
-            slblTitleOfTopPanel.BorderRadius = 8;
-            slblTitleOfTopPanel.BorderSize = 0;
             slblTitleOfTopPanel.Font = new Font("Cairo", 18F, FontStyle.Bold);
             slblTitleOfTopPanel.ForeColor = Color.FromArgb(40, 40, 40);
             slblTitleOfTopPanel.Location = new Point(1328, 10);
             slblTitleOfTopPanel.Name = "slblTitleOfTopPanel";
+            slblTitleOfTopPanel.RightToLeft = RightToLeft.Yes;
             slblTitleOfTopPanel.Size = new Size(235, 56);
             slblTitleOfTopPanel.TabIndex = 15;
             slblTitleOfTopPanel.Text = "تواقف السيارات";
@@ -107,13 +105,11 @@
             lblAlertsCount.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblAlertsCount.AutoSize = true;
             lblAlertsCount.BackColor = Color.Transparent;
-            lblAlertsCount.BorderColor = Color.DodgerBlue;
-            lblAlertsCount.BorderRadius = 8;
-            lblAlertsCount.BorderSize = 0;
             lblAlertsCount.Font = new Font("Cairo", 12F);
             lblAlertsCount.ForeColor = SystemColors.WindowFrame;
             lblAlertsCount.Location = new Point(1373, 66);
             lblAlertsCount.Name = "lblAlertsCount";
+            lblAlertsCount.RightToLeft = RightToLeft.Yes;
             lblAlertsCount.Size = new Size(175, 37);
             lblAlertsCount.TabIndex = 16;
             lblAlertsCount.Text = "ربط القطع بالسيارات";
@@ -148,7 +144,7 @@
             spnlDataGridViewOPtions.BackColor = Color.White;
             spnlDataGridViewOPtions.BorderColor = Color.LightGray;
             spnlDataGridViewOPtions.BorderRadius = 15;
-            spnlDataGridViewOPtions.BorderSize = 0;
+            spnlDataGridViewOPtions.BorderSize = 1;
             spnlDataGridViewOPtions.Controls.Add(sabraLabel2);
             spnlDataGridViewOPtions.Controls.Add(stxbPartInfo);
             spnlDataGridViewOPtions.Controls.Add(stxbYear);
@@ -175,13 +171,11 @@
             sabraLabel2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             sabraLabel2.AutoSize = true;
             sabraLabel2.BackColor = Color.Transparent;
-            sabraLabel2.BorderColor = Color.DodgerBlue;
-            sabraLabel2.BorderRadius = 8;
-            sabraLabel2.BorderSize = 0;
             sabraLabel2.Font = new Font("Cairo", 12F);
             sabraLabel2.ForeColor = SystemColors.WindowText;
             sabraLabel2.Location = new Point(596, 36);
             sabraLabel2.Name = "sabraLabel2";
+            sabraLabel2.RightToLeft = RightToLeft.Yes;
             sabraLabel2.Size = new Size(136, 37);
             sabraLabel2.TabIndex = 20;
             sabraLabel2.Text = ":  بحث بالقطعة";
@@ -197,11 +191,16 @@
             stxbPartInfo.ForeColor = Color.FromArgb(64, 64, 64);
             stxbPartInfo.Location = new Point(278, 35);
             stxbPartInfo.Name = "stxbPartInfo";
+            stxbPartInfo.Padding = new Padding(10, 7, 25, 7);
             stxbPartInfo.PlaceholderText = "اسم / باركود / رقم فني..";
             stxbPartInfo.RightToLeft = RightToLeft.Yes;
-            stxbPartInfo.Size = new Size(312, 39);
+            stxbPartInfo.SelectedText = "";
+            stxbPartInfo.SelectionLength = 0;
+            stxbPartInfo.SelectionStart = 0;
+            stxbPartInfo.Size = new Size(312, 47);
             stxbPartInfo.TabIndex = 19;
             stxbPartInfo.TabStop = false;
+            stxbPartInfo.Texts = "";
             // 
             // stxbYear
             // 
@@ -212,11 +211,16 @@
             stxbYear.ForeColor = Color.FromArgb(64, 64, 64);
             stxbYear.Location = new Point(898, 37);
             stxbYear.Name = "stxbYear";
+            stxbYear.Padding = new Padding(10, 7, 25, 7);
             stxbYear.PlaceholderText = "السنة    ";
             stxbYear.RightToLeft = RightToLeft.Yes;
-            stxbYear.Size = new Size(144, 39);
+            stxbYear.SelectedText = "";
+            stxbYear.SelectionLength = 0;
+            stxbYear.SelectionStart = 0;
+            stxbYear.Size = new Size(144, 47);
             stxbYear.TabIndex = 18;
             stxbYear.TabStop = false;
+            stxbYear.Texts = "";
             stxbYear.TextChanged += stxbYear_TextChanged;
             // 
             // sabraLabel1
@@ -224,13 +228,11 @@
             sabraLabel1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             sabraLabel1.AutoSize = true;
             sabraLabel1.BackColor = Color.Transparent;
-            sabraLabel1.BorderColor = Color.DodgerBlue;
-            sabraLabel1.BorderRadius = 8;
-            sabraLabel1.BorderSize = 0;
             sabraLabel1.Font = new Font("Cairo", 12F);
             sabraLabel1.ForeColor = SystemColors.WindowText;
             sabraLabel1.Location = new Point(1519, 37);
             sabraLabel1.Name = "sabraLabel1";
+            sabraLabel1.RightToLeft = RightToLeft.Yes;
             sabraLabel1.Size = new Size(125, 37);
             sabraLabel1.TabIndex = 17;
             sabraLabel1.Text = ": بحث بالسيارة";
@@ -291,11 +293,16 @@
             stxbxModel.ForeColor = Color.FromArgb(64, 64, 64);
             stxbxModel.Location = new Point(1063, 38);
             stxbxModel.Name = "stxbxModel";
+            stxbxModel.Padding = new Padding(10, 7, 25, 7);
             stxbxModel.PlaceholderText = "الموديل...";
             stxbxModel.RightToLeft = RightToLeft.Yes;
-            stxbxModel.Size = new Size(253, 39);
+            stxbxModel.SelectedText = "";
+            stxbxModel.SelectionLength = 0;
+            stxbxModel.SelectionStart = 0;
+            stxbxModel.Size = new Size(253, 47);
             stxbxModel.TabIndex = 12;
             stxbxModel.TabStop = false;
+            stxbxModel.Texts = "";
             stxbxModel.TextChanged += stxbxModel_TextChanged;
             // 
             // sabraDataGridView1
@@ -336,6 +343,9 @@
             dataGridViewCellStyle3.SelectionForeColor = Color.White;
             dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
             sabraDataGridView1.DefaultCellStyle = dataGridViewCellStyle3;
+            sabraDataGridView1.EditableCellBackColor = Color.White;
+            sabraDataGridView1.EditableCellBorderColor = Color.FromArgb(203, 213, 225);
+            sabraDataGridView1.EditMode = DataGridViewEditMode.EditOnEnter;
             sabraDataGridView1.EnableHeadersVisualStyles = false;
             sabraDataGridView1.Font = new Font("Cairo", 10F);
             sabraDataGridView1.GridColor = Color.FromArgb(226, 232, 240);

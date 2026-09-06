@@ -1,27 +1,25 @@
 ﻿using SabraForSpareParts.Screens;
 using SabraForSpareParts.Screens.InventoryAlerts;
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace SabraForSpareParts
 {
     public partial class frmMain : Form
     {
+        // افترض أن لديك متغير عام يحفظ اسم المستخدم الذي سجل الدخول
+        private string _loggedInUserName = "أحمد صبره"; // قم بتغييره حسب نظام الدخول الخاص بك
+
         public frmMain()
         {
             InitializeComponent();
 
-            // event of the menu control
             ucMenue1.ScreenSelected += UcMenue1_ScreenSelected;
-
             WireTopBarEvents();
+
             LoadScreen(MenuScreen.Main);
         }
 
-        // =========================================================
-        // Top bar events wiring
-        // =========================================================
         private void WireTopBarEvents()
         {
             if (ucTopBar1 == null) return;
@@ -32,19 +30,11 @@ namespace SabraForSpareParts
             ucTopBar1.UserAvatarClicked += (s, e) => LoadScreen(MenuScreen.Settings);
         }
 
-
-        // =========================================================
-        // event handler for menu screen selection
-        // =========================================================
         private void UcMenue1_ScreenSelected(object sender, MenuScreenSelectedEventArgs e)
         {
             LoadScreen(e.Screen);
         }
 
-
-        // =========================================================
-        // Load the appropriate screen based on the selected menu item
-        // =========================================================
         private void LoadScreen(MenuScreen screen)
         {
             SabraUserControl uc = screen switch
@@ -83,11 +73,14 @@ namespace SabraForSpareParts
 
             ShowScreen(uc);
             ucMenue1.SetActiveScreen(screen);
+
+            // التحديث الاحترافي للشريط السفلي بمجرد تحميل الشاشة
+            if (ucBottomBar1 != null)
+            {
+                ucBottomBar1.UpdateBottomBarInfo(screen, _loggedInUserName);
+            }
         }
 
-        // =========================================================
-        // Show the given UserControl in the main content panel
-        // =========================================================
         private void ShowScreen(UserControl screen)
         {
             if (screen == null) return;
