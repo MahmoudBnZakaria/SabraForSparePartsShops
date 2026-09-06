@@ -135,6 +135,30 @@
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333333F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 8.333335F));
@@ -161,6 +185,22 @@
             sabraTableLayoutPanel1.RightToLeft = RightToLeft.Yes;
             sabraTableLayoutPanel1.RowCount = 8;
             sabraTableLayoutPanel1.Rows = 8;
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
@@ -314,7 +354,7 @@
             sabraTableLayoutPanel1.SetColumnSpan(spnlTopPanel, 12);
             spnlTopPanel.Controls.Add(sabraButton1);
             spnlTopPanel.Controls.Add(slblTitleOfTopPanel);
-            spnlTopPanel.Dock = DockStyle.Top;
+            spnlTopPanel.Dock = DockStyle.Fill;
             spnlTopPanel.EnableHover = true;
             spnlTopPanel.ForeColor = Color.Black;
             spnlTopPanel.GradientAngle = 90F;
@@ -323,10 +363,10 @@
             spnlTopPanel.HoverBackColor = Color.FromArgb(245, 248, 255);
             spnlTopPanel.HoverBorderColor = Color.FromArgb(37, 99, 235);
             spnlTopPanel.HoverBorderSize = 2;
-            spnlTopPanel.Location = new Point(50, 50);
-            spnlTopPanel.Margin = new Padding(20);
+            spnlTopPanel.Location = new Point(30, 30);
+            spnlTopPanel.Margin = new Padding(0);
             spnlTopPanel.Name = "spnlTopPanel";
-            spnlTopPanel.Size = new Size(1402, 80);
+            spnlTopPanel.Size = new Size(1442, 120);
             spnlTopPanel.TabIndex = 2;
             // 
             // sabraButton1
@@ -345,7 +385,7 @@
             sabraButton1.IconFont = FontAwesome.Sharp.IconFont.Auto;
             sabraButton1.IconSize = 30;
             sabraButton1.ImageAlign = ContentAlignment.MiddleRight;
-            sabraButton1.Location = new Point(36, 22);
+            sabraButton1.Location = new Point(26, 42);
             sabraButton1.Name = "sabraButton1";
             sabraButton1.NormalColor = Color.DimGray;
             sabraButton1.Padding = new Padding(10, 0, 10, 0);
@@ -361,14 +401,13 @@
             slblTitleOfTopPanel.AutoSize = true;
             slblTitleOfTopPanel.BackColor = Color.Transparent;
             slblTitleOfTopPanel.BorderColor = Color.Black;
-            slblTitleOfTopPanel.BorderRadius = 8;
-            slblTitleOfTopPanel.BorderSize = 0;
             slblTitleOfTopPanel.Font = new Font("Cairo", 12F, FontStyle.Bold);
             slblTitleOfTopPanel.ForeColor = Color.Black;
             slblTitleOfTopPanel.IsTitle = true;
-            slblTitleOfTopPanel.Location = new Point(1243, 22);
+            slblTitleOfTopPanel.Location = new Point(1290, 46);
             slblTitleOfTopPanel.Margin = new Padding(0);
             slblTitleOfTopPanel.Name = "slblTitleOfTopPanel";
+            slblTitleOfTopPanel.RightToLeft = RightToLeft.Yes;
             slblTitleOfTopPanel.Size = new Size(130, 37);
             slblTitleOfTopPanel.TabIndex = 0;
             slblTitleOfTopPanel.Text = "إضافة قطعة";
@@ -498,12 +537,11 @@
             // 
             sabraLabel7.AutoSize = true;
             sabraLabel7.BackColor = Color.Transparent;
-            sabraLabel7.BorderColor = Color.DodgerBlue;
-            sabraLabel7.BorderRadius = 8;
-            sabraLabel7.BorderSize = 0;
             sabraLabel7.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel7.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel7.Location = new Point(308, 95);
             sabraLabel7.Name = "sabraLabel7";
+            sabraLabel7.RightToLeft = RightToLeft.Yes;
             sabraLabel7.Size = new Size(94, 32);
             sabraLabel7.TabIndex = 19;
             sabraLabel7.Text = "الرقم الفني";
@@ -524,17 +562,17 @@
             stxbxTechnicalNum.SelectionStart = 0;
             stxbxTechnicalNum.Size = new Size(261, 47);
             stxbxTechnicalNum.TabIndex = 18;
+            stxbxTechnicalNum.Texts = "";
             // 
             // sabraLabel6
             // 
             sabraLabel6.AutoSize = true;
             sabraLabel6.BackColor = Color.Transparent;
-            sabraLabel6.BorderColor = Color.DodgerBlue;
-            sabraLabel6.BorderRadius = 8;
-            sabraLabel6.BorderSize = 0;
             sabraLabel6.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel6.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel6.Location = new Point(216, 200);
             sabraLabel6.Name = "sabraLabel6";
+            sabraLabel6.RightToLeft = RightToLeft.Yes;
             sabraLabel6.Size = new Size(126, 32);
             sabraLabel6.TabIndex = 17;
             sabraLabel6.Text = "المورد الأساسي";
@@ -544,12 +582,11 @@
             // 
             sabraLabel5.AutoSize = true;
             sabraLabel5.BackColor = Color.Transparent;
-            sabraLabel5.BorderColor = Color.DodgerBlue;
-            sabraLabel5.BorderRadius = 8;
-            sabraLabel5.BorderSize = 0;
             sabraLabel5.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel5.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel5.Location = new Point(663, 95);
             sabraLabel5.Name = "sabraLabel5";
+            sabraLabel5.RightToLeft = RightToLeft.Yes;
             sabraLabel5.Size = new Size(68, 32);
             sabraLabel5.TabIndex = 16;
             sabraLabel5.Text = "الباركود";
@@ -559,12 +596,11 @@
             // 
             sabraLabel4.AutoSize = true;
             sabraLabel4.BackColor = Color.Transparent;
-            sabraLabel4.BorderColor = Color.DodgerBlue;
-            sabraLabel4.BorderRadius = 8;
-            sabraLabel4.BorderSize = 0;
             sabraLabel4.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel4.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel4.Location = new Point(564, 200);
             sabraLabel4.Name = "sabraLabel4";
+            sabraLabel4.RightToLeft = RightToLeft.Yes;
             sabraLabel4.Size = new Size(86, 32);
             sabraLabel4.TabIndex = 15;
             sabraLabel4.Text = "وحدة البيع";
@@ -574,12 +610,11 @@
             // 
             sabraLabel3.AutoSize = true;
             sabraLabel3.BackColor = Color.Transparent;
-            sabraLabel3.BorderColor = Color.DodgerBlue;
-            sabraLabel3.BorderRadius = 8;
-            sabraLabel3.BorderSize = 0;
             sabraLabel3.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel3.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel3.Location = new Point(947, 200);
             sabraLabel3.Name = "sabraLabel3";
+            sabraLabel3.RightToLeft = RightToLeft.Yes;
             sabraLabel3.Size = new Size(67, 32);
             sabraLabel3.TabIndex = 14;
             sabraLabel3.Text = "الماركة";
@@ -589,12 +624,11 @@
             // 
             sabraLabel2.AutoSize = true;
             sabraLabel2.BackColor = Color.Transparent;
-            sabraLabel2.BorderColor = Color.DodgerBlue;
-            sabraLabel2.BorderRadius = 8;
-            sabraLabel2.BorderSize = 0;
             sabraLabel2.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel2.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel2.Location = new Point(1301, 200);
             sabraLabel2.Name = "sabraLabel2";
+            sabraLabel2.RightToLeft = RightToLeft.Yes;
             sabraLabel2.Size = new Size(72, 32);
             sabraLabel2.TabIndex = 13;
             sabraLabel2.Text = "التصنيف";
@@ -604,12 +638,11 @@
             // 
             sabraLabel1.AutoSize = true;
             sabraLabel1.BackColor = Color.Transparent;
-            sabraLabel1.BorderColor = Color.DodgerBlue;
-            sabraLabel1.BorderRadius = 8;
-            sabraLabel1.BorderSize = 0;
             sabraLabel1.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel1.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel1.Location = new Point(1270, 95);
             sabraLabel1.Name = "sabraLabel1";
+            sabraLabel1.RightToLeft = RightToLeft.Yes;
             sabraLabel1.Size = new Size(103, 32);
             sabraLabel1.TabIndex = 12;
             sabraLabel1.Text = "أسم القطعة";
@@ -648,6 +681,7 @@
             stxbxParcode.SelectionStart = 0;
             stxbxParcode.Size = new Size(261, 47);
             stxbxParcode.TabIndex = 7;
+            stxbxParcode.Texts = "";
             // 
             // stxbxPartName
             // 
@@ -665,6 +699,7 @@
             stxbxPartName.Size = new Size(612, 47);
             stxbxPartName.TabIndex = 6;
             stxbxPartName.TextAlign = HorizontalAlignment.Center;
+            stxbxPartName.Texts = "";
             // 
             // panel1
             // 
@@ -679,12 +714,11 @@
             // 
             slblBasicInfoTitle.AutoSize = true;
             slblBasicInfoTitle.BackColor = Color.Transparent;
-            slblBasicInfoTitle.BorderColor = Color.DodgerBlue;
-            slblBasicInfoTitle.BorderRadius = 8;
-            slblBasicInfoTitle.BorderSize = 0;
             slblBasicInfoTitle.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            slblBasicInfoTitle.ForeColor = Color.FromArgb(64, 64, 64);
             slblBasicInfoTitle.Location = new Point(1243, 16);
             slblBasicInfoTitle.Name = "slblBasicInfoTitle";
+            slblBasicInfoTitle.RightToLeft = RightToLeft.Yes;
             slblBasicInfoTitle.Size = new Size(143, 32);
             slblBasicInfoTitle.TabIndex = 4;
             slblBasicInfoTitle.Text = "البيانات الأساسية";
@@ -760,12 +794,11 @@
             // 
             sabraLabel15.AutoSize = true;
             sabraLabel15.BackColor = Color.Transparent;
-            sabraLabel15.BorderColor = Color.DodgerBlue;
-            sabraLabel15.BorderRadius = 8;
-            sabraLabel15.BorderSize = 0;
             sabraLabel15.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel15.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel15.Location = new Point(824, 225);
             sabraLabel15.Name = "sabraLabel15";
+            sabraLabel15.RightToLeft = RightToLeft.Yes;
             sabraLabel15.Size = new Size(78, 32);
             sabraLabel15.TabIndex = 30;
             sabraLabel15.Text = "ملاحظات";
@@ -787,17 +820,17 @@
             stbxNotes.SelectionStart = 0;
             stbxNotes.Size = new Size(499, 47);
             stbxNotes.TabIndex = 29;
+            stbxNotes.Texts = "";
             // 
             // sabraLabel16
             // 
             sabraLabel16.AutoSize = true;
             sabraLabel16.BackColor = Color.Transparent;
-            sabraLabel16.BorderColor = Color.DodgerBlue;
-            sabraLabel16.BorderRadius = 8;
-            sabraLabel16.BorderSize = 0;
             sabraLabel16.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel16.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel16.Location = new Point(1286, 226);
             sabraLabel16.Name = "sabraLabel16";
+            sabraLabel16.RightToLeft = RightToLeft.Yes;
             sabraLabel16.Size = new Size(96, 32);
             sabraLabel16.TabIndex = 28;
             sabraLabel16.Text = "قطعة بديلة";
@@ -819,6 +852,7 @@
             stbxAlternativePart.SelectionStart = 0;
             stbxAlternativePart.Size = new Size(315, 47);
             stbxAlternativePart.TabIndex = 27;
+            stbxAlternativePart.Texts = "";
             // 
             // panel3
             // 
@@ -833,12 +867,11 @@
             // 
             sabraLabel14.AutoSize = true;
             sabraLabel14.BackColor = Color.Transparent;
-            sabraLabel14.BorderColor = Color.DodgerBlue;
-            sabraLabel14.BorderRadius = 8;
-            sabraLabel14.BorderSize = 0;
             sabraLabel14.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sabraLabel14.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel14.Location = new Point(1240, 176);
             sabraLabel14.Name = "sabraLabel14";
+            sabraLabel14.RightToLeft = RightToLeft.Yes;
             sabraLabel14.Size = new Size(142, 32);
             sabraLabel14.TabIndex = 25;
             sabraLabel14.Text = "معلومات إضافية";
@@ -848,12 +881,11 @@
             // 
             sabraLabel13.AutoSize = true;
             sabraLabel13.BackColor = Color.Transparent;
-            sabraLabel13.BorderColor = Color.DodgerBlue;
-            sabraLabel13.BorderRadius = 8;
-            sabraLabel13.BorderSize = 0;
             sabraLabel13.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel13.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel13.Location = new Point(129, 82);
             sabraLabel13.Name = "sabraLabel13";
+            sabraLabel13.RightToLeft = RightToLeft.Yes;
             sabraLabel13.Size = new Size(91, 32);
             sabraLabel13.TabIndex = 24;
             sabraLabel13.Text = "الحد الأدني";
@@ -875,17 +907,17 @@
             stbxMiniAmount.SelectionStart = 0;
             stbxMiniAmount.Size = new Size(184, 47);
             stbxMiniAmount.TabIndex = 23;
+            stbxMiniAmount.Texts = "";
             // 
             // sabraLabel12
             // 
             sabraLabel12.AutoSize = true;
             sabraLabel12.BackColor = Color.Transparent;
-            sabraLabel12.BorderColor = Color.DodgerBlue;
-            sabraLabel12.BorderRadius = 8;
-            sabraLabel12.BorderSize = 0;
             sabraLabel12.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel12.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel12.Location = new Point(723, 82);
             sabraLabel12.Name = "sabraLabel12";
+            sabraLabel12.RightToLeft = RightToLeft.Yes;
             sabraLabel12.Size = new Size(79, 32);
             sabraLabel12.TabIndex = 22;
             sabraLabel12.Text = "سعر البيع";
@@ -907,17 +939,17 @@
             stbxSellPrice.SelectionStart = 0;
             stbxSellPrice.Size = new Size(262, 47);
             stbxSellPrice.TabIndex = 21;
+            stbxSellPrice.Texts = "";
             // 
             // sabraLabel11
             // 
             sabraLabel11.AutoSize = true;
             sabraLabel11.BackColor = Color.Transparent;
-            sabraLabel11.BorderColor = Color.DodgerBlue;
-            sabraLabel11.BorderRadius = 8;
-            sabraLabel11.BorderSize = 0;
             sabraLabel11.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel11.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel11.Location = new Point(960, 82);
             sabraLabel11.Name = "sabraLabel11";
+            sabraLabel11.RightToLeft = RightToLeft.Yes;
             sabraLabel11.Size = new Size(133, 32);
             sabraLabel11.TabIndex = 20;
             sabraLabel11.Text = "نسبة المكسب % ";
@@ -927,12 +959,11 @@
             // 
             sabraLabel10.AutoSize = true;
             sabraLabel10.BackColor = Color.Transparent;
-            sabraLabel10.BorderColor = Color.DodgerBlue;
-            sabraLabel10.BorderRadius = 8;
-            sabraLabel10.BorderSize = 0;
             sabraLabel10.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel10.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel10.Location = new Point(400, 82);
             sabraLabel10.Name = "sabraLabel10";
+            sabraLabel10.RightToLeft = RightToLeft.Yes;
             sabraLabel10.Size = new Size(111, 32);
             sabraLabel10.TabIndex = 20;
             sabraLabel10.Text = "الكمية الحالية";
@@ -954,6 +985,7 @@
             stbxProfitPercentage.SelectionStart = 0;
             stbxProfitPercentage.Size = new Size(262, 47);
             stbxProfitPercentage.TabIndex = 19;
+            stbxProfitPercentage.Texts = "";
             // 
             // stbxCurrentAmount
             // 
@@ -971,17 +1003,17 @@
             stbxCurrentAmount.SelectionStart = 0;
             stbxCurrentAmount.Size = new Size(252, 47);
             stbxCurrentAmount.TabIndex = 19;
+            stbxCurrentAmount.Texts = "";
             // 
             // sabraLabel9
             // 
             sabraLabel9.AutoSize = true;
             sabraLabel9.BackColor = Color.Transparent;
-            sabraLabel9.BorderColor = Color.DodgerBlue;
-            sabraLabel9.BorderRadius = 8;
-            sabraLabel9.BorderSize = 0;
             sabraLabel9.Font = new Font("Cairo Medium", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            sabraLabel9.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel9.Location = new Point(1293, 82);
             sabraLabel9.Name = "sabraLabel9";
+            sabraLabel9.RightToLeft = RightToLeft.Yes;
             sabraLabel9.Size = new Size(92, 32);
             sabraLabel9.TabIndex = 18;
             sabraLabel9.Text = "سعر الشراء";
@@ -1005,6 +1037,7 @@
             stbxPurchasePrice.Size = new Size(254, 47);
             stbxPurchasePrice.TabIndex = 17;
             stbxPurchasePrice.TextAlign = HorizontalAlignment.Right;
+            stbxPurchasePrice.Texts = "";
             // 
             // panel2
             // 
@@ -1019,12 +1052,11 @@
             // 
             sabraLabel8.AutoSize = true;
             sabraLabel8.BackColor = Color.Transparent;
-            sabraLabel8.BorderColor = Color.DodgerBlue;
-            sabraLabel8.BorderRadius = 8;
-            sabraLabel8.BorderSize = 0;
             sabraLabel8.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sabraLabel8.ForeColor = Color.FromArgb(64, 64, 64);
             sabraLabel8.Location = new Point(1243, 17);
             sabraLabel8.Name = "sabraLabel8";
+            sabraLabel8.RightToLeft = RightToLeft.Yes;
             sabraLabel8.Size = new Size(145, 32);
             sabraLabel8.TabIndex = 6;
             sabraLabel8.Text = "التسعير والمخزون";

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace SabraForSpareParts.Screens.InventoryAlerts
 {
-    public partial class ucInventoryAlerts : UserControl
+    public partial class ucInventoryAlerts : SabraUserControl
     {
         int alertCount = 0;
         private void ucInventoryAlerts_Load(object sender, EventArgs e)

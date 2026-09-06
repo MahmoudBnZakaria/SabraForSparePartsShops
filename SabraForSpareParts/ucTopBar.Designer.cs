@@ -29,13 +29,11 @@
         private void InitializeComponent()
         {
             lblProgramName = new Label();
-            sbtnSearchForCustomerInvoicePart = new SabraTextBox();
             AddNewPart = new FontAwesome.Sharp.IconButton();
             btnNewInvoice = new FontAwesome.Sharp.IconButton();
             btnInverntoryAlerts = new FontAwesome.Sharp.IconButton();
             fwPbxUserAvatar = new FontAwesome.Sharp.IconPictureBox();
-            slblCustomerNameAndCreditLimit = new SabraLabel();
-            sbtnSearch = new SabraButton();
+            slblUsername = new SabraLabel();
             ((System.ComponentModel.ISupportInitialize)fwPbxUserAvatar).BeginInit();
             SuspendLayout();
             // 
@@ -43,43 +41,23 @@
             // 
             lblProgramName.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             lblProgramName.AutoSize = true;
+            lblProgramName.BackColor = Color.White;
             lblProgramName.Font = new Font("Cairo Black", 13.7999992F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblProgramName.ForeColor = Color.DarkGray;
-            lblProgramName.Location = new Point(1189, 18);
+            lblProgramName.ForeColor = Color.FromArgb(15, 23, 42);
+            lblProgramName.Location = new Point(1213, 15);
             lblProgramName.Name = "lblProgramName";
             lblProgramName.Size = new Size(282, 43);
             lblProgramName.TabIndex = 0;
             lblProgramName.Text = "صبره لقطع غيار السيارات";
             // 
-            // sbtnSearchForCustomerInvoicePart
-            // 
-            sbtnSearchForCustomerInvoicePart.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            sbtnSearchForCustomerInvoicePart.BackColor = Color.White;
-            sbtnSearchForCustomerInvoicePart.BorderColor = Color.DimGray;
-            sbtnSearchForCustomerInvoicePart.Font = new Font("Cairo", 10F);
-            sbtnSearchForCustomerInvoicePart.ForeColor = Color.FromArgb(64, 64, 64);
-            sbtnSearchForCustomerInvoicePart.Location = new Point(694, 18);
-            sbtnSearchForCustomerInvoicePart.Name = "sbtnSearchForCustomerInvoicePart";
-            sbtnSearchForCustomerInvoicePart.Padding = new Padding(10, 7, 25, 7);
-            sbtnSearchForCustomerInvoicePart.PlaceholderText = "ابحث عن فاتورة، عميل، قعطة...";
-            sbtnSearchForCustomerInvoicePart.RightToLeft = RightToLeft.Yes;
-            sbtnSearchForCustomerInvoicePart.SelectedText = "";
-            sbtnSearchForCustomerInvoicePart.SelectionLength = 0;
-            sbtnSearchForCustomerInvoicePart.SelectionStart = 0;
-            sbtnSearchForCustomerInvoicePart.Size = new Size(446, 47);
-            sbtnSearchForCustomerInvoicePart.TabIndex = 5;
-            sbtnSearchForCustomerInvoicePart.Texts = "";
-            sbtnSearchForCustomerInvoicePart.Load += sbtnSearchForCustomerInvoicePart_Load;
-            sbtnSearchForCustomerInvoicePart.KeyDown += sbtnSearchForCustomerInvoicePart_KeyDown;
-            sbtnSearchForCustomerInvoicePart.KeyPress += sbtnSearchForCustomerInvoicePart_KeyPress;
-            // 
             // AddNewPart
             // 
             AddNewPart.BackColor = Color.White;
+            AddNewPart.ForeColor = Color.Violet;
             AddNewPart.IconChar = FontAwesome.Sharp.IconChar.Add;
-            AddNewPart.IconColor = Color.RoyalBlue;
+            AddNewPart.IconColor = Color.FromArgb(15, 23, 42);
             AddNewPart.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            AddNewPart.Location = new Point(478, 9);
+            AddNewPart.Location = new Point(486, 9);
             AddNewPart.Name = "AddNewPart";
             AddNewPart.Size = new Size(52, 61);
             AddNewPart.TabIndex = 6;
@@ -90,9 +68,9 @@
             // 
             btnNewInvoice.BackColor = Color.White;
             btnNewInvoice.IconChar = FontAwesome.Sharp.IconChar.FileInvoiceDollar;
-            btnNewInvoice.IconColor = Color.RoyalBlue;
+            btnNewInvoice.IconColor = Color.FromArgb(15, 23, 42);
             btnNewInvoice.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnNewInvoice.Location = new Point(405, 9);
+            btnNewInvoice.Location = new Point(414, 9);
             btnNewInvoice.Name = "btnNewInvoice";
             btnNewInvoice.Size = new Size(52, 61);
             btnNewInvoice.TabIndex = 7;
@@ -103,9 +81,9 @@
             // 
             btnInverntoryAlerts.BackColor = Color.White;
             btnInverntoryAlerts.IconChar = FontAwesome.Sharp.IconChar.Warning;
-            btnInverntoryAlerts.IconColor = Color.RoyalBlue;
+            btnInverntoryAlerts.IconColor = Color.FromArgb(15, 23, 42);
             btnInverntoryAlerts.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnInverntoryAlerts.Location = new Point(333, 9);
+            btnInverntoryAlerts.Location = new Point(342, 9);
             btnInverntoryAlerts.Name = "btnInverntoryAlerts";
             btnInverntoryAlerts.Size = new Size(52, 61);
             btnInverntoryAlerts.TabIndex = 8;
@@ -114,62 +92,35 @@
             // 
             // fwPbxUserAvatar
             // 
-            fwPbxUserAvatar.BackColor = SystemColors.Window;
-            fwPbxUserAvatar.ForeColor = Color.Gray;
+            fwPbxUserAvatar.BackColor = Color.White;
+            fwPbxUserAvatar.ForeColor = Color.FromArgb(15, 23, 42);
             fwPbxUserAvatar.IconChar = FontAwesome.Sharp.IconChar.UserLarge;
-            fwPbxUserAvatar.IconColor = Color.Gray;
+            fwPbxUserAvatar.IconColor = Color.FromArgb(15, 23, 42);
             fwPbxUserAvatar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             fwPbxUserAvatar.IconSize = 45;
-            fwPbxUserAvatar.Location = new Point(202, 20);
+            fwPbxUserAvatar.Location = new Point(200, 20);
             fwPbxUserAvatar.Name = "fwPbxUserAvatar";
             fwPbxUserAvatar.Size = new Size(45, 45);
             fwPbxUserAvatar.TabIndex = 9;
             fwPbxUserAvatar.TabStop = false;
             fwPbxUserAvatar.Click += fwPbxUserAvatar_Click;
             // 
-            // slblCustomerNameAndCreditLimit
+            // slblUsername
             // 
-            slblCustomerNameAndCreditLimit.BackColor = Color.White;
-            slblCustomerNameAndCreditLimit.BorderColor = Color.DimGray;
-            slblCustomerNameAndCreditLimit.BorderRadius = 20;
-            slblCustomerNameAndCreditLimit.BorderSize = 1;
-            slblCustomerNameAndCreditLimit.Font = new Font("Cairo", 15F);
-            slblCustomerNameAndCreditLimit.ForeColor = Color.DimGray;
-            slblCustomerNameAndCreditLimit.Location = new Point(20, 13);
-            slblCustomerNameAndCreditLimit.Name = "slblCustomerNameAndCreditLimit";
-            slblCustomerNameAndCreditLimit.RightToLeft = RightToLeft.Yes;
-            slblCustomerNameAndCreditLimit.Size = new Size(176, 52);
-            slblCustomerNameAndCreditLimit.TabIndex = 15;
-            slblCustomerNameAndCreditLimit.Text = "أحمد محمد";
-            slblCustomerNameAndCreditLimit.TextAlign = ContentAlignment.MiddleCenter;
-            slblCustomerNameAndCreditLimit.Click += lblCurrentUserName;
-            // 
-            // sbtnSearch
-            // 
-            sbtnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            sbtnSearch.BackColor = Color.RoyalBlue;
-            sbtnSearch.BorderColor = Color.Gray;
-            sbtnSearch.BorderRadius = 15;
-            sbtnSearch.BorderSize = 0;
-            sbtnSearch.FlatAppearance.BorderSize = 0;
-            sbtnSearch.FlatStyle = FlatStyle.Flat;
-            sbtnSearch.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            sbtnSearch.ForeColor = Color.White;
-            sbtnSearch.HoverColor = Color.CornflowerBlue;
-            sbtnSearch.IconChar = FontAwesome.Sharp.IconChar.Search;
-            sbtnSearch.IconColor = Color.Beige;
-            sbtnSearch.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sbtnSearch.IconSize = 30;
-            sbtnSearch.ImageAlign = ContentAlignment.MiddleRight;
-            sbtnSearch.Location = new Point(627, 20);
-            sbtnSearch.Name = "sbtnSearch";
-            sbtnSearch.NormalColor = Color.RoyalBlue;
-            sbtnSearch.Padding = new Padding(10, 0, 10, 0);
-            sbtnSearch.Size = new Size(61, 45);
-            sbtnSearch.TabIndex = 23;
-            sbtnSearch.TextAlign = ContentAlignment.MiddleLeft;
-            sbtnSearch.UseVisualStyleBackColor = false;
-            sbtnSearch.Click += sbtnSearch_Click;
+            slblUsername.BackColor = Color.White;
+            slblUsername.BorderColor = Color.DimGray;
+            slblUsername.BorderRadius = 20;
+            slblUsername.BorderSize = 1;
+            slblUsername.Font = new Font("Cairo", 15F);
+            slblUsername.ForeColor = Color.FromArgb(15, 23, 42);
+            slblUsername.Location = new Point(18, 15);
+            slblUsername.Name = "slblUsername";
+            slblUsername.RightToLeft = RightToLeft.Yes;
+            slblUsername.Size = new Size(176, 52);
+            slblUsername.TabIndex = 15;
+            slblUsername.Text = "أحمد محمد";
+            slblUsername.TextAlign = ContentAlignment.MiddleCenter;
+            slblUsername.Click += slblUsername_Click;
             // 
             // ucTopBar
             // 
@@ -177,19 +128,20 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoScrollMinSize = new Size(0, 0);
             BackColor = Color.White;
+            BorderColor = Color.Gray;
             BorderRadius = 15;
-            BorderStyle = BorderStyle.FixedSingle;
-            Controls.Add(sbtnSearch);
-            Controls.Add(slblCustomerNameAndCreditLimit);
+            BorderSize = 3;
+            Controls.Add(slblUsername);
             Controls.Add(fwPbxUserAvatar);
             Controls.Add(btnInverntoryAlerts);
             Controls.Add(btnNewInvoice);
             Controls.Add(AddNewPart);
-            Controls.Add(sbtnSearchForCustomerInvoicePart);
             Controls.Add(lblProgramName);
             MinimumSize = new Size(1493, 83);
             Name = "ucTopBar";
-            Size = new Size(1493, 83);
+            Padding = new Padding(0);
+            Size = new Size(1495, 83);
+            Load += ucTopBar_Load;
             ((System.ComponentModel.ISupportInitialize)fwPbxUserAvatar).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -198,12 +150,10 @@
         #endregion
 
         private Label lblProgramName;
-        private SabraTextBox sbtnSearchForCustomerInvoicePart;
         private FontAwesome.Sharp.IconButton AddNewPart;
         private FontAwesome.Sharp.IconButton btnNewInvoice;
         private FontAwesome.Sharp.IconButton btnInverntoryAlerts;
         private FontAwesome.Sharp.IconPictureBox fwPbxUserAvatar;
-        private SabraLabel slblCustomerNameAndCreditLimit;
-        private SabraButton sbtnSearch;
+        private SabraLabel slblUsername;
     }
 }

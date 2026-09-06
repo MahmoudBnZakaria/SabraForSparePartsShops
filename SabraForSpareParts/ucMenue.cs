@@ -9,24 +9,21 @@ namespace SabraForSpareParts
 {
     public partial class ucMenue : SabraUserControl
     {
-        // ================== الألوان ==================
         private static readonly Color NormalBg = Color.FromArgb(15, 23, 42);
         private static readonly Color ActiveBg = Color.FromArgb(37, 99, 235);
 
-        // خريطة: كل شاشة على الزرار بتاعها
         private Dictionary<MenuScreen, SabraButton> _screenButtons;
 
-        // خريطة: كل عنوان قسم على أزراره
         private Dictionary<SabraLabel, SabraButton[]> _sectionMap;
 
-        // نسخة من ستايل الصفوف الأصلية عشان نرجعها لما نظهر الصف تاني
+        // Buckup of the original RowStyles to restore when making rows visible again
         private RowStyle[] _originalRowStyles;
 
-        // الزرار النشط حالياً
         private SabraButton _activeButton;
 
         /// <summary>
-        /// بيتبعت لما المستخدم يدوس على أي زرار في القائمة.
+        /// Event that's raised when a menu screen is selected.
+        /// The parent form (frmMain) listens to this event and decides which screen to open.
         /// </summary>
         public event EventHandler<MenuScreenSelectedEventArgs> ScreenSelected;
 
@@ -34,9 +31,7 @@ namespace SabraForSpareParts
         {
             InitializeComponent();
             BuildMaps();
-            SetActiveButton(MenuScreen.Main);   // عشان الـ Dashboard يبقى مختار من الأول
-            // الشاشة الافتراضية = Dashboard
-            SetActiveButton(MenuScreen.Main);
+            SetActiveButton(MenuScreen.Main);   // Set the default active button to Main
         }
 
         private void BuildMaps()
@@ -80,7 +75,7 @@ namespace SabraForSpareParts
                 { lblPurchases, new[] { btnNewPurchaseOrderScreen, btnPurchaseOrdersListScreen, btnReceiveGoodsScreen } },
                 { lblSuppliersAndCustomers, new[] { btnCustomersScreen, btnCustomerStatementScreen, btnSuppliersScreen, btnSupplierStatementScreen } },
                 { lblFinancial, new[] { btnTreasury, btnExpensesScreen, btnSalariesScreen, btnAdvancesScreen, btnReportesScreen, btnCashFlowScreen } },
-                { sabraLabel6, new[] { btnEmployeesScreen, btnUsersScreen, btnSettingsScreen, btnBackupScreen, btnActvityScreenScreen } },
+                { lblSystem, new[] { btnEmployeesScreen, btnUsersScreen, btnSettingsScreen, btnBackupScreen, btnActvityScreenScreen } },
             };
 
             _originalRowStyles = sabraTableLayoutPanel1.RowStyles
@@ -89,8 +84,15 @@ namespace SabraForSpareParts
                 .ToArray();
         }
 
+
+
+
+
+
+
+
         // ========================================================
-        //                      الصلاحيات
+        //                      Permissions
         // ========================================================
 
         public void ApplyPermissions(IEnumerable<MenuScreen> allowedScreens)
@@ -152,22 +154,33 @@ namespace SabraForSpareParts
             }
         }
 
+
+
+
+
+
+
         // ========================================================
-        //                   الزرار النشط
+        //                   Active Button Handling 
         // ========================================================
 
         /// <summary>
-        /// بتخلي الزرار بتاع الشاشة دي Active (لون مميز) طول ما الشاشة مفتوحة.
+        /// a method to set the active screen from outside the control.
+        /// This will change the active button's appearance and raise the ScreenSelected event.
         /// </summary>
+
+
+        // The Entry Of the Menu Control to set the active screen from outside
         public void SetActiveScreen(MenuScreen screen)
         {
             SetActiveButton(screen);
         }
 
 
+        // To handle the active button color change when a screen is selected
         private void SetActiveButton(MenuScreen screen)
         {
-            // رجّع الزرار القديم
+            // reset the previous active button's appearance
             if (_activeButton != null)
             {
                 _activeButton.NormalColor = NormalBg;
@@ -175,7 +188,7 @@ namespace SabraForSpareParts
                 _activeButton.IconColor = Color.White;
             }
 
-            // فعّل الزرار الجديد
+            // activate the new button's appearance
             if (_screenButtons.TryGetValue(screen, out var button))
             {
                 button.NormalColor = ActiveBg;
@@ -185,13 +198,17 @@ namespace SabraForSpareParts
             }
         }
 
+
+
+
+
         // ========================================================
-        //                    أحداث الأزرار
+        //                    button click events
         // ========================================================
 
         private void RaiseScreenSelected(MenuScreen screen)
         {
-            SetActiveButton(screen);   // يفضل لونه مميز طول ما الشاشة مفتوحة
+            SetActiveButton(screen);   
             ScreenSelected?.Invoke(this, new MenuScreenSelectedEventArgs(screen));
         }
 

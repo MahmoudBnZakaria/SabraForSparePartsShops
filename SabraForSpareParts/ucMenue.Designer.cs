@@ -57,7 +57,7 @@
             btnAdvancesScreen = new SabraButton();
             btnReportesScreen = new SabraButton();
             btnCashFlowScreen = new SabraButton();
-            sabraLabel6 = new SabraLabel();
+            lblSystem = new SabraLabel();
             btnEmployeesScreen = new SabraButton();
             btnUsersScreen = new SabraButton();
             btnSettingsScreen = new SabraButton();
@@ -73,6 +73,7 @@
             sabraTableLayoutPanel1.BackColor = Color.Transparent;
             sabraTableLayoutPanel1.ColumnCount = 1;
             sabraTableLayoutPanel1.Columns = 1;
+            sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             sabraTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -117,7 +118,7 @@
             sabraTableLayoutPanel1.Controls.Add(btnAdvancesScreen);
             sabraTableLayoutPanel1.Controls.Add(btnReportesScreen);
             sabraTableLayoutPanel1.Controls.Add(btnCashFlowScreen);
-            sabraTableLayoutPanel1.Controls.Add(sabraLabel6);
+            sabraTableLayoutPanel1.Controls.Add(lblSystem);
             sabraTableLayoutPanel1.Controls.Add(btnEmployeesScreen);
             sabraTableLayoutPanel1.Controls.Add(btnUsersScreen);
             sabraTableLayoutPanel1.Controls.Add(btnSettingsScreen);
@@ -134,6 +135,42 @@
             sabraTableLayoutPanel1.RightToLeft = RightToLeft.No;
             sabraTableLayoutPanel1.RowCount = 36;
             sabraTableLayoutPanel1.Rows = 36;
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
+            sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
             sabraTableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 2.77777767F));
@@ -892,22 +929,22 @@
             btnCashFlowScreen.UseVisualStyleBackColor = false;
             btnCashFlowScreen.Click += btnCashFlowScreen_Click;
             // 
-            // sabraLabel6
+            // lblSystem
             // 
-            sabraLabel6.BackColor = Color.Transparent;
-            sabraLabel6.BorderColor = Color.Transparent;
-            sabraLabel6.Dock = DockStyle.Fill;
-            sabraLabel6.Font = new Font("Cairo", 12F);
-            sabraLabel6.ForeColor = Color.LightGray;
-            sabraLabel6.Location = new Point(0, 2318);
-            sabraLabel6.Margin = new Padding(0, 20, 0, 20);
-            sabraLabel6.Name = "sabraLabel6";
-            sabraLabel6.Padding = new Padding(0, 0, 10, 0);
-            sabraLabel6.RightToLeft = RightToLeft.No;
-            sabraLabel6.Size = new Size(237, 41);
-            sabraLabel6.TabIndex = 51;
-            sabraLabel6.Text = "النظام";
-            sabraLabel6.TextAlign = ContentAlignment.MiddleRight;
+            lblSystem.BackColor = Color.Transparent;
+            lblSystem.BorderColor = Color.Transparent;
+            lblSystem.Dock = DockStyle.Fill;
+            lblSystem.Font = new Font("Cairo", 12F);
+            lblSystem.ForeColor = Color.LightGray;
+            lblSystem.Location = new Point(0, 2318);
+            lblSystem.Margin = new Padding(0, 20, 0, 20);
+            lblSystem.Name = "lblSystem";
+            lblSystem.Padding = new Padding(0, 0, 10, 0);
+            lblSystem.RightToLeft = RightToLeft.No;
+            lblSystem.Size = new Size(237, 41);
+            lblSystem.TabIndex = 51;
+            lblSystem.Text = "النظام";
+            lblSystem.TextAlign = ContentAlignment.MiddleRight;
             // 
             // btnEmployeesScreen
             // 
@@ -1110,7 +1147,7 @@
         private SabraButton btnAdvancesScreen;
         private SabraButton btnReportesScreen;
         private SabraButton btnCashFlowScreen;
-        private SabraLabel sabraLabel6;
+        private SabraLabel lblSystem;
         private SabraButton btnEmployeesScreen;
         private SabraButton btnUsersScreen;
         private SabraButton btnSettingsScreen;

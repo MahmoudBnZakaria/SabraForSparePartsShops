@@ -12,18 +12,15 @@ namespace SabraForSpareParts
         {
             InitializeComponent();
 
-            // القائمة الجانبية
+            // event of the menu control
             ucMenue1.ScreenSelected += UcMenue1_ScreenSelected;
 
-            // التوب بار
             WireTopBarEvents();
-
-            // الشاشة الافتراضية
             LoadScreen(MenuScreen.Main);
         }
 
         // =========================================================
-        // ربط أحداث التوب بار
+        // Top bar events wiring
         // =========================================================
         private void WireTopBarEvents()
         {
@@ -32,66 +29,25 @@ namespace SabraForSpareParts
             ucTopBar1.InventoryAlertsClicked += (s, e) => LoadScreen(MenuScreen.InventoryAlerts);
             ucTopBar1.NewInvoiceClicked += (s, e) => LoadScreen(MenuScreen.NewInvoice);
             ucTopBar1.AddNewPartClicked += (s, e) => LoadScreen(MenuScreen.AddPart);
-
-            // البحث
-            ucTopBar1.SearchRequested += UcTopBar1_SearchRequested;
-
-            // صورة المستخدم (تقدر تفتح الإعدادات أو بروفايل)
             ucTopBar1.UserAvatarClicked += (s, e) => LoadScreen(MenuScreen.Settings);
         }
 
-        // =========================================================
-        // حدث البحث من التوب بار
-        // =========================================================
-        private void UcTopBar1_SearchRequested(object sender, EventArgs e)
-        {
-            string searchText = ucTopBar1.SearchText;
-
-            if (string.IsNullOrWhiteSpace(searchText))
-            {
-                ucTopBar1.FocusSearch();
-                return;
-            }
-
-            // هنا تقدر تعمل اللي انت عايزه بالبحث
-            // مثال بسيط: افتح شاشة المخزون وابحث فيها (لو عندك ميثود بحث)
-            // أو افتح شاشة الفواتير... حسب منطق برنامجك
-
-            // حالياً هفتح شاشة المخزون كمثال:
-            LoadScreen(MenuScreen.InventoryList);
-
-            // لو عايز تبعت نص البحث للشاشات، تقدر تعمل كده:
-            // if (pnlContent.Controls.Count > 0 && pnlContent.Controls[0] is ucInventory inv)
-            // {
-            //     inv.Search(searchText);
-            // }
-        }
 
         // =========================================================
-        // حدث اختيار شاشة من القائمة الجانبية
+        // event handler for menu screen selection
         // =========================================================
         private void UcMenue1_ScreenSelected(object sender, MenuScreenSelectedEventArgs e)
         {
             LoadScreen(e.Screen);
         }
 
-        // =========================================================
-        // تطبيق الصلاحيات بعد تسجيل الدخول
-        // =========================================================
-        private void OnUserLoggedIn(List<string> userPermissionCodes)
-        {
-            ucMenue1.ApplyPermissions(userPermissionCodes);
-
-            // تقدر كمان تحدث بيانات المستخدم في التوب بار
-            // ucTopBar1.SetUserSettings(userId, userName, userRole);
-        }
 
         // =========================================================
-        // تحميل الشاشة
+        // Load the appropriate screen based on the selected menu item
         // =========================================================
         private void LoadScreen(MenuScreen screen)
         {
-            UserControl uc = screen switch
+            SabraUserControl uc = screen switch
             {
                 MenuScreen.Main => new usDashboard(),
                 MenuScreen.InventoryList => new ucInventory(),
@@ -126,13 +82,11 @@ namespace SabraForSpareParts
             if (uc == null) return;
 
             ShowScreen(uc);
-
-            // مهم جدًا: خلي الزرار في القائمة الجانبية يتلون
             ucMenue1.SetActiveScreen(screen);
         }
 
         // =========================================================
-        // عرض الشاشة جوه البانل
+        // Show the given UserControl in the main content panel
         // =========================================================
         private void ShowScreen(UserControl screen)
         {
