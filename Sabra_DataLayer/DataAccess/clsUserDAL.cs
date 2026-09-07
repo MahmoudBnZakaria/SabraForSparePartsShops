@@ -20,8 +20,11 @@ namespace Sabra.DataLayer
             Username = r["Username"].ToString(),
             PasswordHash = r["Password_Hash"].ToString(),
             IsActive = (bool)r["Is_Active"],
-            CreatedAt = (DateTime)r["Created_At"]
+            CreatedAt = (DateTime)r["Created_At"],
+            Permissions = r["Permissions"] != DBNull.Value ? (int)r["Permissions"] : 0
         };
+
+
         const string sql = @"
                 SELECT u.*, e.Full_Name
                 FROM USERS u
@@ -32,7 +35,7 @@ namespace Sabra.DataLayer
 
             using (var conn = clsConnectionManager.GetConnection())
             {
-                using (var cmd = new SqlCommand(sql + "Where u.Username = @Username And u.Is_Active = 1 ;", conn))
+                using (var cmd = new SqlCommand(sql + " Where u.Username = @Username And u.Is_Active = 1 ;", conn))
                 {
                     cmd.Parameters.AddWithValue("@Username", username);
                     conn.Open();

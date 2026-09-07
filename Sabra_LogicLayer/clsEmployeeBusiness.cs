@@ -69,8 +69,8 @@ namespace Sabra.LogicLayer
             return OperationResult.Ok("تم إيقاف الموظف بنجاح");
         }
 
-        public OperationResult<List<EmployeePosition>> GetPositions() { 
-            var list = _lookupDAL.GetAllPositions();
+        public OperationResult<List<EmployeePosition>> GetEmployee_Positions() { 
+            var list = _lookupDAL.GetAllEmployee_Positions();
             return OperationResult<List<EmployeePosition>>.Ok(list);
         }
 

@@ -1,4 +1,4 @@
-﻿using SabraForSpareParts.SabraForSpareParts;
+﻿using SabraForSpareParts;
 using System;
 using System.Windows.Forms;
 

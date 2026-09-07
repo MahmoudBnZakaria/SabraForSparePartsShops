@@ -342,13 +342,13 @@ namespace SabraForSpareParts.Screens
             Controls.Add(cmbUserStatus);
             Controls.Add(btnRefreshUsers);
 
-            PositionSearchControls();
+            Employee_PositionsearchControls();
 
             Resize -= ucUsers_Resize;
             Resize += ucUsers_Resize;
         }
 
-        private void PositionSearchControls()
+        private void Employee_PositionsearchControls()
         {
             if (txtSearchUsers == null ||
                 cmbUserStatus == null ||
@@ -382,7 +382,7 @@ namespace SabraForSpareParts.Screens
             object sender,
             EventArgs e)
         {
-            PositionSearchControls();
+            Employee_PositionsearchControls();
 
             /*
              * لا نستخدم BeginInvoke هنا.

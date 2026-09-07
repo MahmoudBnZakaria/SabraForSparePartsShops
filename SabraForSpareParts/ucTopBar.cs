@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sabra.LogicLayer;
+using System;
 using System.Windows.Forms;
 
 namespace SabraForSpareParts
@@ -25,7 +26,7 @@ namespace SabraForSpareParts
         {
             ConfigureControlsBehavior();
             ConfigureTabOrder();
-            UpdateUserInterface();
+            SetBarData();
         }
 
 
@@ -62,25 +63,11 @@ namespace SabraForSpareParts
             if (fwPbxUserAvatar != null) fwPbxUserAvatar.TabIndex = 5;
         }
 
-
-
-        // Method to set user settings and update the UI accordingly
-        public void SetUserSettings(string userName, string programName)
+        public void SetBarData()
         {
-            UserName = string.IsNullOrWhiteSpace(userName) ? "User" : userName.Trim();
-            ProgramName = string.IsNullOrWhiteSpace(programName) ? "صبره لقطع غيار السيارات" : programName.Trim();
+            UserName = clsAppSession.CurrentUser.EmployeeName;
+            ProgramName =  "صبره لقطع غيار السيارات";
 
-            UpdateUserInterface();
-        }
-
-        private void UpdateUserInterface()
-        {
-
-            if (lblProgramName != null)
-                lblProgramName.Text = ProgramName;
-
-            if (slblUsername != null)
-                slblUsername.Text = UserName;
         }
 
         #region Event Handlers
@@ -97,14 +84,6 @@ namespace SabraForSpareParts
             => UserAvatarClicked?.Invoke(this, EventArgs.Empty);
         #endregion
 
-        private void slblUsername_Click(object sender, EventArgs e)
-        {
 
-        }
-
-        private void ucTopBar_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

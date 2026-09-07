@@ -38,6 +38,9 @@
             sbtnCancelLogin = new SabraButton();
             stbxPassowrd = new SabraTextBox();
             cbxPasswordVisibility = new CheckBox();
+            slblWrongPassword = new SabraLabel();
+            slblUserIsNotExist = new SabraLabel();
+            slblGeneralError = new SabraLabel();
             SuspendLayout();
             // 
             // slblTitleSabra
@@ -47,7 +50,7 @@
             slblTitleSabra.BorderColor = Color.DeepSkyBlue;
             slblTitleSabra.Font = new Font("Cairo", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
             slblTitleSabra.ForeColor = Color.White;
-            slblTitleSabra.Location = new Point(455, 12);
+            slblTitleSabra.Location = new Point(455, 33);
             slblTitleSabra.Name = "slblTitleSabra";
             slblTitleSabra.RightToLeft = RightToLeft.Yes;
             slblTitleSabra.Size = new Size(322, 75);
@@ -62,7 +65,7 @@
             slblTitleForSpare.BorderColor = Color.DeepSkyBlue;
             slblTitleForSpare.Font = new Font("Cairo", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
             slblTitleForSpare.ForeColor = Color.White;
-            slblTitleForSpare.Location = new Point(455, 97);
+            slblTitleForSpare.Location = new Point(455, 118);
             slblTitleForSpare.Name = "slblTitleForSpare";
             slblTitleForSpare.RightToLeft = RightToLeft.Yes;
             slblTitleForSpare.Size = new Size(124, 75);
@@ -77,7 +80,7 @@
             slblTitleCarParats.BorderColor = Color.DeepSkyBlue;
             slblTitleCarParats.Font = new Font("Cairo", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
             slblTitleCarParats.ForeColor = Color.White;
-            slblTitleCarParats.Location = new Point(455, 172);
+            slblTitleCarParats.Location = new Point(455, 193);
             slblTitleCarParats.Name = "slblTitleCarParats";
             slblTitleCarParats.RightToLeft = RightToLeft.Yes;
             slblTitleCarParats.Size = new Size(344, 75);
@@ -92,7 +95,7 @@
             slblEnglishTitle.BorderColor = Color.FromArgb(15, 23, 42);
             slblEnglishTitle.Font = new Font("Century Schoolbook", 10.8F, FontStyle.Italic, GraphicsUnit.Point, 0);
             slblEnglishTitle.ForeColor = Color.White;
-            slblEnglishTitle.Location = new Point(505, 266);
+            slblEnglishTitle.Location = new Point(505, 287);
             slblEnglishTitle.Name = "slblEnglishTitle";
             slblEnglishTitle.RightToLeft = RightToLeft.Yes;
             slblEnglishTitle.Size = new Size(231, 22);
@@ -107,7 +110,7 @@
             slblAppVersion.BorderColor = Color.FromArgb(15, 23, 42);
             slblAppVersion.Font = new Font("Copperplate Gothic Light", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             slblAppVersion.ForeColor = Color.White;
-            slblAppVersion.Location = new Point(589, 311);
+            slblAppVersion.Location = new Point(589, 332);
             slblAppVersion.Name = "slblAppVersion";
             slblAppVersion.RightToLeft = RightToLeft.Yes;
             slblAppVersion.Size = new Size(44, 21);
@@ -123,7 +126,7 @@
             stbxUserName.BorderSize = 3;
             stbxUserName.Font = new Font("Cairo", 13.7999992F, FontStyle.Regular, GraphicsUnit.Point, 0);
             stbxUserName.ForeColor = Color.White;
-            stbxUserName.Location = new Point(18, 60);
+            stbxUserName.Location = new Point(18, 51);
             stbxUserName.Name = "stbxUserName";
             stbxUserName.Padding = new Padding(10, 7, 25, 7);
             stbxUserName.PlaceholderText = "أدخل أسم المستخدم...";
@@ -133,7 +136,7 @@
             stbxUserName.SelectionLength = 0;
             stbxUserName.SelectionStart = 0;
             stbxUserName.Size = new Size(381, 58);
-            stbxUserName.TabIndex = 13;
+            stbxUserName.TabIndex = 1;
             stbxUserName.Texts = "";
             // 
             // stbnLogin
@@ -150,7 +153,7 @@
             stbnLogin.IconChar = FontAwesome.Sharp.IconChar.LockOpen;
             stbnLogin.IconColor = Color.FromArgb(15, 23, 42);
             stbnLogin.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            stbnLogin.Location = new Point(18, 266);
+            stbnLogin.Location = new Point(18, 287);
             stbnLogin.Name = "stbnLogin";
             stbnLogin.NormalColor = Color.DimGray;
             stbnLogin.Size = new Size(228, 60);
@@ -172,7 +175,7 @@
             sbtnCancelLogin.IconChar = FontAwesome.Sharp.IconChar.X;
             sbtnCancelLogin.IconColor = Color.FromArgb(15, 23, 42);
             sbtnCancelLogin.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sbtnCancelLogin.Location = new Point(269, 266);
+            sbtnCancelLogin.Location = new Point(269, 287);
             sbtnCancelLogin.Name = "sbtnCancelLogin";
             sbtnCancelLogin.NormalColor = Color.DimGray;
             sbtnCancelLogin.Size = new Size(120, 60);
@@ -188,7 +191,7 @@
             stbxPassowrd.BorderSize = 3;
             stbxPassowrd.Font = new Font("Cairo", 13.7999992F, FontStyle.Regular, GraphicsUnit.Point, 0);
             stbxPassowrd.ForeColor = Color.White;
-            stbxPassowrd.Location = new Point(18, 141);
+            stbxPassowrd.Location = new Point(18, 162);
             stbxPassowrd.Name = "stbxPassowrd";
             stbxPassowrd.Padding = new Padding(10, 7, 25, 7);
             stbxPassowrd.PasswordChar = true;
@@ -199,7 +202,7 @@
             stbxPassowrd.SelectionLength = 0;
             stbxPassowrd.SelectionStart = 0;
             stbxPassowrd.Size = new Size(381, 58);
-            stbxPassowrd.TabIndex = 17;
+            stbxPassowrd.TabIndex = 2;
             stbxPassowrd.Texts = "";
             // 
             // cbxPasswordVisibility
@@ -207,7 +210,7 @@
             cbxPasswordVisibility.AutoSize = true;
             cbxPasswordVisibility.Font = new Font("Cairo", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbxPasswordVisibility.ForeColor = Color.White;
-            cbxPasswordVisibility.Location = new Point(18, 211);
+            cbxPasswordVisibility.Location = new Point(18, 232);
             cbxPasswordVisibility.Name = "cbxPasswordVisibility";
             cbxPasswordVisibility.Size = new Size(155, 36);
             cbxPasswordVisibility.TabIndex = 18;
@@ -215,13 +218,61 @@
             cbxPasswordVisibility.UseVisualStyleBackColor = true;
             cbxPasswordVisibility.CheckedChanged += cbxPasswordVisibility_CheckedChanged;
             // 
+            // slblWrongPassword
+            // 
+            slblWrongPassword.AutoSize = true;
+            slblWrongPassword.BackColor = Color.Transparent;
+            slblWrongPassword.Font = new Font("Cairo", 12F);
+            slblWrongPassword.ForeColor = Color.Red;
+            slblWrongPassword.Location = new Point(27, 123);
+            slblWrongPassword.Name = "slblWrongPassword";
+            slblWrongPassword.RightToLeft = RightToLeft.Yes;
+            slblWrongPassword.Size = new Size(171, 37);
+            slblWrongPassword.TabIndex = 19;
+            slblWrongPassword.Text = "كلمة المرور خاطئة ";
+            slblWrongPassword.TextAlign = ContentAlignment.MiddleRight;
+            slblWrongPassword.Visible = false;
+            // 
+            // slblUserIsNotExist
+            // 
+            slblUserIsNotExist.AutoSize = true;
+            slblUserIsNotExist.BackColor = Color.Transparent;
+            slblUserIsNotExist.Font = new Font("Cairo", 12F);
+            slblUserIsNotExist.ForeColor = Color.Red;
+            slblUserIsNotExist.Location = new Point(27, 9);
+            slblUserIsNotExist.Name = "slblUserIsNotExist";
+            slblUserIsNotExist.RightToLeft = RightToLeft.Yes;
+            slblUserIsNotExist.Size = new Size(191, 37);
+            slblUserIsNotExist.TabIndex = 20;
+            slblUserIsNotExist.Text = "المستخدم غير موجود";
+            slblUserIsNotExist.TextAlign = ContentAlignment.MiddleRight;
+            slblUserIsNotExist.Visible = false;
+            // 
+            // slblGeneralError
+            // 
+            slblGeneralError.AutoSize = true;
+            slblGeneralError.BackColor = Color.Transparent;
+            slblGeneralError.Font = new Font("Cairo", 12F);
+            slblGeneralError.ForeColor = Color.Red;
+            slblGeneralError.Location = new Point(328, 9);
+            slblGeneralError.Name = "slblGeneralError";
+            slblGeneralError.RightToLeft = RightToLeft.Yes;
+            slblGeneralError.Size = new Size(191, 37);
+            slblGeneralError.TabIndex = 21;
+            slblGeneralError.Text = "المستخدم غير موجود";
+            slblGeneralError.TextAlign = ContentAlignment.MiddleRight;
+            slblGeneralError.Visible = false;
+            // 
             // frmLogin
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(15, 23, 42);
-            ClientSize = new Size(811, 359);
+            ClientSize = new Size(811, 372);
             ControlBox = false;
+            Controls.Add(slblGeneralError);
+            Controls.Add(slblUserIsNotExist);
+            Controls.Add(slblWrongPassword);
             Controls.Add(cbxPasswordVisibility);
             Controls.Add(stbxPassowrd);
             Controls.Add(sbtnCancelLogin);
@@ -254,5 +305,8 @@
         private SabraButton sbtnCancelLogin;
         private SabraTextBox stbxPassowrd;
         private CheckBox cbxPasswordVisibility;
+        private SabraLabel slblWrongPassword;
+        private SabraLabel slblUserIsNotExist;
+        private SabraLabel slblGeneralError;
     }
 }

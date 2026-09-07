@@ -7,13 +7,13 @@ namespace Sabra.DataLayer.DataAccess
 {
     public class clsLookupDAL
     {
-             // ── Employee Positions ──────────────────────────────────
-            public List<EmployeePosition> GetAllPositions()
+             // ── Employee Employee_Positions ──────────────────────────────────
+            public List<EmployeePosition> GetAllEmployee_Positions()
             {
             
                 var list = new List<EmployeePosition>();
                 using (var conn = clsConnectionManager.GetConnection())
-                using (var cmd = new SqlCommand("SELECT Position_ID, Position_Name FROM EMPLOYEE_POSITIONS ORDER BY Position_Name", conn))
+                using (var cmd = new SqlCommand("SELECT Position_ID, Position_Name FROM EMPLOYEE_Employee_Positions ORDER BY Position_Name", conn))
                 {
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
@@ -26,7 +26,7 @@ namespace Sabra.DataLayer.DataAccess
             public bool AddPosition(string name)
             {
                 using (var conn = clsConnectionManager.GetConnection())
-                using (var cmd = new SqlCommand("INSERT INTO EMPLOYEE_POSITIONS (Position_Name) VALUES (@Name)", conn))
+                using (var cmd = new SqlCommand("INSERT INTO EMPLOYEE_Employee_Positions (Position_Name) VALUES (@Name)", conn))
                 {
                     cmd.Parameters.AddWithValue("@Name", name);
                     conn.Open();

@@ -32,7 +32,7 @@ namespace Sabra.DataLayer.DataAccess
                     e.*, 
                     p.Position_Name 
                 FROM Employees e
-                INNER JOIN Positions p ON e.Position_ID = p.Position_ID";
+                INNER JOIN Employee_Positions p ON e.Position_ID = p.Position_ID ";
 
         public List<Employee> GetAll(bool ActiveOnly = false) { 
             var list = new List<Employee>();
@@ -57,7 +57,7 @@ namespace Sabra.DataLayer.DataAccess
         public Employee GetByID(int ID) {
             using (var conn = clsConnectionManager.GetConnection()) {
 
-                using (var cmd = new SqlCommand(_SelectSql + "where e.Employee_ID = @ID", conn)) {
+                using (var cmd = new SqlCommand(_SelectSql + " where e.Employee_ID = @ID", conn)) {
                     cmd.Parameters.AddWithValue("@ID", ID);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader()) {
@@ -71,7 +71,7 @@ namespace Sabra.DataLayer.DataAccess
             var list = new List<Employee>();
 
             var Query = _SelectSql +
-                @"Where e.Is_Active = 1 and 
+                @" Where e.Is_Active = 1 and 
 `                       ( e.Full_Name Like @kw or e.Phone_Number like @kw or e.National_ID like @kw) 
                         Order By e.Full_Name";
 

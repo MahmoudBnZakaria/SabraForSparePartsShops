@@ -10,7 +10,7 @@ namespace Sabra.LogicLayer
     {
         public bool Success { get; set; }
         public string Message { get; set; }
-        public int NewID { get; set; }
+        public int NewID { get; set; } // To Get Idenentitiy
 
         public static OperationResult Ok(string message = "تمت العملية بنجاح", int newID = 0) => new OperationResult
         {

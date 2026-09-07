@@ -19,6 +19,6 @@ static class Program
         //     if (login.ShowDialog() != DialogResult.OK) return;
         // }
 
-        Application.Run(new frmMain());
+        Application.Run(new frmLogin());
     }
 }

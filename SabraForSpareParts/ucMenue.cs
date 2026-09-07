@@ -1,4 +1,5 @@
 ﻿using FontAwesome.Sharp;
+using Sabra.LogicLayer;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -31,6 +32,7 @@ namespace SabraForSpareParts
         {
             InitializeComponent();
             BuildMaps();
+            ApplyPermissions((Permissions) clsAppSession.CurrentUser.Permissions);
             SetActiveButton(MenuScreen.Main);   // Set the default active button to Main
         }
 
@@ -85,12 +87,6 @@ namespace SabraForSpareParts
         }
 
 
-
-
-
-
-
-
         // ========================================================
         //                      Permissions
         // ========================================================
@@ -108,19 +104,24 @@ namespace SabraForSpareParts
             UpdateRowsVisibility();
         }
 
-        public void ApplyPermissions(IEnumerable<string> allowedPermissionCodes)
+        public void ApplyPermissions(Permissions permissions)
         {
-            var screens = new List<MenuScreen>();
+            var allowedScreens = new List<MenuScreen>();
 
-            foreach (var code in allowedPermissionCodes ?? Enumerable.Empty<string>())
+            foreach (MenuScreen screen in Enum.GetValues(typeof(MenuScreen)))
             {
-                if (Enum.TryParse<MenuScreen>(code, true, out var screen))
-                    screens.Add(screen);
+                if (Enum.TryParse<Permissions>(
+                    screen.ToString(),
+                    true,
+                    out var permission))
+                {
+                    if ((permissions & permission) == permission)
+                        allowedScreens.Add(screen);
+                }
             }
 
-            ApplyPermissions(screens);
+            ApplyPermissions(allowedScreens);
         }
-
         private void UpdateRowsVisibility()
         {
             sabraTableLayoutPanel1.SuspendLayout();

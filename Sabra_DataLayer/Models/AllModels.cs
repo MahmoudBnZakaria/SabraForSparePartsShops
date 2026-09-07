@@ -109,6 +109,9 @@ namespace Sabra.DataLayer.Models
         public string PasswordHash { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        public int Permissions { get; set; }  // Bitwise representation of permissions
+
     }
 
     public class StaffWallet

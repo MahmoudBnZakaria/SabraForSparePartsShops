@@ -9,10 +9,15 @@ using System.Threading.Tasks;
 
 namespace Sabra.LogicLayer
 {
+
+
     public class clsAuthBusiness
     {
         private readonly clsUserDAL _userDAL = new clsUserDAL();
         private readonly clsEmployeeDAL _employeeDAL = new clsEmployeeDAL();
+
+
+
         public OperationResult<User> Login(string username, string password) {
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
@@ -26,14 +31,19 @@ namespace Sabra.LogicLayer
             if (!PasswordHelper.Verify(password, user.PasswordHash))
                 return OperationResult<User>.Fail("كلمة المرور غير صحيحة.");
 
+
             var employee = _employeeDAL.GetByID(user.EmployeeID);
             clsAppSession.SetSession(user, employee);
 
             return OperationResult<User>.Ok(user, $"مرحبا، {user.EmployeeName}");
         }
+
+
         public void Logout() {
             clsAppSession.ClearSession();
         }
+
+
         public OperationResult ChangePassword(int userID, string oldPassword, string newPassword, string confirmPassword) {
             if (string.IsNullOrWhiteSpace(newPassword))
                 return OperationResult.Fail("كلمة المرور الجديدة لا يمكن أن تكون فارغة ");
@@ -52,6 +62,8 @@ namespace Sabra.LogicLayer
             _userDAL.UpdatePassword(userID, PasswordHelper.Hash(newPassword));
             return OperationResult.Ok("تم تغيير كلمة المرور بنجاح");
         }
+        
+        
         public OperationResult ResetPassword(int userID, string newPassword, string confirmPassword) {
 
             if (newPassword != confirmPassword)

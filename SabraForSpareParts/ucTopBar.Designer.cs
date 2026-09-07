@@ -120,7 +120,6 @@
             slblUsername.TabIndex = 15;
             slblUsername.Text = "أحمد محمد";
             slblUsername.TextAlign = ContentAlignment.MiddleCenter;
-            slblUsername.Click += slblUsername_Click;
             // 
             // ucTopBar
             // 
@@ -141,7 +140,6 @@
             Name = "ucTopBar";
             Padding = new Padding(0);
             Size = new Size(1495, 83);
-            Load += ucTopBar_Load;
             ((System.ComponentModel.ISupportInitialize)fwPbxUserAvatar).EndInit();
             ResumeLayout(false);
             PerformLayout();

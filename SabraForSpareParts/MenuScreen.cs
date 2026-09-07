@@ -3,12 +3,7 @@
 namespace SabraForSpareParts
 {
 
-
-    using System;
-
-    namespace SabraForSpareParts
-    {
-        public static class MenuScreenExtensions
+    public static class MenuScreenExtensions
         {
             public static string GetDisplayName(this MenuScreen screen)
             {
@@ -45,7 +40,7 @@ namespace SabraForSpareParts
                 };
             }
         }
-    }
+
 
 
     /// <summary>
