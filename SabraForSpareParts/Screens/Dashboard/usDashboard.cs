@@ -3,6 +3,7 @@ using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.WinForms;
+using Sabra.LogicLayer;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace SabraForSpareParts.Screens
 {
     public partial class usDashboard : SabraUserControl
     {
+        private clsReportsBusiness _reportsBusiness = new clsReportsBusiness();
         public usDashboard()
         {
             InitializeComponent();
@@ -29,41 +31,85 @@ namespace SabraForSpareParts.Screens
             LoadPendingOrdersMock();
         }
 
+
         private void LoadWeeklySalesChart()
         {
-            List<double> sales = new() { 47, 62, 38, 80, 55, 71, 44 };
+            var from = DateTime.Today.AddDays(-6);
+            var to = DateTime.Today.AddDays(1);
+
+            var result = _reportsBusiness.GetDailyProfits(from, to);
+
+            if (!result.Success || result.Data == null)
+                return;
 
             var culture = new CultureInfo("ar-EG");
-            var labels = Enumerable.Range(0, 7)
-                .Select(i => DateTime.Today.AddDays(-6 + i))
-                .Select(date => culture.DateTimeFormat.GetDayName(date.DayOfWeek))
+
+            var dailyData = Enumerable.Range(0, 7)
+                .Select(i =>
+                {
+                    var date = DateTime.Today.AddDays(-6 + i);
+
+                    var day = result.Data.FirstOrDefault(x =>
+                        x.SaleDate.Date == date.Date);
+
+                    return new
+                    {
+                        Date = date,
+                        Sales = day?.TotalRevenue ?? 0
+                    };
+                })
                 .ToList();
+
+            var sales = dailyData
+                .Select(x => (double)x.Sales)
+                .ToArray();
+
+            var labels = dailyData
+                .Select(x =>
+                    culture.DateTimeFormat.GetDayName(x.Date.DayOfWeek))
+                .ToArray();
 
             cartesianChart1.Series = new ISeries[]
             {
-                new ColumnSeries<double> { Values = sales }
+                new ColumnSeries<double>
+                {
+                    Values = sales
+                }
             };
 
             cartesianChart1.XAxes = new Axis[]
             {
-                new Axis { Labels = labels }
+                new Axis
+                {
+                    Labels = labels
+                }
             };
 
-            cartesianChart1.YAxes = new Axis[] { new Axis() };
+            cartesianChart1.YAxes = new Axis[]
+            {
+                new Axis()
+            };
+
             cartesianChart1.LegendPosition = LegendPosition.Bottom;
         }
 
+
         private void LoadSalesDistributionChart()
         {
-            pieChart1.Series = new ISeries[]
-            {
-                new PieSeries<double> { Name = "فلاتر", Values = new[] { 35.0 }, Fill = new SolidColorPaint(SKColors.RoyalBlue), InnerRadius = 60 },
-                new PieSeries<double> { Name = "فرامل", Values = new[] { 22.0 }, Fill = new SolidColorPaint(SKColors.ForestGreen), InnerRadius = 60 },
-                new PieSeries<double> { Name = "بواجي",  Values = new[] { 18.0 }, Fill = new SolidColorPaint(SKColors.DarkOrange), InnerRadius = 60 },
-                new PieSeries<double> { Name = "تعليق", Values = new[] { 15.0 }, Fill = new SolidColorPaint(SKColors.MediumPurple), InnerRadius = 60 },
-                new PieSeries<double> { Name = "أخرى",   Values = new[] { 10.0 }, Fill = new SolidColorPaint(SKColors.Crimson), InnerRadius = 60 }
-            };
+            var result = _reportsBusiness.GetTopSellingParts(5);
+            if (!result.Success || result.Data == null || !result.Data.Any())
+                return;
 
+            var series = result.Data.Select(part => new PieSeries<double>{ 
+                    Name = part.PartName,
+                    Values = new[] { 
+                        (double)part.TotalQtySold
+                    },
+                    InnerRadius = 60,
+
+            }).ToArray();
+
+            pieChart1.Series = series;
             pieChart1.LegendPosition = LegendPosition.Right;
         }
 

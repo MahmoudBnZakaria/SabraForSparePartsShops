@@ -42,6 +42,9 @@ namespace SabraForSpareParts
         public frmLogin()
         {
             InitializeComponent();
+            stbxUserName.Text = "m.ibrahim";
+            stbxPassowrd.Text = "admin";
+            
 
             // تخزين المواضع الأصلية لكل Label خاص بالأخطاء
             _originalLabelTops = new Dictionary<Label, int>
@@ -320,10 +323,9 @@ namespace SabraForSpareParts
             var CurrentUser = authBusiness.Login(username, password);
 
             clsEmployeeBusiness employeeBusiness = new clsEmployeeBusiness();
-            var CurrentEmployee = employeeBusiness.GetByID(CurrentUser.Data.EmployeeID);
             if (CurrentUser.Success)
             {
-                // نجاح
+                var CurrentEmployee = employeeBusiness.GetByID(CurrentUser.Data.EmployeeID);
                 this.Hide();
                 frmMain main = new frmMain();
                 main.ShowDialog();
