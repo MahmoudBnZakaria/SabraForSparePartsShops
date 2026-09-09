@@ -3,11 +3,6 @@ using Sabra.DataLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace Sabra.DataLayer
 {
@@ -27,24 +22,18 @@ namespace Sabra.DataLayer
             CreatedAt = (DateTime)r["Created_At"]
         };
 
-
         public List<Payroll> GetAll(string monthYear = null, int? employeeID = null)
         {
             var list = new List<Payroll>();
-            var sql = @"
-                SELECT p.*, e.Full_Name FROM PAYROLL p
-                JOIN EMPLOYEES e ON p.Employee_ID = e.Employee_ID WHERE 1=1";
-            if (!string.IsNullOrWhiteSpace(monthYear)) sql += " AND p.Month_Year = @MonthYear";
-            if (employeeID.HasValue) sql += " AND p.Employee_ID = @EmpID";
-            sql += " ORDER BY p.Payment_Date DESC";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Payroll_GetAll"))
             {
-                if (!string.IsNullOrWhiteSpace(monthYear)) cmd.Parameters.AddWithValue("@MonthYear", monthYear);
-                if (employeeID.HasValue) cmd.Parameters.AddWithValue("@EmpID", employeeID.Value);
+                clsDBHelper.AddParam(cmd, "@MonthYear", monthYear);
+                clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
-                    while (r.Read()) list.Add(MapPayroll(r));
+                    while (r.Read())
+                        list.Add(MapPayroll(r));
             }
             return list;
         }
@@ -52,36 +41,47 @@ namespace Sabra.DataLayer
         public bool MonthYearExists(int employeeID, string monthYear)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("SELECT COUNT(1) FROM PAYROLL WHERE Employee_ID = @EmpID AND Month_Year = @MY", conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Payroll_MonthYearExists"))
             {
-                cmd.Parameters.AddWithValue("@EmpID", employeeID);
-                cmd.Parameters.AddWithValue("@MY", monthYear);
+                clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
+                clsDBHelper.AddParam(cmd, "@MonthYear", monthYear);
+                var outExists = clsDBHelper.AddOutputParam(cmd, "@Exists", SqlDbType.Bit);
+
                 conn.Open();
-                return (int)cmd.ExecuteScalar() > 0;
+                cmd.ExecuteNonQuery();
+                return clsDBHelper.GetBool(outExists);
             }
         }
 
-
         public int Add(Payroll payroll)
         {
-            const string sql = @"
-                INSERT INTO PAYROLL (Employee_ID, Amount_Paid, Deductions, Bonuses, Payment_Date, Month_Year, Notes)
-                VALUES (@EmpID, @AmtPaid, @Deductions, @Bonuses, @PayDate, @MonthYear, @Notes);
-                SELECT SCOPE_IDENTITY();";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Payroll_Add"))
             {
-                cmd.Parameters.AddWithValue("@EmpID", payroll.EmployeeID);
-                cmd.Parameters.AddWithValue("@AmtPaid", payroll.AmountPaid);
-                cmd.Parameters.AddWithValue("@Deductions", payroll.Deductions);
-                cmd.Parameters.AddWithValue("@Bonuses", payroll.Bonuses);
-                cmd.Parameters.AddWithValue("@PayDate", payroll.PaymentDate);
-                cmd.Parameters.AddWithValue("@MonthYear", payroll.MonthYear);
-                cmd.Parameters.AddWithValue("@Notes", (object)payroll.Notes ?? DBNull.Value);
+                clsDBHelper.AddParam(cmd, "@EmployeeID", payroll.EmployeeID);
+                clsDBHelper.AddParam(cmd, "@AmountPaid", payroll.AmountPaid);
+                clsDBHelper.AddParam(cmd, "@Deductions", payroll.Deductions);
+                clsDBHelper.AddParam(cmd, "@Bonuses", payroll.Bonuses);
+                clsDBHelper.AddParam(cmd, "@PaymentDate", payroll.PaymentDate);
+                clsDBHelper.AddParam(cmd, "@MonthYear", payroll.MonthYear);
+                clsDBHelper.AddParam(cmd, "@Notes", payroll.Notes);
+                var outId = clsDBHelper.AddOutputParam(cmd, "@NewPayrollID", SqlDbType.Int);
+
                 conn.Open();
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                cmd.ExecuteNonQuery();
+                return Convert.ToInt32(outId.Value);
+            }
+        }
+
+        public string FormatMonthYear(DateTime date)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = new SqlCommand("SELECT dbo.fn_FormatMonthYear(@Date)", conn))
+            {
+                clsDBHelper.AddParam(cmd, "@Date", date.Date);
+                conn.Open();
+                return cmd.ExecuteScalar().ToString();
             }
         }
     }
 }
-

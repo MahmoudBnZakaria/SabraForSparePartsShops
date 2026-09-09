@@ -1,29 +1,18 @@
 ﻿using Microsoft.Data.SqlClient;
 using Sabra.DataLayer.Models;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sabra.DataLayer
 {
     public class clsStaffWalletDAL
     {
-
-
         public StaffWallet GetByEmployee(int employeeID)
         {
-            const string sql = @"
-                SELECT sw.*, e.Full_Name FROM STAFF_WALLETS sw
-                JOIN EMPLOYEES e ON sw.Employee_ID = e.Employee_ID
-                WHERE sw.Employee_ID = @EmpID";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_StaffWallet_GetByEmployee"))
             {
-                cmd.Parameters.AddWithValue("@EmpID", employeeID);
+                clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
                 {
@@ -42,31 +31,28 @@ namespace Sabra.DataLayer
             }
         }
 
-
         public bool CreateWallet(int employeeID, string walletNumber = null)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("INSERT INTO STAFF_WALLETS (Employee_ID, Wallet_Number, Current_Balance) VALUES (@EmpID, @WalletNum, 0)", conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_StaffWallet_Create"))
             {
-                cmd.Parameters.AddWithValue("@EmpID", employeeID);
-                cmd.Parameters.AddWithValue("@WalletNum", (object)walletNumber ?? DBNull.Value);
+                clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
+                clsDBHelper.AddParam(cmd, "@WalletNumber", walletNumber);
                 conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
 
-        public bool UpdateBalance(int employeeID, decimal newBalance)
+        public bool AdjustBalance(int employeeID, decimal delta)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("UPDATE STAFF_WALLETS SET Current_Balance = @Balance, Last_Update = GETDATE() WHERE Employee_ID = @EmpID", conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_StaffWallet_AdjustBalance"))
             {
-                cmd.Parameters.AddWithValue("@Balance", newBalance);
-                cmd.Parameters.AddWithValue("@EmpID", employeeID);
+                clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
+                clsDBHelper.AddParam(cmd, "@Delta", delta);
                 conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
     }
-
 }
-

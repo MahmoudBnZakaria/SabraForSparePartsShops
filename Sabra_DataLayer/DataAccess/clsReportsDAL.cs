@@ -2,29 +2,19 @@
 using Sabra.DataLayer.Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sabra.DataLayer
 {
     public class clsReportsDAL
     {
-
         public List<InvoiceProfitView> GetInvoiceProfits(DateTime? from = null, DateTime? to = null)
         {
             var list = new List<InvoiceProfitView>();
-            var sql = "SELECT * FROM V_Invoice_Profit WHERE 1=1";
-            if (from.HasValue) sql += " AND Date_Time >= @From";
-            if (to.HasValue) sql += " AND Date_Time <= @To";
-            sql += " ORDER BY Date_Time DESC";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Report_InvoiceProfits"))
             {
-                if (from.HasValue) cmd.Parameters.AddWithValue("@From", from.Value);
-                if (to.HasValue) cmd.Parameters.AddWithValue("@To", to.Value);
+                clsDBHelper.AddParam(cmd, "@From", from);
+                clsDBHelper.AddParam(cmd, "@To", to);
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
                     while (r.Read())
@@ -44,19 +34,14 @@ namespace Sabra.DataLayer
             return list;
         }
 
-
         public List<DailyProfitView> GetDailyProfits(DateTime? from = null, DateTime? to = null)
         {
             var list = new List<DailyProfitView>();
-            var sql = "SELECT * FROM V_Daily_Profit WHERE 1=1";
-            if (from.HasValue) sql += " AND Sale_Date >= @From";
-            if (to.HasValue) sql += " AND Sale_Date <= @To";
-            sql += " ORDER BY Sale_Date DESC";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Report_DailyProfits"))
             {
-                if (from.HasValue) cmd.Parameters.AddWithValue("@From", from.Value);
-                if (to.HasValue) cmd.Parameters.AddWithValue("@To", to.Value);
+                clsDBHelper.AddParam(cmd, "@From", from);
+                clsDBHelper.AddParam(cmd, "@To", to);
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
                     while (r.Read())
@@ -74,18 +59,13 @@ namespace Sabra.DataLayer
             return list;
         }
 
-
-
         public List<MonthlyProfitView> GetMonthlyProfits(int? year = null)
         {
             var list = new List<MonthlyProfitView>();
-            var sql = "SELECT * FROM V_Monthly_Profit";
-            if (year.HasValue) sql += " WHERE Month_Year LIKE @Year";
-            sql += " ORDER BY Month_Year DESC";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Report_MonthlyProfits"))
             {
-                if (year.HasValue) cmd.Parameters.AddWithValue("@Year", year.Value.ToString() + "%");
+                clsDBHelper.AddParam(cmd, "@Year", year);
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
                     while (r.Read())
@@ -104,12 +84,11 @@ namespace Sabra.DataLayer
             return list;
         }
 
-
         public List<LowStockView> GetLowStockSuggestions()
         {
             var list = new List<LowStockView>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("SELECT * FROM V_Reorder_Suggestion ORDER BY Shortage DESC", conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Report_LowStockSuggestions"))
             {
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
@@ -132,39 +111,38 @@ namespace Sabra.DataLayer
             return list;
         }
 
-
         public List<TopSellingPartView> GetTopSellingParts(int top = 10)
         {
             var list = new List<TopSellingPartView>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand($"SELECT TOP {top} * FROM V_Top_Selling_Parts ORDER BY Total_Qty_Sold DESC", conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Report_TopSellingParts"))
             {
+                clsDBHelper.AddParam(cmd, "@Top", top);
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
                     while (r.Read())
                         list.Add(new TopSellingPartView
                         {
-                            PartID = (int)r["Part_ID"],
-                            PartName = r["Part_Name"].ToString(),
-                            CategoryName = r["Category_Name"].ToString(),
+                            PartID = r["Part_ID"] == DBNull.Value ? 0 : (int)r["Part_ID"],
+                            PartName = r["Part_Name"] == DBNull.Value ? null : r["Part_Name"].ToString(),
+                            CategoryName = r["Category_Name"] == DBNull.Value ? null : r["Category_Name"].ToString(),
                             BrandName = r["Brand_Name"] == DBNull.Value ? null : r["Brand_Name"].ToString(),
-                            TotalQtySold = (int)r["Total_Qty_Sold"],
-                            TotalRevenue = (decimal)r["Total_Revenue"],
-                            TotalProfit = (decimal)r["Total_Profit"],
-                            InvoiceCount = (int)r["Invoice_Count"],
-                            CurrentStock = (int)r["Current_Stock"],
+                            TotalQtySold = r["Total_Qty_Sold"] == DBNull.Value ? 0 : (int)r["Total_Qty_Sold"],
+                            TotalRevenue = r["Total_Revenue"] == DBNull.Value ? 0m : (decimal)r["Total_Revenue"],
+                            TotalProfit = r["Total_Profit"] == DBNull.Value ? 0m : (decimal)r["Total_Profit"],
+                            InvoiceCount = r["Invoice_Count"] == DBNull.Value ? 0 : (int)r["Invoice_Count"],
+                            CurrentStock = r["Current_Stock"] == DBNull.Value ? 0 : (int)r["Current_Stock"],
                             LastSaleDate = r["Last_Sale_Date"] == DBNull.Value ? (DateTime?)null : (DateTime)r["Last_Sale_Date"]
                         });
             }
             return list;
         }
 
-
         public List<InventoryValuationView> GetInventoryValuation()
         {
             var list = new List<InventoryValuationView>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("SELECT * FROM V_Inventory_Valuation ORDER BY Value_At_Cost DESC", conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Report_InventoryValuation"))
             {
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
@@ -191,8 +169,9 @@ namespace Sabra.DataLayer
         {
             var list = new List<TopCustomerView>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand($"SELECT TOP {top} * FROM V_Top_Customers ORDER BY Total_Purchases DESC", conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Report_TopCustomers"))
             {
+                clsDBHelper.AddParam(cmd, "@Top", top);
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
                     while (r.Read())
@@ -213,12 +192,11 @@ namespace Sabra.DataLayer
             return list;
         }
 
-
         public List<EmployeePerformanceView> GetEmployeePerformance()
         {
             var list = new List<EmployeePerformanceView>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("SELECT * FROM V_Employee_Performance ORDER BY Total_Sales DESC", conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Report_EmployeePerformance"))
             {
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
@@ -245,7 +223,7 @@ namespace Sabra.DataLayer
         public TreasuryBalanceView GetCurrentTreasuryBalance()
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("SELECT * FROM V_Current_Treasury_Balance", conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Report_CurrentTreasuryBalance"))
             {
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
@@ -264,19 +242,14 @@ namespace Sabra.DataLayer
             }
         }
 
-
         public List<DailyCashFlowView> GetDailyCashFlow(DateTime? from = null, DateTime? to = null)
         {
             var list = new List<DailyCashFlowView>();
-            var sql = "SELECT * FROM V_Daily_Cash_Flow WHERE 1=1";
-            if (from.HasValue) sql += " AND Flow_Date >= @From";
-            if (to.HasValue) sql += " AND Flow_Date <= @To";
-            sql += " ORDER BY Flow_Date DESC";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Report_DailyCashFlow"))
             {
-                if (from.HasValue) cmd.Parameters.AddWithValue("@From", from.Value);
-                if (to.HasValue) cmd.Parameters.AddWithValue("@To", to.Value);
+                clsDBHelper.AddParam(cmd, "@From", from);
+                clsDBHelper.AddParam(cmd, "@To", to);
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
                     while (r.Read())
@@ -297,7 +270,4 @@ namespace Sabra.DataLayer
             return list;
         }
     }
-
-
 }
-

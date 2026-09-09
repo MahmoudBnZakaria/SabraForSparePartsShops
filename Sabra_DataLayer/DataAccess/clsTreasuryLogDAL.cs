@@ -3,15 +3,11 @@ using Sabra.DataLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 namespace Sabra.DataLayer
 {
     public class clsTreasuryLogDAL
     {
-
         private TreasuryLog MapLog(SqlDataReader r) => new TreasuryLog
         {
             TransactionID = (int)r["Transaction_ID"],
@@ -34,7 +30,7 @@ namespace Sabra.DataLayer
         public decimal GetCurrentBalance()
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("SELECT TOP 1 Balance_After FROM TREASURY_LOG ORDER BY Action_Date DESC", conn))
+            using (var cmd = new SqlCommand("SELECT dbo.fn_Treasury_GetCurrentBalance()", conn))
             {
                 conn.Open();
                 var result = cmd.ExecuteScalar();
@@ -45,66 +41,43 @@ namespace Sabra.DataLayer
         public List<TreasuryLog> GetAll(DateTime? from = null, DateTime? to = null, int? typeID = null, int? methodID = null)
         {
             var list = new List<TreasuryLog>();
-            var sql = @"
-                SELECT tl.*, tt.Type_Name, pm.Method_Name
-                FROM TREASURY_LOG tl
-                JOIN TRANSACTION_TYPES tt ON tl.Transaction_Type_ID = tt.Transaction_Type_ID
-                JOIN PAYMENT_METHODS   pm ON tl.Payment_Method_ID   = pm.Payment_Method_ID
-                WHERE 1=1";
-            if (from.HasValue) sql += " AND tl.Action_Date >= @From";
-            if (to.HasValue) sql += " AND tl.Action_Date <= @To";
-            if (typeID.HasValue) sql += " AND tl.Transaction_Type_ID = @TypeID";
-            if (methodID.HasValue) sql += " AND tl.Payment_Method_ID   = @MethodID";
-            sql += " ORDER BY tl.Action_Date DESC";
-
-
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Treasury_GetAll"))
             {
-                if (from.HasValue) cmd.Parameters.AddWithValue("@From", from.Value);
-                if (to.HasValue) cmd.Parameters.AddWithValue("@To", to.Value);
-                if (typeID.HasValue) cmd.Parameters.AddWithValue("@TypeID", typeID.Value);
-                if (methodID.HasValue) cmd.Parameters.AddWithValue("@MethodID", methodID.Value);
+                clsDBHelper.AddParam(cmd, "@From", from);
+                clsDBHelper.AddParam(cmd, "@To", to);
+                clsDBHelper.AddParam(cmd, "@TypeID", typeID);
+                clsDBHelper.AddParam(cmd, "@MethodID", methodID);
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
-                    while (r.Read()) list.Add(MapLog(r));
+                    while (r.Read())
+                        list.Add(MapLog(r));
             }
             return list;
         }
 
-
-        public int Add(TreasuryLog log)
+        public (int NewTransactionID, decimal NewBalance) Add(TreasuryLog log)
         {
-            const string sql = @"
-                INSERT INTO TREASURY_LOG
-                    (Transaction_Type_ID, Payment_Method_ID, Amount,
-                     Invoice_ID, PO_ID, Expense_ID, Payroll_ID, Advance_ID, Employee_ID,
-                     Action_Date, Balance_After, Notes)
-                VALUES
-                    (@TypeID, @MethodID, @Amount,
-                     @InvID, @POID, @ExpID, @PayrollID, @AdvID, @EmpID,
-                     @Date, @BalAfter, @Notes);
-                SELECT SCOPE_IDENTITY();";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Treasury_Add"))
             {
-                cmd.Parameters.AddWithValue("@TypeID", log.TransactionTypeID);
-                cmd.Parameters.AddWithValue("@MethodID", log.PaymentMethodID);
-                cmd.Parameters.AddWithValue("@Amount", log.Amount);
-                cmd.Parameters.AddWithValue("@InvID", (object)log.InvoiceID ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@POID", (object)log.POID ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@ExpID", (object)log.ExpenseID ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@PayrollID", (object)log.PayrollID ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@AdvID", (object)log.AdvanceID ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@EmpID", (object)log.EmployeeID ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Date", log.ActionDate);
-                cmd.Parameters.AddWithValue("@BalAfter", log.BalanceAfter);
-                cmd.Parameters.AddWithValue("@Notes", (object)log.Notes ?? DBNull.Value);
+                clsDBHelper.AddParam(cmd, "@TransactionTypeID", log.TransactionTypeID);
+                clsDBHelper.AddParam(cmd, "@PaymentMethodID", log.PaymentMethodID);
+                clsDBHelper.AddParam(cmd, "@SignedAmount", log.Amount);
+                clsDBHelper.AddParam(cmd, "@InvoiceID", log.InvoiceID);
+                clsDBHelper.AddParam(cmd, "@POID", log.POID);
+                clsDBHelper.AddParam(cmd, "@ExpenseID", log.ExpenseID);
+                clsDBHelper.AddParam(cmd, "@PayrollID", log.PayrollID);
+                clsDBHelper.AddParam(cmd, "@AdvanceID", log.AdvanceID);
+                clsDBHelper.AddParam(cmd, "@EmployeeID", log.EmployeeID);
+                clsDBHelper.AddParam(cmd, "@Notes", log.Notes);
+                var outTranId = clsDBHelper.AddOutputParam(cmd, "@NewTransactionID", SqlDbType.Int);
+                var outBalance = clsDBHelper.AddDecimalOutputParam(cmd, "@NewBalance", 18, 2);
+
                 conn.Open();
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                cmd.ExecuteNonQuery();
+                return (Convert.ToInt32(outTranId.Value), Convert.ToDecimal(outBalance.Value));
             }
         }
     }
-
 }
-

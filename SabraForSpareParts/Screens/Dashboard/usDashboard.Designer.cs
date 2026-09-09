@@ -618,12 +618,12 @@
             lblAlerts.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblAlerts.ForeColor = Color.FromArgb(64, 64, 64);
             lblAlerts.IsTitle = true;
-            lblAlerts.Location = new Point(300, 17);
+            lblAlerts.Location = new Point(246, 17);
             lblAlerts.Name = "lblAlerts";
             lblAlerts.RightToLeft = RightToLeft.Yes;
-            lblAlerts.Size = new Size(111, 37);
+            lblAlerts.Size = new Size(159, 37);
             lblAlerts.TabIndex = 2;
-            lblAlerts.Text = "آخر الفواتير";
+            lblAlerts.Text = "تنبيهات المخزون";
             lblAlerts.TextAlign = ContentAlignment.MiddleRight;
             // 
             // sabraPanel1

@@ -2,32 +2,20 @@
 using Sabra.DataLayer.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
+
 namespace Sabra.DataLayer
 {
-
     public class clsReturnsDAL
     {
         public List<Return> GetAll(DateTime? from = null, DateTime? to = null)
         {
             var list = new List<Return>();
-            var sql = @"
-                SELECT r.*, i.Part_Name, its.Status_Name
-                FROM RETURNS r
-                JOIN INVENTORY  i   ON r.Part_ID   = i.Part_ID
-                JOIN ITEM_STATUS its ON r.Status_ID = its.Status_ID
-                WHERE 1=1";
-            if (from.HasValue) sql += " AND r.Return_Date >= @From";
-            if (to.HasValue) sql += " AND r.Return_Date <= @To";
-            sql += " ORDER BY r.Return_Date DESC";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Returns_GetAll"))
             {
-                if (from.HasValue) cmd.Parameters.AddWithValue("@From", from.Value);
-                if (to.HasValue) cmd.Parameters.AddWithValue("@To", to.Value);
+                clsDBHelper.AddParam(cmd, "@From", from);
+                clsDBHelper.AddParam(cmd, "@To", to);
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
                     while (r.Read())
@@ -48,23 +36,36 @@ namespace Sabra.DataLayer
             return list;
         }
 
-        public int Add(Return ret)
+        /// <summary>
+        /// بترجع الـ Return_ID الجديد. لو restockOnAccept=true وStatusID اللي بعتها
+        /// يطابق acceptedStatusID، الـ SP بترجع القطعة للمخزون وتسجل حركة من نوع
+        /// restockMovementTypeID تلقائيًا.
+        /// </summary>
+        public int Add(
+            Return ret,
+            bool restockOnAccept = false,
+            int? acceptedStatusID = null,
+            int? restockMovementTypeID = null,
+            int? userID = null)
         {
-            const string sql = @"
-                INSERT INTO RETURNS (Invoice_ID, Part_ID, Quantity, Reason, Status_ID, Return_Date)
-                VALUES (@InvID, @PartID, @Qty, @Reason, @StatusID, @Date);
-                SELECT SCOPE_IDENTITY();";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Returns_Add"))
             {
-                cmd.Parameters.AddWithValue("@InvID", ret.InvoiceID);
-                cmd.Parameters.AddWithValue("@PartID", ret.PartID);
-                cmd.Parameters.AddWithValue("@Qty", ret.Quantity);
-                cmd.Parameters.AddWithValue("@Reason", (object)ret.Reason ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@StatusID", ret.StatusID);
-                cmd.Parameters.AddWithValue("@Date", ret.ReturnDate);
+                clsDBHelper.AddParam(cmd, "@InvoiceID", ret.InvoiceID);
+                clsDBHelper.AddParam(cmd, "@PartID", ret.PartID);
+                clsDBHelper.AddParam(cmd, "@Quantity", ret.Quantity);
+                clsDBHelper.AddParam(cmd, "@Reason", ret.Reason);
+                clsDBHelper.AddParam(cmd, "@StatusID", ret.StatusID);
+                clsDBHelper.AddParam(cmd, "@ReturnDate", ret.ReturnDate);
+                clsDBHelper.AddParam(cmd, "@RestockOnAccept", restockOnAccept);
+                clsDBHelper.AddParam(cmd, "@AcceptedStatusID", acceptedStatusID);
+                clsDBHelper.AddParam(cmd, "@RestockMovementTypeID", restockMovementTypeID);
+                clsDBHelper.AddParam(cmd, "@UserID", userID);
+                var outId = clsDBHelper.AddOutputParam(cmd, "@NewReturnID", SqlDbType.Int);
+
                 conn.Open();
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                cmd.ExecuteNonQuery();
+                return Convert.ToInt32(outId.Value);
             }
         }
     }

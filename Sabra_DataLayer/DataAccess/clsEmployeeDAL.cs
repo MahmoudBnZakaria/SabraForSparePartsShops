@@ -1,153 +1,116 @@
 ﻿using Microsoft.Data.SqlClient;
+using Sabra.DataLayer.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Sabra.DataLayer.Models;
+using System.Data;
 
 namespace Sabra.DataLayer.DataAccess
 {
     public class clsEmployeeDAL
     {
-        private Employee MapEmployee(SqlDataReader r) {
+        private Employee MapEmployee(SqlDataReader r) => new Employee
+        {
+            EmployeeID = (int)r["Employee_ID"],
+            PositionID = (int)r["Position_ID"],
+            PositionName = r["Position_Name"].ToString(),
+            FullName = r["Full_Name"].ToString(),
+            BasicSalary = (decimal)r["Basic_Salary"],
+            HireDate = (DateTime)r["Hire_Date"],
+            PhoneNumber = r["Phone_Number"] == DBNull.Value ? null : r["Phone_Number"].ToString(),
+            NationalID = r["National_ID"] == DBNull.Value ? null : r["National_ID"].ToString(),
+            IsActive = (bool)r["Is_Active"],
+            CreatedAt = (DateTime)r["Created_At"],
+            UpdatedAt = (DateTime)r["Updated_At"]
+        };
 
-            return new Employee {
-                EmployeeID = (int)r["Employee_ID"],
-                PositionID = (int)r["Position_ID"],
-                PositionName = r["Position_Name"].ToString(),
-                FullName = r["Full_Name"].ToString(),
-                BasicSalary = (decimal)r["Basic_Salary"],
-                HireDate = (DateTime)r["Hire_Date"],
-                PhoneNumber = r["Phone_Number"] == DBNull.Value ? null : r["Phone_Number"].ToString(),
-                NationalID = r["National_ID"] == DBNull.Value ? null : r["National_ID"].ToString(),
-                IsActive = (bool)r["Is_Active"],
-                CreatedAt = (DateTime)r["Created_At"],
-                UpdatedAt = (DateTime)r["Updated_At"]
-            };
-        }
-
-        private const string _SelectSql = @"
-                SELECT 
-                    e.*, 
-                    p.Position_Name 
-                FROM Employees e
-                INNER JOIN Employee_Positions p ON e.Position_ID = p.Position_ID ";
-
-        public List<Employee> GetAll(bool ActiveOnly = false) { 
+        public List<Employee> GetAll(bool activeOnly = false)
+        {
             var list = new List<Employee>();
-            var sql = _SelectSql + (ActiveOnly ? "Where e.Is_Active = 1 " : "") + "Order By e.Full_Name";
-            
-            using (var conn = clsConnectionManager.GetConnection()) {
-              
-                using (var cmd = new SqlCommand(sql, conn)) {
-                   
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader()) {
-                        while (reader.Read()) {
-                            list.Add(MapEmployee(reader));
-                        }
-                    }
-                }
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Employee_GetAll"))
+            {
+                clsDBHelper.AddParam(cmd, "@ActiveOnly", activeOnly);
+                conn.Open();
+                using (var r = cmd.ExecuteReader())
+                    while (r.Read())
+                        list.Add(MapEmployee(r));
             }
-            return list;
-
-        }
-
-        public Employee GetByID(int ID) {
-            using (var conn = clsConnectionManager.GetConnection()) {
-
-                using (var cmd = new SqlCommand(_SelectSql + " where e.Employee_ID = @ID", conn)) {
-                    cmd.Parameters.AddWithValue("@ID", ID);
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader()) {
-                        return reader.Read() ? MapEmployee(reader) : null;
-                    }
-                }
-            }
-        }
-
-        public List<Employee> Search(string Keyword) {
-            var list = new List<Employee>();
-
-            var Query = _SelectSql +
-                @" Where e.Is_Active = 1 and 
-`                       ( e.Full_Name Like @kw or e.Phone_Number like @kw or e.National_ID like @kw) 
-                        Order By e.Full_Name";
-
-            using (var conn = clsConnectionManager.GetConnection()) {
-                using (var cmd = new SqlCommand(Query, conn)) {
-                    cmd.Parameters.AddWithValue("@kw", "%" + Keyword + "%");
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader()) {
-                        while (reader.Read()) {
-                            list.Add(MapEmployee(reader));
-                        }
-                    }
-                }
-            }
-
             return list;
         }
 
-        public int Add(Employee emp) {
-            const string sql = @"
-                insert into Employees (Position_ID, Full_Name, Basic_Salary, Hire_Date, Phone_Number, National_ID, Is_Active)
-                Values (@PosID, @Name, @Salary, @HireDate, @Phone, @NatID, @Active)
-                Select SCOPE_IDENTITY();";
-
-            using (var conn = clsConnectionManager.GetConnection()) {
-                using (var cmd = new SqlCommand(sql, conn)) {
-                    cmd.Parameters.AddWithValue("@PosID", emp.PositionID);
-                    cmd.Parameters.AddWithValue("@Name",emp.FullName);
-                    cmd.Parameters.AddWithValue("@Salary",emp.BasicSalary);
-                    cmd.Parameters.AddWithValue("@HireDate",emp.HireDate);
-                    cmd.Parameters.AddWithValue("@Phone",(object)emp.PhoneNumber ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@NatID",(object)emp.NationalID ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Active",emp.IsActive);
-
-                    conn.Open();
-                    return Convert.ToInt32(cmd.ExecuteScalar());
-                }
+        public Employee GetByID(int employeeID)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Employee_GetByID"))
+            {
+                clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
+                conn.Open();
+                using (var r = cmd.ExecuteReader())
+                    return r.Read() ? MapEmployee(r) : null;
             }
         }
 
-        public bool Update(Employee emp) {
-            const string sql = @"
-                Update Employees Set 
-                    Position_ID = @PosID,
-                    Full_Name = @Name,
-                    Basic_Salary = @Salary,
-                    Hire_Date = @HireDate,
-                    Phone_Number = @ Phone,
-                    National_ID = @NatID,
-                    Is_Active = @Active,
-                    Updated_At = GETDATE()
-                    Where Employee_ID = @ID
-                    ";
-            using (var conn = clsConnectionManager.GetConnection()) {
-                using (var cmd = new SqlCommand(sql,conn)) {
-                    cmd.Parameters.AddWithValue("@PosID", emp.PositionID);
-                    cmd.Parameters.AddWithValue("@Name", emp.FullName);
-                    cmd.Parameters.AddWithValue("@Salary", emp.BasicSalary);
-                    cmd.Parameters.AddWithValue("@HireDate", emp.HireDate);
-                    cmd.Parameters.AddWithValue("@Phone", (object)emp.PhoneNumber ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@NatID", (object)emp.NationalID ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Active", emp.IsActive);
-                    conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
-                }
+        public List<Employee> Search(string keyword)
+        {
+            var list = new List<Employee>();
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Employee_Search"))
+            {
+                clsDBHelper.AddParam(cmd, "@Keyword", keyword);
+                conn.Open();
+                using (var r = cmd.ExecuteReader())
+                    while (r.Read())
+                        list.Add(MapEmployee(r));
+            }
+            return list;
+        }
+
+        public int Add(Employee emp)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Employee_Add"))
+            {
+                clsDBHelper.AddParam(cmd, "@PositionID", emp.PositionID);
+                clsDBHelper.AddParam(cmd, "@FullName", emp.FullName);
+                clsDBHelper.AddParam(cmd, "@BasicSalary", emp.BasicSalary);
+                clsDBHelper.AddParam(cmd, "@HireDate", emp.HireDate);
+                clsDBHelper.AddParam(cmd, "@PhoneNumber", emp.PhoneNumber);
+                clsDBHelper.AddParam(cmd, "@NationalID", emp.NationalID);
+                clsDBHelper.AddParam(cmd, "@IsActive", emp.IsActive);
+                var outId = clsDBHelper.AddOutputParam(cmd, "@NewEmployeeID", SqlDbType.Int);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                return Convert.ToInt32(outId.Value);
             }
         }
 
-        public bool Deactivate(int id) {
-            using (var conn = clsConnectionManager.GetConnection()) {
-                using (var cmd = new SqlCommand("UPDATE Employees Set Is_Active = 0 Updated_At = GETDATE() Where Employee_ID = @ID",conn))
-                {
-                    cmd.Parameters.AddWithValue("@ID", id);
-                    conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
-                }
+        public bool Update(Employee emp)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Employee_Update"))
+            {
+                clsDBHelper.AddParam(cmd, "@EmployeeID", emp.EmployeeID);
+                clsDBHelper.AddParam(cmd, "@PositionID", emp.PositionID);
+                clsDBHelper.AddParam(cmd, "@FullName", emp.FullName);
+                clsDBHelper.AddParam(cmd, "@BasicSalary", emp.BasicSalary);
+                clsDBHelper.AddParam(cmd, "@HireDate", emp.HireDate);
+                clsDBHelper.AddParam(cmd, "@PhoneNumber", emp.PhoneNumber);
+                clsDBHelper.AddParam(cmd, "@NationalID", emp.NationalID);
+                clsDBHelper.AddParam(cmd, "@IsActive", emp.IsActive);
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        public bool Deactivate(int employeeID)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Employee_Deactivate"))
+            {
+                clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
     }

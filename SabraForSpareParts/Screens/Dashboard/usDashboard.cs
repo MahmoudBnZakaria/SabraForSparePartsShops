@@ -31,7 +31,7 @@ namespace SabraForSpareParts.Screens
             LoadPendingOrdersMock();
         }
 
-
+        //Linked
         private void LoadWeeklySalesChart()
         {
             var from = DateTime.Today.AddDays(-6);
@@ -93,7 +93,7 @@ namespace SabraForSpareParts.Screens
             cartesianChart1.LegendPosition = LegendPosition.Bottom;
         }
 
-
+        //linked
         private void LoadSalesDistributionChart()
         {
             var result = _reportsBusiness.GetTopSellingParts(5);
@@ -113,6 +113,23 @@ namespace SabraForSpareParts.Screens
             pieChart1.LegendPosition = LegendPosition.Right;
         }
 
+        //Linked
+        private void LoadUrgentAlertsMock()
+        {
+            var result= _reportsBusiness.GetLowStockSuggestions();
+            if (!result.Success || result.Data == null)
+                return;
+
+            PopulateFlowLayoutPanel(flpAlerts, result.Data, alert =>
+            {
+                var row = new ucAlertRow();
+                row.SetData(alert.PartName, alert.CurrentStock);
+                return row;
+            }, 5);
+        }
+
+
+
         private void LoadRecentInvoicesMock()
         {
             var sampleInvoices = new List<(int Id, string Customer, decimal Amount, string Status)>
@@ -131,23 +148,6 @@ namespace SabraForSpareParts.Screens
             }, 10);
         }
 
-        private void LoadUrgentAlertsMock()
-        {
-            var alerts = new List<(string Name, int Qty)>
-            {
-                ("فلتر زيت تويوتا", 2),
-                ("بوجية NGK", 0),
-                ("تيل فرامل هيونداي", 3)
-            };
-
-            PopulateFlowLayoutPanel(flpAlerts, alerts, alert =>
-            {
-                var row = new ucAlertRow();
-                row.SetData(alert.Name, alert.Qty);
-                return row;
-            }, 5);
-        }
-
         private void LoadPendingOrdersMock()
         {
             var pendingOrders = new List<(string Code, string Supplier, decimal Amount)>
@@ -164,13 +164,7 @@ namespace SabraForSpareParts.Screens
             }, 5);
         }
 
-        // ==========================================
-        // دوال مساعدة (Helper Methods)
-        // ==========================================
 
-        /// <summary>
-        /// دالة عامة لتفريغ وإعادة تعبئة أي FlowLayoutPanel بطريقة ديناميكية
-        /// </summary>
         private void PopulateFlowLayoutPanel<T>(FlowLayoutPanel panel, IEnumerable<T> data, Func<T, UserControl> controlCreator, int widthMargin)
         {
             panel.SuspendLayout();
@@ -178,10 +172,8 @@ namespace SabraForSpareParts.Screens
 
             foreach (var item in data)
             {
-                // إنشاء الـ UserControl باستخدام الدالة الممررة
                 UserControl ctrl = controlCreator(item);
 
-                // ضبط العرض لملء الحاوية
                 ctrl.Width = panel.ClientSize.Width - widthMargin;
 
                 panel.Controls.Add(ctrl);

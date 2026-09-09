@@ -3,11 +3,6 @@ using Sabra.DataLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Security.Cryptography.Pkcs;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sabra.DataLayer
 {
@@ -26,134 +21,93 @@ namespace Sabra.DataLayer
             CreatedAt = (DateTime)r["Created_At"]
         };
 
-        private const string _selectSql = @"SELECT cu.*, ct.Type_Name 
-                                            FROM Customers cu 
-                                            LEFT JOIN Customer_Types ct ON cu.Customer_Type_ID = ct.Customer_Type_ID";
-
-        public List<Customer> GetAll() { 
+        public List<Customer> GetAll()
+        {
             var list = new List<Customer>();
-
-            using (var conn = clsConnectionManager.GetConnection()) {
-                using (var cmd = new SqlCommand(_selectSql, conn)) { 
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader()) 
-                        while (r.Read()) list.Add(MapCustomer(r));
-                }
-            }
-            return list;
-        }
-
-        public Customer GetByID(int id) {
-            using (var conn = clsConnectionManager.GetConnection()) {
-                using (var cmd = new SqlCommand(_selectSql + "WHERE cu.Customer_ID = @ID", conn)) {
-                    cmd.Parameters.AddWithValue("@ID", id);
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader()) {
-                        return r.Read() ? MapCustomer(r) : null;
-                    }
-                }
-            }
-        }
-        public List<Customer> Search(string keyword, int? typeID = null,string deptFilter = null ) {
-
-            List<Customer> list = new List<Customer>();
-            var sql = new System.Text.StringBuilder(_selectSql + " WHERE 1= 1");
-            if (!string.IsNullOrWhiteSpace(keyword)) {
-                sql.Append("AND (cu.Custer_Name LIKE @kw OR cu.Phone_Number LIKE @kw)");
-            }
-            if (typeID.HasValue) {
-                sql.Append("AND cu.Customer_Type_ID = @TypeID");
-            }
-            if (deptFilter == "hasDebt")
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Customer_GetAll"))
             {
-                sql.Append("AND cu.Total_Balance > 0");
-            }
-            else if (deptFilter == "exceeded") {
-                sql.Append("AND cu.Total_Balance >= cu.Credit_Limit  AND cu.Credit_Limit > 0");
-            }
-            sql.Append("ORDER BY cu.Customer_Name");
-
-            using (var conn = clsConnectionManager.GetConnection()) {
-
-                using (var cmd = new SqlCommand(sql.ToString(), conn))
-                {
-                    if (string.IsNullOrWhiteSpace(keyword))
-                        cmd.Parameters.AddWithValue("@kw", "%" + keyword + "%");
-                    if (typeID.HasValue)
-                        cmd.Parameters.AddWithValue("@TypeID", typeID.Value);
-
-                    conn.Open();
-                    using (var r = cmd.ExecuteReader()) {
+                conn.Open();
+                using (var r = cmd.ExecuteReader())
+                    while (r.Read())
                         list.Add(MapCustomer(r));
-                    }
-                }
             }
-
             return list;
         }
 
-        public int Add(Customer cust) {
-            const string sql = @"
-                INSERT INTO CUSTOMERS (Customer_Name, Phone_Number, Customer_Type_ID, Credit_Limit, Total_Balance)
-                VALUES (@Name, @Phone, @TypeID, @CreditLimit, 0);
-                SELECT SCOPE_IDENTITY();";
+        public Customer GetByID(int id)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Customer_GetByID"))
+            {
+                clsDBHelper.AddParam(cmd, "@CustomerID", id);
+                conn.Open();
+                using (var r = cmd.ExecuteReader())
+                    return r.Read() ? MapCustomer(r) : null;
+            }
+        }
 
-            using (var conn = clsConnectionManager.GetConnection()) {
+        public List<Customer> Search(string keyword = null, int? typeID = null, string debtFilter = null)
+        {
+            var list = new List<Customer>();
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Customer_Search"))
+            {
+                clsDBHelper.AddParam(cmd, "@Keyword", keyword);
+                clsDBHelper.AddParam(cmd, "@TypeID", typeID);
+                clsDBHelper.AddParam(cmd, "@DebtFilter", debtFilter);
+                conn.Open();
+                using (var r = cmd.ExecuteReader())
+                    while (r.Read())
+                        list.Add(MapCustomer(r));
+            }
+            return list;
+        }
 
-                using (var cmd = new SqlCommand(sql, conn)) {
-                    cmd.Parameters.AddWithValue("@Name", cust.CustomerName);
-                    cmd.Parameters.AddWithValue("@Phone", (object)cust.PhoneNumber ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@TypeID", (object)cust.CustomerTypeID ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@CreditLimit", cust.CreditLimit);
-                    conn.Open();
-                    return Convert.ToInt32(cmd.ExecuteScalar());
-                }
+        public int Add(Customer cust)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Customer_Add"))
+            {
+                clsDBHelper.AddParam(cmd, "@CustomerName", cust.CustomerName);
+                clsDBHelper.AddParam(cmd, "@PhoneNumber", cust.PhoneNumber);
+                clsDBHelper.AddParam(cmd, "@CustomerTypeID", cust.CustomerTypeID);
+                clsDBHelper.AddParam(cmd, "@CreditLimit", cust.CreditLimit);
+                var outId = clsDBHelper.AddOutputParam(cmd, "@NewCustomerID", SqlDbType.Int);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                return Convert.ToInt32(outId.Value);
             }
         }
 
         public bool Update(Customer cust)
         {
-            const string sql = @"
-                UPDATE CUSTOMERS SET
-                    Customer_Name    = @Name,
-                    Phone_Number     = @Phone,
-                    Customer_Type_ID = @TypeID,
-                    Credit_Limit     = @CreditLimit
-                WHERE Customer_ID = @ID";
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Customer_Update"))
             {
-                cmd.Parameters.AddWithValue("@ID", cust.CustomerID);
-                cmd.Parameters.AddWithValue("@Name", cust.CustomerName);
-                cmd.Parameters.AddWithValue("@Phone", (object)cust.PhoneNumber ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@TypeID", (object)cust.CustomerTypeID ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@CreditLimit", cust.CreditLimit);
+                clsDBHelper.AddParam(cmd, "@CustomerID", cust.CustomerID);
+                clsDBHelper.AddParam(cmd, "@CustomerName", cust.CustomerName);
+                clsDBHelper.AddParam(cmd, "@PhoneNumber", cust.PhoneNumber);
+                clsDBHelper.AddParam(cmd, "@CustomerTypeID", cust.CustomerTypeID);
+                clsDBHelper.AddParam(cmd, "@CreditLimit", cust.CreditLimit);
                 conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
 
-        public bool UpdateBalance(int customerID, decimal newBalance, DateTime? lastPaymentDate, SqlTransaction transaction = null)
+        public bool AdjustBalance(int customerID, decimal delta, bool isPayment = false, bool enforceCreditLimit = true)
         {
-            var conn = transaction?.Connection ?? clsConnectionManager.GetConnection();
-            bool ownConn = transaction == null;
-            try
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Customer_AdjustBalance"))
             {
-                var sql = "UPDATE CUSTOMERS SET Total_Balance = @Balance";
-                if (lastPaymentDate.HasValue) sql += ", Last_Payment_Date = @PayDate";
-                sql += " WHERE Customer_ID = @ID";
-                using (var cmd = new SqlCommand(sql, conn))
-                {
-                    if (transaction != null) cmd.Transaction = transaction;
-                    cmd.Parameters.AddWithValue("@Balance", newBalance);
-                    cmd.Parameters.AddWithValue("@ID", customerID);
-                    if (lastPaymentDate.HasValue)
-                        cmd.Parameters.AddWithValue("@PayDate", lastPaymentDate.Value);
-                    if (ownConn) conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
-                }
+                clsDBHelper.AddParam(cmd, "@CustomerID", customerID);
+                clsDBHelper.AddParam(cmd, "@Delta", delta);
+                clsDBHelper.AddParam(cmd, "@IsPayment", isPayment);
+                clsDBHelper.AddParam(cmd, "@EnforceCreditLimit", enforceCreditLimit);
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
             }
-            finally { if (ownConn) conn.Dispose(); }
         }
     }
 }
