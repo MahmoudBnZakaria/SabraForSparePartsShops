@@ -141,15 +141,24 @@ namespace Sabra.DataLayer.Models
     public class Advance
     {
         public int AdvanceID { get; set; }
+
         public int EmployeeID { get; set; }
-        public string EmployeeName { get; set; }   // من JOIN
+
         public decimal Amount { get; set; }
+
         public DateTime AdvanceDate { get; set; }
+
         public int StatusID { get; set; }
-        public string StatusName { get; set; }   // من JOIN
+
         public int? ApprovedBy { get; set; }
-        public string ApprovedByName { get; set; } // من JOIN
+
         public DateTime CreatedAt { get; set; }
+
+        public string EmployeeName { get; set; }
+
+        public string ApproverName { get; set; }
+
+        public string StatusName { get; set; }
     }
 
     public class Supplier
@@ -187,6 +196,8 @@ namespace Sabra.DataLayer.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool IsLowStock => CurrentStock <= MinLimit;
+
+        public string Notes { get; set; }
     }
 
     public class PriceHistory

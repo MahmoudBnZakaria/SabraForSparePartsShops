@@ -4,6 +4,9 @@
     <Compile Update="CustomControls\SabraCheckbox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="CustomControls\SabraContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="CustomControls\SabraNumericUpDown.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -57,6 +60,9 @@
     </Compile>
     <Compile Update="Screens\Dashboard\ucPendingPORow.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Screens\frmRequireAdvance.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="Screens\InventoryAlerts\ucInventoryAlertRow.cs">
       <SubType>UserControl</SubType>

@@ -1,10 +1,9 @@
-﻿using ClosedXML.Excel;
+﻿using Sabra.DataLayer;
+using Sabra.DataLayer.Models;
+using Sabra.LogicLayer;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
-using System.Drawing.Printing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -12,37 +11,17 @@ namespace SabraForSpareParts.Screens
 {
     public partial class ucActivityLog : SabraUserControl
     {
-        // =========================================================
-        // Activity Log Model
-        // =========================================================
 
-        private class ActivityLogItem
-        {
-            public DateTime DateTime { get; set; }
-            public string User { get; set; }
-            public string Operation { get; set; }
-            public string Details { get; set; }
-            public string IP { get; set; }
-        }
+        private const string AllUsersLabel = "كل المستخدمين";
+        private const string AllOperationsLabel = "كل العمليات";
 
         // =========================================================
         // Fields
         // =========================================================
 
-        private readonly List<ActivityLogItem> _activityLogs =
-            new List<ActivityLogItem>();
+        private readonly clsAuditBusiness _auditBusiness = new clsAuditBusiness();
 
-        private List<ActivityLogItem> _filteredLogs =
-            new List<ActivityLogItem>();
-
-        private readonly PrintDocument _printDocument =
-            new PrintDocument();
-
-        private int _printRowIndex = 0;
-
-        private Font _printHeaderFont;
-        private Font _printTitleFont;
-        private Font _printBodyFont;
+        private List<AuditLog> _filteredLogs = new List<AuditLog>();
 
         // =========================================================
         // Constructor
@@ -51,25 +30,7 @@ namespace SabraForSpareParts.Screens
         public ucActivityLog()
         {
             InitializeComponent();
-
         }
-    //    private void LogActivity(
-    //string user,
-    //string operation,
-    //string details,
-    //string ip)
-    //    {
-
-    //        _activityLogs.Add(new ActivityLogItem
-    //        {
-    //            DateTime = DateTime.Now,
-    //            User = user,
-    //            Operation = operation,
-    //            Details = details,
-    //            IP = ip
-    //        });
-    //    }
-
 
         // =========================================================
         // Load
@@ -99,15 +60,11 @@ namespace SabraForSpareParts.Screens
         {
             ConfigurePage();
 
-            CreateMockData();
+            ConfigureGrid();
 
             ConfigureFilters();
 
-            ConfigureGrid();
-
-            LoadActivityLogs();
-
-            UpdateResultsCount();
+            ApplyFilters();
         }
 
         // =========================================================
@@ -118,245 +75,61 @@ namespace SabraForSpareParts.Screens
         {
             RightToLeft = RightToLeft.Yes;
             BackColor = Color.White;
-
-            _printTitleFont = new Font(
-                "Segoe UI",
-                14,
-                FontStyle.Bold);
-
-            _printHeaderFont = new Font(
-                "Segoe UI",
-                9,
-                FontStyle.Bold);
-
-            _printBodyFont = new Font(
-                "Segoe UI",
-                9,
-                FontStyle.Regular);
         }
 
-        // =========================================================
-        // Mock Data
-        // =========================================================
 
-        private void CreateMockData()
+        private sealed class LookupItem
         {
-            _activityLogs.Clear();
+            public int Id { get; }
+            public string Name { get; }
 
-            _activityLogs.AddRange(new[]
+            public LookupItem(int id, string name)
             {
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 15, 11, 23, 0),
-                    User = "admin",
-                    Operation = "فاتورة جديدة",
-                    Details = "إنشاء INV-1084 بقيمة 3,200 ج",
-                    IP = "192.168.1.1"
-                },
+                Id = id;
+                Name = name;
+            }
 
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 15, 10, 5, 0),
-                    User = "admin",
-                    Operation = "تعديل سعر",
-                    Details = "تغيير سعر فلتر زيت من 40 لـ 45 ج",
-                    IP = "192.168.1.1"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 15, 9, 0, 0),
-                    User = "sara_cashier",
-                    Operation = "دخول للنظام",
-                    Details = "تسجيل دخول ناجح",
-                    IP = "192.168.1.5"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 14, 16, 45, 0),
-                    User = "khaled_store",
-                    Operation = "استلام بضاعة",
-                    Details = "PO-0045 — 30 فلتر تويوتا",
-                    IP = "192.168.1.8"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 14, 15, 20, 0),
-                    User = "admin",
-                    Operation = "إضافة مستخدم",
-                    Details = "إضافة المستخدم ahmed_sales",
-                    IP = "192.168.1.1"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 14, 14, 10, 0),
-                    User = "ahmed_sales",
-                    Operation = "فاتورة جديدة",
-                    Details = "إنشاء INV-1083 بقيمة 1,850 ج",
-                    IP = "192.168.1.12"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 14, 12, 35, 0),
-                    User = "sara_cashier",
-                    Operation = "تعديل فاتورة",
-                    Details = "تعديل الكمية في INV-1081",
-                    IP = "192.168.1.5"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 14, 11, 15, 0),
-                    User = "khaled_store",
-                    Operation = "إضافة صنف",
-                    Details = "إضافة Bosch Oil Filter إلى المخزون",
-                    IP = "192.168.1.8"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 13, 17, 30, 0),
-                    User = "admin",
-                    Operation = "تعديل مستخدم",
-                    Details = "تعديل صلاحيات المستخدم sara_cashier",
-                    IP = "192.168.1.1"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 13, 15, 50, 0),
-                    User = "ahmed_sales",
-                    Operation = "حذف فاتورة",
-                    Details = "حذف الفاتورة INV-1078",
-                    IP = "192.168.1.12"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 13, 13, 25, 0),
-                    User = "sara_cashier",
-                    Operation = "صرف نقدية",
-                    Details = "صرف مبلغ 500 ج من الخزينة",
-                    IP = "192.168.1.5"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 13, 10, 40, 0),
-                    User = "khaled_store",
-                    Operation = "تعديل مخزون",
-                    Details = "تعديل كمية فلتر هواء Toyota من 12 إلى 20",
-                    IP = "192.168.1.8"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 12, 18, 5, 0),
-                    User = "admin",
-                    Operation = "تصدير تقرير",
-                    Details = "تصدير تقرير المبيعات إلى Excel",
-                    IP = "192.168.1.1"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 12, 16, 20, 0),
-                    User = "ahmed_sales",
-                    Operation = "تسجيل خروج",
-                    Details = "تسجيل خروج من النظام",
-                    IP = "192.168.1.12"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 12, 9, 10, 0),
-                    User = "sara_cashier",
-                    Operation = "دخول للنظام",
-                    Details = "تسجيل دخول ناجح",
-                    IP = "192.168.1.5"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 11, 14, 45, 0),
-                    User = "admin",
-                    Operation = "تعديل إعدادات",
-                    Details = "تعديل إعدادات الضرائب والفواتير",
-                    IP = "192.168.1.1"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 11, 12, 30, 0),
-                    User = "khaled_store",
-                    Operation = "استلام بضاعة",
-                    Details = "PO-0044 — 50 فلتر زيت",
-                    IP = "192.168.1.8"
-                },
-
-                new ActivityLogItem
-                {
-                    DateTime = new DateTime(2026, 1, 10, 17, 15, 0),
-                    User = "ahmed_sales",
-                    Operation = "فاتورة جديدة",
-                    Details = "إنشاء INV-1075 بقيمة 4,700 ج",
-                    IP = "192.168.1.12"
-                }
-            });
+            public override string ToString() => Name;
         }
 
-        // =========================================================
-        // Filters
-        // =========================================================
 
         private void ConfigureFilters()
         {
-            // Users
+            var usersResult = _auditBusiness.GetUsers();
+
             cstbxUsers.Items.Clear();
+            cstbxUsers.Items.Add(AllUsersLabel);
 
-            cstbxUsers.Items.Add("كل المستخدمين");
-
-            foreach (string user in _activityLogs
-                .Select(x => x.User)
-                .Distinct()
-                .OrderBy(x => x))
+            if (usersResult.Success && usersResult.Data != null)
             {
-                cstbxUsers.Items.Add(user);
+                foreach (var user in usersResult.Data
+                    .OrderBy(u => u.Username))
+                {
+                    cstbxUsers.Items.Add(new LookupItem(user.UserID, user.Username));
+                }
             }
 
             cstbxUsers.SelectedIndex = 0;
 
-            // Operations
+            var movTypesResult = _auditBusiness.GetMovementTypes();
+
             cmbxAllTransations.Items.Clear();
+            cmbxAllTransations.Items.Add(AllOperationsLabel);
 
-            cmbxAllTransations.Items.Add("كل العمليات");
-
-            foreach (string operation in _activityLogs
-                .Select(x => x.Operation)
-                .Distinct()
-                .OrderBy(x => x))
+            if (movTypesResult.Success && movTypesResult.Data != null)
             {
-                cmbxAllTransations.Items.Add(operation);
+                foreach (var movType in movTypesResult.Data
+                    .OrderBy(m => m.TypeName))
+                {
+                    cmbxAllTransations.Items.Add(new LookupItem(movType.MovementTypeID, movType.TypeName));
+                }
             }
 
             cmbxAllTransations.SelectedIndex = 0;
 
-            // Dates
-            DateTime minDate = _activityLogs.Min(x => x.DateTime).Date;
-            DateTime maxDate = _activityLogs.Max(x => x.DateTime).Date;
-
-
-            sabraDateTimePickerFrom.Value = minDate;
-            sabraDateTimePickerTo.Value = maxDate;
+            sabraDateTimePickerFrom.Value = DateTime.Today.AddDays(-30);
+            sabraDateTimePickerTo.Value = DateTime.Today;
         }
-
-        // =========================================================
-        // Grid
-        // =========================================================
 
         private void ConfigureGrid()
         {
@@ -425,13 +198,13 @@ namespace SabraForSpareParts.Screens
 
             dgvLogActivity.RowTemplate.Height = 45;
 
-            // Date & Time
+            // التاريخ والوقت
             dgvLogActivity.Columns.Add(
                 new DataGridViewTextBoxColumn
                 {
-                    Name = "DateTime",
+                    Name = "ActionDate",
                     HeaderText = "التاريخ والوقت",
-                    DataPropertyName = "DateTime",
+                    DataPropertyName = "ActionDate",
                     Width = 140,
                     MinimumWidth = 120,
                     SortMode = DataGridViewColumnSortMode.NotSortable,
@@ -442,14 +215,30 @@ namespace SabraForSpareParts.Screens
                     }
                 });
 
-            // User
+            // المستخدم
             dgvLogActivity.Columns.Add(
                 new DataGridViewTextBoxColumn
                 {
-                    Name = "User",
+                    Name = "Username",
                     HeaderText = "المستخدم",
-                    DataPropertyName = "User",
-                    Width = 150,
+                    DataPropertyName = "Username",
+                    Width = 130,
+                    MinimumWidth = 100,
+                    SortMode = DataGridViewColumnSortMode.NotSortable,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Alignment = DataGridViewContentAlignment.MiddleCenter
+                    }
+                });
+
+            // نوع الحركة
+            dgvLogActivity.Columns.Add(
+                new DataGridViewTextBoxColumn
+                {
+                    Name = "MovementType",
+                    HeaderText = "نوع الحركة",
+                    DataPropertyName = "MovementType",
+                    Width = 130,
                     MinimumWidth = 110,
                     SortMode = DataGridViewColumnSortMode.NotSortable,
                     DefaultCellStyle = new DataGridViewCellStyle
@@ -458,31 +247,15 @@ namespace SabraForSpareParts.Screens
                     }
                 });
 
-            // Operation
+            // الصنف
             dgvLogActivity.Columns.Add(
                 new DataGridViewTextBoxColumn
                 {
-                    Name = "Operation",
-                    HeaderText = "العملية",
-                    DataPropertyName = "Operation",
-                    Width = 150,
-                    MinimumWidth = 120,
-                    SortMode = DataGridViewColumnSortMode.NotSortable,
-                    DefaultCellStyle = new DataGridViewCellStyle
-                    {
-                        Alignment = DataGridViewContentAlignment.MiddleCenter
-                    }
-                });
-
-            // Details
-            dgvLogActivity.Columns.Add(
-                new DataGridViewTextBoxColumn
-                {
-                    Name = "Details",
-                    HeaderText = "التفاصيل",
-                    DataPropertyName = "Details",
+                    Name = "PartName",
+                    HeaderText = "الصنف",
+                    DataPropertyName = "PartName",
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                    MinimumWidth = 250,
+                    MinimumWidth = 200,
                     SortMode = DataGridViewColumnSortMode.NotSortable,
                     DefaultCellStyle = new DataGridViewCellStyle
                     {
@@ -490,19 +263,35 @@ namespace SabraForSpareParts.Screens
                     }
                 });
 
-            // IP
+            // التغيير بالكمية
             dgvLogActivity.Columns.Add(
                 new DataGridViewTextBoxColumn
                 {
-                    Name = "IP",
-                    HeaderText = "IP",
-                    DataPropertyName = "IP",
-                    Width = 135,
-                    MinimumWidth = 110,
+                    Name = "QuantityChange",
+                    HeaderText = "التغيير بالكمية",
+                    DataPropertyName = "QuantityChange",
+                    Width = 120,
+                    MinimumWidth = 100,
                     SortMode = DataGridViewColumnSortMode.NotSortable,
                     DefaultCellStyle = new DataGridViewCellStyle
                     {
                         Alignment = DataGridViewContentAlignment.MiddleCenter
+                    }
+                });
+
+            // ملاحظات
+            dgvLogActivity.Columns.Add(
+                new DataGridViewTextBoxColumn
+                {
+                    Name = "Remarks",
+                    HeaderText = "ملاحظات",
+                    DataPropertyName = "Remarks",
+                    Width = 220,
+                    MinimumWidth = 150,
+                    SortMode = DataGridViewColumnSortMode.NotSortable,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Alignment = DataGridViewContentAlignment.MiddleRight
                     }
                 });
 
@@ -513,32 +302,13 @@ namespace SabraForSpareParts.Screens
         }
 
         // =========================================================
-        // Load Grid Data
+        // Bind Grid Data
         // =========================================================
 
-        private void LoadActivityLogs()
-        {
-            _filteredLogs = _activityLogs
-                .OrderByDescending(x => x.DateTime)
-                .ToList();
-
-            BindGrid(_filteredLogs);
-        }
-
-        private void BindGrid(IEnumerable<ActivityLogItem> logs)
+        private void BindGrid(IEnumerable<AuditLog> logs)
         {
             dgvLogActivity.DataSource = null;
-
-            dgvLogActivity.DataSource =
-                logs.Select(x => new
-                {
-                    x.DateTime,
-                    x.User,
-                    x.Operation,
-                    x.Details,
-                    x.IP
-                })
-                .ToList();
+            dgvLogActivity.DataSource = logs.ToList();
 
             UpdateResultsCount();
         }
@@ -573,40 +343,28 @@ namespace SabraForSpareParts.Screens
                     return;
                 }
 
-                string selectedUser =
-                    cstbxUsers.SelectedItem?.ToString();
+                int? selectedUserID = (cstbxUsers.SelectedItem as LookupItem)?.Id;
+                int? selectedMovementTypeID = (cmbxAllTransations.SelectedItem as LookupItem)?.Id;
 
-                string selectedOperation =
-                    cmbxAllTransations.SelectedItem?.ToString();
+                var result = _auditBusiness.GetAll(
+                    partID: null,
+                    movementTypeID: selectedMovementTypeID,
+                    from: fromDate,
+                    to: toDate,
+                    userID: selectedUserID);
 
-                IEnumerable<ActivityLogItem> query =
-                    _activityLogs;
-
-                // Date
-                query = query.Where(x =>
-                    x.DateTime >= fromDate &&
-                    x.DateTime <= toDate);
-
-                // User
-                if (!string.IsNullOrWhiteSpace(selectedUser) &&
-                    selectedUser != "كل المستخدمين")
+                if (!result.Success)
                 {
-                    query = query.Where(x =>
-                        x.User.Equals(
-                            selectedUser,
-                            StringComparison.OrdinalIgnoreCase));
+                    MessageBox.Show(
+                        result.Message,
+                        "خطأ",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
                 }
 
-                // Operation
-                if (!string.IsNullOrWhiteSpace(selectedOperation) &&
-                    selectedOperation != "كل العمليات")
-                {
-                    query = query.Where(x =>
-                        x.Operation == selectedOperation);
-                }
-
-                _filteredLogs = query
-                    .OrderByDescending(x => x.DateTime)
+                _filteredLogs = result.Data
+                    .OrderByDescending(x => x.ActionDate)
                     .ToList();
 
                 BindGrid(_filteredLogs);
@@ -629,9 +387,8 @@ namespace SabraForSpareParts.Screens
             object sender,
             EventArgs e)
         {
-            // Apply automatically when user changes the filter.
-            // If you want search to happen only after pressing
-            // Search, remove the next line.
+            // بيطبّق الفلتر تلقائياً أول ما يتغيّر.
+            // لو عايزه يطبّق بس بعد الضغط على "بحث"، امسح السطر اللي جاي.
 
             ApplyFilters();
         }
@@ -647,21 +404,7 @@ namespace SabraForSpareParts.Screens
             ApplyFilters();
         }
 
-        // =========================================================
-        // Date Pickers
-        // =========================================================
 
-        private void sabraDateTimePickerFrom_Load(
-            object sender,
-            EventArgs e)
-        {
-        }
-
-        private void sabraDateTimePickerTo_Load(
-            object sender,
-            EventArgs e)
-        {
-        }
 
         // =========================================================
         // Reset Filters
@@ -679,23 +422,10 @@ namespace SabraForSpareParts.Screens
                 if (cmbxAllTransations.Items.Count > 0)
                     cmbxAllTransations.SelectedIndex = 0;
 
-                if (_activityLogs.Count > 0)
-                {
-                    sabraDateTimePickerFrom.Value =
-                        _activityLogs.Min(x => x.DateTime).Date;
+                sabraDateTimePickerFrom.Value = DateTime.Today.AddDays(-30);
+                sabraDateTimePickerTo.Value = DateTime.Today;
 
-                    sabraDateTimePickerTo.Value =
-                        _activityLogs.Max(x => x.DateTime).Date;
-                }
-
-                _filteredLogs =
-                    _activityLogs
-                    .OrderByDescending(x => x.DateTime)
-                    .ToList();
-
-                BindGrid(_filteredLogs);
-
-                UpdateResultsCount();
+                ApplyFilters();
             }
             catch (Exception ex)
             {
@@ -713,10 +443,7 @@ namespace SabraForSpareParts.Screens
 
         private void UpdateResultsCount()
         {
-            // If your page contains a label for the number of results,
-            // you can set its Text here.
-            //
-            // Example:
+            // لو الشاشة فيها Label لعدد النتائج، حدّث نصه هنا. مثال:
             // lblResultsCount.Text = $"عدد العمليات: {_filteredLogs.Count}";
 
             if (dgvLogActivity.Parent != null)
@@ -737,85 +464,55 @@ namespace SabraForSpareParts.Screens
                 e.ColumnIndex < 0)
                 return;
 
-            string operation =
-                dgvLogActivity.Rows[e.RowIndex]
-                .Cells["Operation"]
-                .Value?.ToString();
+            string columnName = dgvLogActivity.Columns[e.ColumnIndex].Name;
 
-            if (string.IsNullOrWhiteSpace(operation))
-                return;
-
-            // Login
-            if (operation == "دخول للنظام")
+            // تلوين عمود "نوع الحركة" حسب نوعها
+            if (columnName == "MovementType")
             {
-                e.CellStyle.ForeColor =
-                    Color.FromArgb(39, 125, 161);
+                string movementType =
+                    dgvLogActivity.Rows[e.RowIndex]
+                    .Cells["MovementType"]
+                    .Value?.ToString();
 
-                e.CellStyle.Font =
-                    new Font(
-                        dgvLogActivity.Font,
-                        FontStyle.Bold);
+                if (string.IsNullOrWhiteSpace(movementType))
+                    return;
+
+                if (movementType.Contains("بيع"))
+                {
+                    e.CellStyle.ForeColor = Color.FromArgb(35, 130, 80);
+                    e.CellStyle.Font = new Font(dgvLogActivity.Font, FontStyle.Bold);
+                }
+                else if (movementType.Contains("شراء"))
+                {
+                    e.CellStyle.ForeColor = Color.FromArgb(39, 125, 161);
+                    e.CellStyle.Font = new Font(dgvLogActivity.Font, FontStyle.Bold);
+                }
+                else if (movementType.Contains("مرتجع"))
+                {
+                    e.CellStyle.ForeColor = Color.FromArgb(190, 50, 50);
+                    e.CellStyle.Font = new Font(dgvLogActivity.Font, FontStyle.Bold);
+                }
+                else if (movementType.Contains("تعديل"))
+                {
+                    e.CellStyle.ForeColor = Color.FromArgb(100, 80, 170);
+                    e.CellStyle.Font = new Font(dgvLogActivity.Font, FontStyle.Bold);
+                }
             }
 
-            // Logout
-            else if (operation == "تسجيل خروج")
+            // تلوين عمود "التغيير بالكمية": أخضر للزيادة، أحمر للنقصان
+            else if (columnName == "QuantityChange" && e.Value != null)
             {
-                e.CellStyle.ForeColor =
-                    Color.FromArgb(100, 116, 139);
+                if (int.TryParse(e.Value.ToString(), out int qtyChange))
+                {
+                    e.Value = qtyChange > 0 ? "+" + qtyChange : qtyChange.ToString();
+                    e.FormattingApplied = true;
 
-                e.CellStyle.Font =
-                    new Font(
-                        dgvLogActivity.Font,
-                        FontStyle.Bold);
-            }
+                    e.CellStyle.ForeColor = qtyChange >= 0
+                        ? Color.FromArgb(35, 130, 80)
+                        : Color.FromArgb(190, 50, 50);
 
-            // Delete
-            else if (operation == "حذف فاتورة")
-            {
-                e.CellStyle.ForeColor =
-                    Color.FromArgb(190, 50, 50);
-
-                e.CellStyle.Font =
-                    new Font(
-                        dgvLogActivity.Font,
-                        FontStyle.Bold);
-            }
-
-            // Money
-            else if (operation == "صرف نقدية")
-            {
-                e.CellStyle.ForeColor =
-                    Color.FromArgb(170, 110, 20);
-
-                e.CellStyle.Font =
-                    new Font(
-                        dgvLogActivity.Font,
-                        FontStyle.Bold);
-            }
-
-            // Create
-            else if (operation == "فاتورة جديدة")
-            {
-                e.CellStyle.ForeColor =
-                    Color.FromArgb(35, 130, 80);
-
-                e.CellStyle.Font =
-                    new Font(
-                        dgvLogActivity.Font,
-                        FontStyle.Bold);
-            }
-
-            // Stock
-            else if (operation.Contains("مخزون") ||
-                     operation.Contains("بضاعة"))
-            {
-                e.CellStyle.ForeColor =
-                    Color.FromArgb(100, 80, 170);
-
-                e.CellStyle.Font =
-                    new Font(
-                        dgvLogActivity.Font,
-                        FontStyle.Bold);
+                    e.CellStyle.Font = new Font(dgvLogActivity.Font, FontStyle.Bold);
+                }
             }
         }
 
@@ -837,30 +534,34 @@ namespace SabraForSpareParts.Screens
                 dgvLogActivity.Rows[e.RowIndex];
 
             string dateTime =
-                row.Cells["DateTime"].Value?.ToString();
+                row.Cells["ActionDate"].Value?.ToString();
 
             string user =
-                row.Cells["User"].Value?.ToString();
+                row.Cells["Username"].Value?.ToString();
 
             string operation =
-                row.Cells["Operation"].Value?.ToString();
+                row.Cells["MovementType"].Value?.ToString();
 
-            string details =
-                row.Cells["Details"].Value?.ToString();
+            string part =
+                row.Cells["PartName"].Value?.ToString();
 
-            string ip =
-                row.Cells["IP"].Value?.ToString();
+            string quantityChange =
+                row.Cells["QuantityChange"].Value?.ToString();
+
+            string remarks =
+                row.Cells["Remarks"].Value?.ToString();
 
             string message =
                 "التاريخ والوقت: " + dateTime +
                 "\n\nالمستخدم: " + user +
-                "\n\nالعملية: " + operation +
-                "\n\nالتفاصيل: " + details +
-                "\n\nعنوان IP: " + ip;
+                "\n\nنوع الحركة: " + operation +
+                "\n\nالصنف: " + part +
+                "\n\nالتغيير بالكمية: " + quantityChange +
+                "\n\nملاحظات: " + (string.IsNullOrWhiteSpace(remarks) ? "—" : remarks);
 
             MessageBox.Show(
                 message,
-                "تفاصيل النشاط",
+                "تفاصيل الحركة",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
@@ -874,7 +575,7 @@ namespace SabraForSpareParts.Screens
             EventArgs e)
         {
             clsGlobalClass.ExportDataGridViewToExcel(
-                dgvLogActivity,"","سجل الأنشطة");
+                dgvLogActivity, "", "سجل الأنشطة");
         }
 
         private void sbtnPrint_Click(

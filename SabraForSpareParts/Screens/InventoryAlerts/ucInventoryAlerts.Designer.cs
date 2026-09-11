@@ -32,8 +32,9 @@
             sabraPanel1 = new SabraPanel();
             slblTitleOfTopPanel = new SabraLabel();
             lblAlertsCount = new SabraLabel();
-            sbtnExport = new SabraButton();
             sabraFlowLayoutPanel1 = new SabraFlowLayoutPanel();
+            sbtnPrint = new SabraButton();
+            sbtnExportAsExcel = new SabraButton();
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).BeginInit();
             sabraPanel1.SuspendLayout();
             SuspendLayout();
@@ -48,7 +49,7 @@
             icnDecreasedParts.IconColor = Color.DarkGoldenrod;
             icnDecreasedParts.IconFont = FontAwesome.Sharp.IconFont.Auto;
             icnDecreasedParts.IconSize = 65;
-            icnDecreasedParts.Location = new Point(1509, 18);
+            icnDecreasedParts.Location = new Point(1488, 18);
             icnDecreasedParts.Name = "icnDecreasedParts";
             icnDecreasedParts.Size = new Size(72, 65);
             icnDecreasedParts.SizeMode = PictureBoxSizeMode.Zoom;
@@ -61,10 +62,11 @@
             sabraPanel1.BorderColor = Color.LightGray;
             sabraPanel1.BorderRadius = 15;
             sabraPanel1.BorderSize = 1;
+            sabraPanel1.Controls.Add(sbtnExportAsExcel);
+            sabraPanel1.Controls.Add(sbtnPrint);
             sabraPanel1.Controls.Add(icnDecreasedParts);
             sabraPanel1.Controls.Add(slblTitleOfTopPanel);
             sabraPanel1.Controls.Add(lblAlertsCount);
-            sabraPanel1.Controls.Add(sbtnExport);
             sabraPanel1.Dock = DockStyle.Top;
             sabraPanel1.EnableHover = true;
             sabraPanel1.ForeColor = Color.Black;
@@ -76,7 +78,7 @@
             sabraPanel1.HoverBorderSize = 2;
             sabraPanel1.Location = new Point(30, 30);
             sabraPanel1.Name = "sabraPanel1";
-            sabraPanel1.Size = new Size(1604, 100);
+            sabraPanel1.Size = new Size(1583, 100);
             sabraPanel1.TabIndex = 0;
             // 
             // slblTitleOfTopPanel
@@ -86,7 +88,7 @@
             slblTitleOfTopPanel.BackColor = Color.Transparent;
             slblTitleOfTopPanel.Font = new Font("Cairo", 18F, FontStyle.Bold);
             slblTitleOfTopPanel.ForeColor = Color.FromArgb(40, 40, 40);
-            slblTitleOfTopPanel.Location = new Point(1281, 19);
+            slblTitleOfTopPanel.Location = new Point(1260, 19);
             slblTitleOfTopPanel.Name = "slblTitleOfTopPanel";
             slblTitleOfTopPanel.RightToLeft = RightToLeft.Yes;
             slblTitleOfTopPanel.Size = new Size(222, 56);
@@ -101,35 +103,13 @@
             lblAlertsCount.BackColor = Color.Transparent;
             lblAlertsCount.Font = new Font("Cairo", 12F);
             lblAlertsCount.ForeColor = Color.IndianRed;
-            lblAlertsCount.Location = new Point(1161, 32);
+            lblAlertsCount.Location = new Point(1140, 32);
             lblAlertsCount.Name = "lblAlertsCount";
             lblAlertsCount.RightToLeft = RightToLeft.Yes;
             lblAlertsCount.Size = new Size(96, 37);
             lblAlertsCount.TabIndex = 16;
             lblAlertsCount.Text = "(0 أصناف)";
             lblAlertsCount.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // sbtnExport
-            // 
-            sbtnExport.BackColor = Color.RoyalBlue;
-            sbtnExport.BorderColor = Color.DodgerBlue;
-            sbtnExport.BorderRadius = 20;
-            sbtnExport.BorderSize = 0;
-            sbtnExport.FlatAppearance.BorderSize = 0;
-            sbtnExport.FlatStyle = FlatStyle.Flat;
-            sbtnExport.Font = new Font("Cairo", 12F, FontStyle.Bold);
-            sbtnExport.ForeColor = Color.White;
-            sbtnExport.HoverColor = Color.CornflowerBlue;
-            sbtnExport.IconChar = FontAwesome.Sharp.IconChar.None;
-            sbtnExport.IconColor = Color.Black;
-            sbtnExport.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sbtnExport.Location = new Point(25, 25);
-            sbtnExport.Name = "sbtnExport";
-            sbtnExport.NormalColor = Color.RoyalBlue;
-            sbtnExport.Size = new Size(150, 50);
-            sbtnExport.TabIndex = 17;
-            sbtnExport.Text = "تصدير";
-            sbtnExport.UseVisualStyleBackColor = false;
             // 
             // sabraFlowLayoutPanel1
             // 
@@ -141,9 +121,63 @@
             sabraFlowLayoutPanel1.BorderSize = 0;
             sabraFlowLayoutPanel1.Location = new Point(30, 160);
             sabraFlowLayoutPanel1.Name = "sabraFlowLayoutPanel1";
-            sabraFlowLayoutPanel1.Size = new Size(1601, 635);
+            sabraFlowLayoutPanel1.Size = new Size(1580, 635);
             sabraFlowLayoutPanel1.TabIndex = 1;
             sabraFlowLayoutPanel1.SizeChanged += sabraFlowLayoutPanel1_SizeChanged;
+            // 
+            // sbtnPrint
+            // 
+            sbtnPrint.BackColor = Color.DimGray;
+            sbtnPrint.BorderColor = Color.DodgerBlue;
+            sbtnPrint.BorderRadius = 20;
+            sbtnPrint.BorderSize = 0;
+            sbtnPrint.FlatAppearance.BorderSize = 0;
+            sbtnPrint.FlatStyle = FlatStyle.Flat;
+            sbtnPrint.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sbtnPrint.ForeColor = Color.White;
+            sbtnPrint.HoverColor = Color.CornflowerBlue;
+            sbtnPrint.IconChar = FontAwesome.Sharp.IconChar.Print;
+            sbtnPrint.IconColor = Color.Beige;
+            sbtnPrint.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sbtnPrint.IconSize = 30;
+            sbtnPrint.ImageAlign = ContentAlignment.MiddleRight;
+            sbtnPrint.Location = new Point(204, 32);
+            sbtnPrint.Name = "sbtnPrint";
+            sbtnPrint.NormalColor = Color.DimGray;
+            sbtnPrint.Padding = new Padding(10, 0, 10, 0);
+            sbtnPrint.Size = new Size(127, 41);
+            sbtnPrint.TabIndex = 19;
+            sbtnPrint.Text = "طباعة";
+            sbtnPrint.TextAlign = ContentAlignment.MiddleLeft;
+            sbtnPrint.UseVisualStyleBackColor = false;
+            sbtnPrint.Click += sbtnPrint_Click;
+            // 
+            // sbtnExportAsExcel
+            // 
+            sbtnExportAsExcel.BackColor = Color.Green;
+            sbtnExportAsExcel.BorderColor = Color.DodgerBlue;
+            sbtnExportAsExcel.BorderRadius = 20;
+            sbtnExportAsExcel.BorderSize = 0;
+            sbtnExportAsExcel.FlatAppearance.BorderSize = 0;
+            sbtnExportAsExcel.FlatStyle = FlatStyle.Flat;
+            sbtnExportAsExcel.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sbtnExportAsExcel.ForeColor = Color.White;
+            sbtnExportAsExcel.HoverColor = Color.CornflowerBlue;
+            sbtnExportAsExcel.IconChar = FontAwesome.Sharp.IconChar.FileUpload;
+            sbtnExportAsExcel.IconColor = Color.Beige;
+            sbtnExportAsExcel.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sbtnExportAsExcel.IconSize = 30;
+            sbtnExportAsExcel.ImageAlign = ContentAlignment.MiddleRight;
+            sbtnExportAsExcel.Location = new Point(21, 32);
+            sbtnExportAsExcel.Name = "sbtnExportAsExcel";
+            sbtnExportAsExcel.NormalColor = Color.Green;
+            sbtnExportAsExcel.Padding = new Padding(10, 0, 10, 0);
+            sbtnExportAsExcel.Size = new Size(157, 41);
+            sbtnExportAsExcel.TabIndex = 20;
+            sbtnExportAsExcel.Text = "تصدير Excel";
+            sbtnExportAsExcel.TextAlign = ContentAlignment.MiddleLeft;
+            sbtnExportAsExcel.UseVisualStyleBackColor = false;
+            sbtnExportAsExcel.Click += sbtnExportAsExcel_Click;
             // 
             // ucInventoryAlerts
             // 
@@ -153,8 +187,7 @@
             Controls.Add(sabraPanel1);
             Name = "ucInventoryAlerts";
             Padding = new Padding(30);
-            Size = new Size(1664, 828);
-            Load += ucInventoryAlerts_Load;
+            Size = new Size(1643, 828);
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).EndInit();
             sabraPanel1.ResumeLayout(false);
             sabraPanel1.PerformLayout();
@@ -167,8 +200,9 @@
         private FontAwesome.Sharp.IconPictureBox icnDecreasedParts;
         private SabraLabel slblTitleOfTopPanel;
         private SabraLabel lblAlertsCount;
-        private SabraButton sbtnExport;
         private SabraFlowLayoutPanel flowLayoutPanel1;
         private SabraFlowLayoutPanel sabraFlowLayoutPanel1;
+        private SabraButton sbtnPrint;
+        private SabraButton sbtnExportAsExcel;
     }
 }

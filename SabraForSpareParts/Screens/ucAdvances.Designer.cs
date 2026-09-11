@@ -41,9 +41,14 @@
             icnDecreasedParts = new FontAwesome.Sharp.IconPictureBox();
             slblTitleOfTopPanel = new SabraLabel();
             dgvAdvances = new SabraDataGridView();
+            AdvanceOptions = new SabraForSpareParts.Controls.SabraContextMenu();
+            ctmApprove = new ToolStripMenuItem();
+            ctmReject = new ToolStripMenuItem();
+            ctmCancelRequest = new ToolStripMenuItem();
             sabraPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvAdvances).BeginInit();
+            AdvanceOptions.SuspendLayout();
             SuspendLayout();
             // 
             // sabraPanel1
@@ -271,7 +276,43 @@
             dgvAdvances.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvAdvances.Size = new Size(1479, 813);
             dgvAdvances.TabIndex = 21;
-            dgvAdvances.CellContentClick += dgvAdvances_CellContentClick;
+            dgvAdvances.CellMouseDown += dgvAdvances_CellMouseDown;
+            // 
+            // AdvanceOptions
+            // 
+            AdvanceOptions.AccentColor = Color.FromArgb(35, 105, 170);
+            AdvanceOptions.BackColor = Color.White;
+            AdvanceOptions.BorderColor = Color.Silver;
+            AdvanceOptions.Font = new Font("Cairo SemiBold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            AdvanceOptions.ForeColor = Color.FromArgb(45, 45, 45);
+            AdvanceOptions.HoverColor = Color.Gainsboro;
+            AdvanceOptions.ImageScalingSize = new Size(20, 20);
+            AdvanceOptions.Items.AddRange(new ToolStripItem[] { ctmApprove, ctmReject, ctmCancelRequest });
+            AdvanceOptions.MenuBackColor = Color.White;
+            AdvanceOptions.MenuTextColor = Color.FromArgb(45, 45, 45);
+            AdvanceOptions.Name = "ctmCancel";
+            AdvanceOptions.PressedColor = Color.FromArgb(225, 235, 245);
+            AdvanceOptions.RightToLeft = RightToLeft.Yes;
+            AdvanceOptions.ShowCheckMargin = true;
+            AdvanceOptions.Size = new Size(200, 118);
+            // 
+            // ctmApprove
+            // 
+            ctmApprove.Name = "ctmApprove";
+            ctmApprove.Size = new Size(199, 38);
+            ctmApprove.Text = "موافقة";
+            // 
+            // ctmReject
+            // 
+            ctmReject.Name = "ctmReject";
+            ctmReject.Size = new Size(199, 38);
+            ctmReject.Text = "رفض";
+            // 
+            // ctmCancelRequest
+            // 
+            ctmCancelRequest.Name = "ctmCancelRequest";
+            ctmCancelRequest.Size = new Size(199, 38);
+            ctmCancelRequest.Text = "إلغاء الطلب";
             // 
             // ucAdvances
             // 
@@ -285,6 +326,7 @@
             sabraPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvAdvances).EndInit();
+            AdvanceOptions.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -298,5 +340,9 @@
         private FontAwesome.Sharp.IconPictureBox icnDecreasedParts;
         private SabraLabel slblTitleOfTopPanel;
         private SabraDataGridView dgvAdvances;
+        private Controls.SabraContextMenu AdvanceOptions;
+        private ToolStripMenuItem ctmApprove;
+        private ToolStripMenuItem ctmReject;
+        private ToolStripMenuItem ctmCancelRequest;
     }
 }

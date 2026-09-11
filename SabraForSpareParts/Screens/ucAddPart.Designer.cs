@@ -33,7 +33,7 @@
             sbtnSaveAndAdd = new SabraButton();
             stbnCancel = new SabraButton();
             spnlTopPanel = new SabraPanel();
-            sabraButton1 = new SabraButton();
+            sbtnClearForm = new SabraButton();
             slblTitleOfTopPanel = new SabraLabel();
             sabraPanel1 = new SabraPanel();
             addBrand = new FontAwesome.Sharp.IconButton();
@@ -42,7 +42,7 @@
             scbxBrand = new SabraComboBox();
             scbxUnitOfSale = new SabraComboBox();
             sabraLabel7 = new SabraLabel();
-            stxbxTechnicalNum = new SabraTextBox();
+            stbxTechnicalNum = new SabraTextBox();
             sabraLabel6 = new SabraLabel();
             sabraLabel5 = new SabraLabel();
             sabraLabel4 = new SabraLabel();
@@ -126,6 +126,7 @@
             sbtnSave.Padding = new Padding(10, 0, 10, 0);
             sbtnSave.Size = new Size(175, 82);
             sbtnSave.TabIndex = 9;
+            sbtnSave.Tag = "14";
             sbtnSave.Text = "حفظ القطعة";
             sbtnSave.TextAlign = ContentAlignment.MiddleLeft;
             sbtnSave.UseVisualStyleBackColor = false;
@@ -150,6 +151,7 @@
             sbtnSaveAndAdd.NormalColor = Color.RoyalBlue;
             sbtnSaveAndAdd.Size = new Size(220, 82);
             sbtnSaveAndAdd.TabIndex = 8;
+            sbtnSaveAndAdd.Tag = "15";
             sbtnSaveAndAdd.Text = "حفظ و إضافة أخرى";
             sbtnSaveAndAdd.TextAlign = ContentAlignment.MiddleLeft;
             sbtnSaveAndAdd.UseVisualStyleBackColor = false;
@@ -176,9 +178,11 @@
             stbnCancel.Padding = new Padding(10, 0, 10, 0);
             stbnCancel.Size = new Size(127, 41);
             stbnCancel.TabIndex = 7;
+            stbnCancel.Tag = "16";
             stbnCancel.Text = "مسح";
             stbnCancel.TextAlign = ContentAlignment.MiddleLeft;
             stbnCancel.UseVisualStyleBackColor = false;
+            stbnCancel.Click += sbtnClearForm_Click;
             // 
             // spnlTopPanel
             // 
@@ -186,7 +190,7 @@
             spnlTopPanel.BorderColor = Color.LightGray;
             spnlTopPanel.BorderRadius = 15;
             spnlTopPanel.BorderSize = 1;
-            spnlTopPanel.Controls.Add(sabraButton1);
+            spnlTopPanel.Controls.Add(sbtnClearForm);
             spnlTopPanel.Controls.Add(slblTitleOfTopPanel);
             spnlTopPanel.Dock = DockStyle.Top;
             spnlTopPanel.EnableHover = true;
@@ -203,31 +207,32 @@
             spnlTopPanel.Size = new Size(1502, 130);
             spnlTopPanel.TabIndex = 2;
             // 
-            // sabraButton1
+            // sbtnClearForm
             // 
-            sabraButton1.BackColor = Color.DimGray;
-            sabraButton1.BorderColor = Color.DodgerBlue;
-            sabraButton1.BorderRadius = 20;
-            sabraButton1.BorderSize = 0;
-            sabraButton1.FlatAppearance.BorderSize = 0;
-            sabraButton1.FlatStyle = FlatStyle.Flat;
-            sabraButton1.Font = new Font("Cairo", 10F, FontStyle.Bold);
-            sabraButton1.ForeColor = Color.White;
-            sabraButton1.HoverColor = Color.CornflowerBlue;
-            sabraButton1.IconChar = FontAwesome.Sharp.IconChar.DeleteLeft;
-            sabraButton1.IconColor = Color.Beige;
-            sabraButton1.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            sabraButton1.IconSize = 30;
-            sabraButton1.ImageAlign = ContentAlignment.MiddleRight;
-            sabraButton1.Location = new Point(26, 42);
-            sabraButton1.Name = "sabraButton1";
-            sabraButton1.NormalColor = Color.DimGray;
-            sabraButton1.Padding = new Padding(10, 0, 10, 0);
-            sabraButton1.Size = new Size(127, 41);
-            sabraButton1.TabIndex = 6;
-            sabraButton1.Text = "مسح";
-            sabraButton1.TextAlign = ContentAlignment.MiddleLeft;
-            sabraButton1.UseVisualStyleBackColor = false;
+            sbtnClearForm.BackColor = Color.DimGray;
+            sbtnClearForm.BorderColor = Color.DodgerBlue;
+            sbtnClearForm.BorderRadius = 20;
+            sbtnClearForm.BorderSize = 0;
+            sbtnClearForm.FlatAppearance.BorderSize = 0;
+            sbtnClearForm.FlatStyle = FlatStyle.Flat;
+            sbtnClearForm.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sbtnClearForm.ForeColor = Color.White;
+            sbtnClearForm.HoverColor = Color.CornflowerBlue;
+            sbtnClearForm.IconChar = FontAwesome.Sharp.IconChar.DeleteLeft;
+            sbtnClearForm.IconColor = Color.Beige;
+            sbtnClearForm.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sbtnClearForm.IconSize = 30;
+            sbtnClearForm.ImageAlign = ContentAlignment.MiddleRight;
+            sbtnClearForm.Location = new Point(39, 39);
+            sbtnClearForm.Name = "sbtnClearForm";
+            sbtnClearForm.NormalColor = Color.DimGray;
+            sbtnClearForm.Padding = new Padding(10, 0, 10, 0);
+            sbtnClearForm.Size = new Size(127, 41);
+            sbtnClearForm.TabIndex = 6;
+            sbtnClearForm.Text = "مسح";
+            sbtnClearForm.TextAlign = ContentAlignment.MiddleLeft;
+            sbtnClearForm.UseVisualStyleBackColor = false;
+            sbtnClearForm.Click += sbtnClearForm_Click;
             // 
             // slblTitleOfTopPanel
             // 
@@ -260,7 +265,7 @@
             sabraPanel1.Controls.Add(scbxBrand);
             sabraPanel1.Controls.Add(scbxUnitOfSale);
             sabraPanel1.Controls.Add(sabraLabel7);
-            sabraPanel1.Controls.Add(stxbxTechnicalNum);
+            sabraPanel1.Controls.Add(stbxTechnicalNum);
             sabraPanel1.Controls.Add(sabraLabel6);
             sabraPanel1.Controls.Add(sabraLabel5);
             sabraPanel1.Controls.Add(sabraLabel4);
@@ -277,8 +282,8 @@
             sabraPanel1.GradientAngle = 90F;
             sabraPanel1.GradientBottomColor = Color.White;
             sabraPanel1.GradientTopColor = Color.White;
-            sabraPanel1.HoverBackColor = Color.FromArgb(245, 248, 255);
-            sabraPanel1.HoverBorderColor = Color.FromArgb(37, 99, 235);
+            sabraPanel1.HoverBackColor = Color.White;
+            sabraPanel1.HoverBorderColor = Color.White;
             sabraPanel1.HoverBorderSize = 2;
             sabraPanel1.Location = new Point(10, 180);
             sabraPanel1.Margin = new Padding(20);
@@ -330,7 +335,7 @@
             scbxClassification.RightToLeft = RightToLeft.Yes;
             scbxClassification.Size = new Size(314, 36);
             scbxClassification.TabIndex = 22;
-            scbxClassification.Tag = "";
+            scbxClassification.Tag = "4";
             // 
             // scbxBrand
             // 
@@ -348,6 +353,7 @@
             scbxBrand.RightToLeft = RightToLeft.Yes;
             scbxBrand.Size = new Size(254, 36);
             scbxBrand.TabIndex = 21;
+            scbxBrand.Tag = "5";
             // 
             // scbxUnitOfSale
             // 
@@ -365,6 +371,7 @@
             scbxUnitOfSale.RightToLeft = RightToLeft.Yes;
             scbxUnitOfSale.Size = new Size(254, 36);
             scbxUnitOfSale.TabIndex = 20;
+            scbxUnitOfSale.Tag = "6";
             // 
             // sabraLabel7
             // 
@@ -380,22 +387,24 @@
             sabraLabel7.Text = "الرقم الفني";
             sabraLabel7.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // stxbxTechnicalNum
+            // stbxTechnicalNum
             // 
-            stxbxTechnicalNum.BackColor = SystemColors.Window;
-            stxbxTechnicalNum.BorderSize = 2;
-            stxbxTechnicalNum.Font = new Font("Cairo", 10F);
-            stxbxTechnicalNum.ForeColor = Color.FromArgb(64, 64, 64);
-            stxbxTechnicalNum.Location = new Point(141, 130);
-            stxbxTechnicalNum.Name = "stxbxTechnicalNum";
-            stxbxTechnicalNum.Padding = new Padding(10, 7, 10, 7);
-            stxbxTechnicalNum.RightToLeft = RightToLeft.Yes;
-            stxbxTechnicalNum.SelectedText = "";
-            stxbxTechnicalNum.SelectionLength = 0;
-            stxbxTechnicalNum.SelectionStart = 0;
-            stxbxTechnicalNum.Size = new Size(261, 47);
-            stxbxTechnicalNum.TabIndex = 18;
-            stxbxTechnicalNum.Texts = "";
+            stbxTechnicalNum.BackColor = SystemColors.Window;
+            stbxTechnicalNum.BorderColor = Color.DarkGray;
+            stbxTechnicalNum.BorderSize = 2;
+            stbxTechnicalNum.Font = new Font("Cairo", 10F);
+            stbxTechnicalNum.ForeColor = Color.FromArgb(64, 64, 64);
+            stbxTechnicalNum.Location = new Point(141, 130);
+            stbxTechnicalNum.Name = "stbxTechnicalNum";
+            stbxTechnicalNum.Padding = new Padding(10, 7, 10, 7);
+            stbxTechnicalNum.RightToLeft = RightToLeft.Yes;
+            stbxTechnicalNum.SelectedText = "";
+            stbxTechnicalNum.SelectionLength = 0;
+            stbxTechnicalNum.SelectionStart = 0;
+            stbxTechnicalNum.Size = new Size(261, 47);
+            stbxTechnicalNum.TabIndex = 18;
+            stbxTechnicalNum.Tag = "3";
+            stbxTechnicalNum.Texts = "";
             // 
             // sabraLabel6
             // 
@@ -497,11 +506,12 @@
             scbxSupplier.RightToLeft = RightToLeft.Yes;
             scbxSupplier.Size = new Size(254, 36);
             scbxSupplier.TabIndex = 11;
-            scbxSupplier.SelectedIndexChanged += sabraComboBox1_SelectedIndexChanged;
+            scbxSupplier.Tag = "7";
             // 
             // stxbxParcode
             // 
             stxbxParcode.BackColor = SystemColors.Window;
+            stxbxParcode.BorderColor = Color.DarkGray;
             stxbxParcode.BorderSize = 2;
             stxbxParcode.Font = new Font("Cairo", 10F);
             stxbxParcode.ForeColor = Color.FromArgb(64, 64, 64);
@@ -514,11 +524,13 @@
             stxbxParcode.SelectionStart = 0;
             stxbxParcode.Size = new Size(261, 47);
             stxbxParcode.TabIndex = 7;
+            stxbxParcode.Tag = "2";
             stxbxParcode.Texts = "";
             // 
             // stxbxPartName
             // 
             stxbxPartName.BackColor = SystemColors.Window;
+            stxbxPartName.BorderColor = Color.DarkGray;
             stxbxPartName.BorderRadius = 12;
             stxbxPartName.Font = new Font("Cairo", 10F);
             stxbxPartName.ForeColor = Color.FromArgb(64, 64, 64);
@@ -531,6 +543,7 @@
             stxbxPartName.SelectionStart = 0;
             stxbxPartName.Size = new Size(687, 47);
             stxbxPartName.TabIndex = 6;
+            stxbxPartName.Tag = "1";
             stxbxPartName.TextAlign = HorizontalAlignment.Center;
             stxbxPartName.Texts = "";
             // 
@@ -588,8 +601,8 @@
             sabraPanel2.GradientAngle = 90F;
             sabraPanel2.GradientBottomColor = Color.White;
             sabraPanel2.GradientTopColor = Color.White;
-            sabraPanel2.HoverBackColor = Color.FromArgb(245, 248, 255);
-            sabraPanel2.HoverBorderColor = Color.FromArgb(37, 99, 235);
+            sabraPanel2.HoverBackColor = Color.White;
+            sabraPanel2.HoverBorderColor = Color.White;
             sabraPanel2.HoverBorderSize = 2;
             sabraPanel2.Location = new Point(13, 570);
             sabraPanel2.Margin = new Padding(20);
@@ -639,6 +652,7 @@
             // stbxNotes
             // 
             stbxNotes.BackColor = SystemColors.Window;
+            stbxNotes.BorderColor = Color.DarkGray;
             stbxNotes.BorderSize = 2;
             stbxNotes.Font = new Font("Cairo", 10F);
             stbxNotes.ForeColor = Color.FromArgb(64, 64, 64);
@@ -652,6 +666,7 @@
             stbxNotes.SelectionStart = 0;
             stbxNotes.Size = new Size(499, 47);
             stbxNotes.TabIndex = 29;
+            stbxNotes.Tag = "13";
             stbxNotes.Texts = "";
             // 
             // sabraLabel16
@@ -671,6 +686,7 @@
             // stbxAlternativePart
             // 
             stbxAlternativePart.BackColor = SystemColors.Window;
+            stbxAlternativePart.BorderColor = Color.DarkGray;
             stbxAlternativePart.BorderSize = 2;
             stbxAlternativePart.Font = new Font("Cairo", 10F);
             stbxAlternativePart.ForeColor = Color.FromArgb(64, 64, 64);
@@ -684,6 +700,7 @@
             stbxAlternativePart.SelectionStart = 0;
             stbxAlternativePart.Size = new Size(315, 47);
             stbxAlternativePart.TabIndex = 27;
+            stbxAlternativePart.Tag = "12";
             stbxAlternativePart.Texts = "";
             // 
             // panel3
@@ -726,6 +743,7 @@
             // stbxMiniAmount
             // 
             stbxMiniAmount.BackColor = SystemColors.Window;
+            stbxMiniAmount.BorderColor = Color.DarkGray;
             stbxMiniAmount.BorderSize = 2;
             stbxMiniAmount.Font = new Font("Cairo", 10F);
             stbxMiniAmount.ForeColor = Color.FromArgb(64, 64, 64);
@@ -739,7 +757,7 @@
             stbxMiniAmount.SelectionStart = 0;
             stbxMiniAmount.Size = new Size(184, 47);
             stbxMiniAmount.TabIndex = 23;
-            stbxMiniAmount.Texts = "";
+            stbxMiniAmount.Texts = "11";
             // 
             // sabraLabel12
             // 
@@ -758,6 +776,7 @@
             // stbxSellPrice
             // 
             stbxSellPrice.BackColor = SystemColors.Window;
+            stbxSellPrice.BorderColor = Color.DarkGray;
             stbxSellPrice.BorderSize = 2;
             stbxSellPrice.Font = new Font("Cairo", 10F);
             stbxSellPrice.ForeColor = Color.FromArgb(64, 64, 64);
@@ -804,6 +823,7 @@
             // stbxProfitPercentage
             // 
             stbxProfitPercentage.BackColor = SystemColors.Window;
+            stbxProfitPercentage.BorderColor = Color.DarkGray;
             stbxProfitPercentage.BorderSize = 2;
             stbxProfitPercentage.Font = new Font("Cairo", 10F);
             stbxProfitPercentage.ForeColor = Color.FromArgb(64, 64, 64);
@@ -817,11 +837,12 @@
             stbxProfitPercentage.SelectionStart = 0;
             stbxProfitPercentage.Size = new Size(262, 47);
             stbxProfitPercentage.TabIndex = 19;
-            stbxProfitPercentage.Texts = "";
+            stbxProfitPercentage.Texts = "9";
             // 
             // stbxCurrentAmount
             // 
             stbxCurrentAmount.BackColor = SystemColors.Window;
+            stbxCurrentAmount.BorderColor = Color.DarkGray;
             stbxCurrentAmount.BorderSize = 2;
             stbxCurrentAmount.Font = new Font("Cairo", 10F);
             stbxCurrentAmount.ForeColor = Color.FromArgb(64, 64, 64);
@@ -835,7 +856,7 @@
             stbxCurrentAmount.SelectionStart = 0;
             stbxCurrentAmount.Size = new Size(252, 47);
             stbxCurrentAmount.TabIndex = 19;
-            stbxCurrentAmount.Texts = "";
+            stbxCurrentAmount.Texts = "10";
             // 
             // sabraLabel9
             // 
@@ -854,6 +875,7 @@
             // stbxPurchasePrice
             // 
             stbxPurchasePrice.BackColor = SystemColors.Window;
+            stbxPurchasePrice.BorderColor = Color.DarkGray;
             stbxPurchasePrice.BorderSize = 2;
             stbxPurchasePrice.Font = new Font("Cairo", 10F);
             stbxPurchasePrice.ForeColor = Color.FromArgb(64, 64, 64);
@@ -869,7 +891,7 @@
             stbxPurchasePrice.Size = new Size(332, 47);
             stbxPurchasePrice.TabIndex = 17;
             stbxPurchasePrice.TextAlign = HorizontalAlignment.Right;
-            stbxPurchasePrice.Texts = "";
+            stbxPurchasePrice.Texts = "8";
             // 
             // panel2
             // 
@@ -903,7 +925,7 @@
             Controls.Add(sabraPanel1);
             Controls.Add(spnSave);
             Name = "ucAddPart";
-            Size = new Size(1418, 961);
+            Size = new Size(1271, 814);
             spnSave.ResumeLayout(false);
             spnlTopPanel.ResumeLayout(false);
             spnlTopPanel.PerformLayout();
@@ -916,7 +938,7 @@
 
         #endregion
         private SabraPanel spnlTopPanel;
-        private SabraButton sabraButton1;
+        private SabraButton sbtnClearForm;
         private SabraLabel slblTitleOfTopPanel;
         private SabraPanel sabraPanel1;
         private SabraLabel slblBasicInfoTitle;
@@ -931,7 +953,7 @@
         private SabraLabel sabraLabel2;
         private SabraLabel sabraLabel1;
         private SabraLabel sabraLabel7;
-        private SabraTextBox stxbxTechnicalNum;
+        private SabraTextBox stbxTechnicalNum;
         private SabraComboBox scbxClassification;
         private SabraComboBox scbxBrand;
         private SabraComboBox scbxUnitOfSale;

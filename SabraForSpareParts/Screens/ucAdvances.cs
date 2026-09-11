@@ -1,112 +1,204 @@
-﻿using System;
-using System.Data;
+﻿using Sabra.DataLayer.DataAccess;
+using Sabra.DataLayer.Models;
+using Sabra.LogicLayer;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Windows.Forms.Design;
+using System.Windows.Forms;
 
 namespace SabraForSpareParts.Screens
 {
     public partial class ucAdvances : SabraUserControl
     {
-        private DataTable _dtAdvances;
+        #region Fields
+
+        private readonly clsAdvanceBusiness _advanceBusiness =
+            new clsAdvanceBusiness();
+
+        private readonly List<Advance> _advances =
+            new List<Advance>();
+
+        private Advance _selectedAdvance;
+
+        private bool _isLoading;
+        private bool _isProcessing;
+
+        private bool _isInitialized;
+
+        #endregion
+
+
+        #region Constructor
 
         public ucAdvances()
         {
             InitializeComponent();
 
-        }
-
-        private void ucAdvances_Load(object sender, EventArgs e)
-        {
-            LoadMockData();
-            ConfigureGrid();
-            RefreshStatistics();
-        }
-
-        #region Data
-
-        private void LoadMockData()
-        {
-            _dtAdvances = new DataTable();
-
-            _dtAdvances.Columns.Add("AdvanceID", typeof(int));
-            _dtAdvances.Columns.Add("Employee", typeof(string));
-            _dtAdvances.Columns.Add("AdvanceDate", typeof(DateTime));
-            _dtAdvances.Columns.Add("Amount", typeof(decimal));
-            _dtAdvances.Columns.Add("Paid", typeof(decimal));
-            _dtAdvances.Columns.Add("Remaining", typeof(decimal));
-            _dtAdvances.Columns.Add("MonthlyDeduction", typeof(decimal));
-            _dtAdvances.Columns.Add("Status", typeof(string));
-
-            _dtAdvances.Rows.Add(
-                1,
-                "أحمد محمد",
-                new DateTime(2025, 1, 5),
-                500,
-                0,
-                500,
-                500,
-                "غير مسددة"
-            );
-
-            _dtAdvances.Rows.Add(
-                2,
-                "سارة أحمد",
-                new DateTime(2025, 1, 3),
-                700,
-                0,
-                700,
-                350,
-                "غير مسددة"
-            );
-
-            _dtAdvances.Rows.Add(
-                3,
-                "محمد علي",
-                new DateTime(2025, 2, 10),
-                1500,
-                500,
-                1000,
-                500,
-                "جزئية"
-            );
-
-            _dtAdvances.Rows.Add(
-                4,
-                "محمود حسن",
-                new DateTime(2025, 2, 15),
-                1000,
-                1000,
-                0,
-                500,
-                "مسددة"
-            );
-
-            _dtAdvances.Rows.Add(
-                5,
-                "عمر خالد",
-                new DateTime(2025, 3, 1),
-                2000,
-                1000,
-                1000,
-                500,
-                "جزئية"
-            );
-
-            dgvAdvances.DataSource = _dtAdvances;
+            WireEvents();
         }
 
         #endregion
 
-        #region Grid
+
+        #region Events
+
+        private void WireEvents()
+        {
+            // Load
+            Load -= ucAdvances_Load;
+            Load += ucAdvances_Load;
+
+            // Buttons
+            sbtnAddAdvance.Click -= sbtnAddAdvance_Click;
+            sbtnAddAdvance.Click += sbtnAddAdvance_Click;
+
+            sbtnExportAsExcel.Click -= sbtnExportAsExcel_Click;
+            sbtnExportAsExcel.Click += sbtnExportAsExcel_Click;
+
+            sbtnPrint.Click -= sbtnPrint_Click;
+            sbtnPrint.Click += sbtnPrint_Click;
+
+            // Grid
+            dgvAdvances.CellMouseDown -= dgvAdvances_CellMouseDown;
+            dgvAdvances.CellMouseDown += dgvAdvances_CellMouseDown;
+
+            dgvAdvances.CellDoubleClick -= dgvAdvances_CellDoubleClick;
+            dgvAdvances.CellDoubleClick += dgvAdvances_CellDoubleClick;
+
+            // Context Menu
+            ctmApprove.Click -= ctmApprove_Click;
+            ctmApprove.Click += ctmApprove_Click;
+
+            ctmReject.Click -= ctmReject_Click;
+            ctmReject.Click += ctmReject_Click;
+
+            ctmCancelRequest.Click -= ctmCancelRequest_Click;
+            ctmCancelRequest.Click += ctmCancelRequest_Click;
+        }
+
+        #endregion
+
+
+        #region Load
+
+        private void ucAdvances_Load(object sender, EventArgs e)
+        {
+            if (_isInitialized)
+                return;
+
+            try
+            {
+                ConfigureGrid();
+                ResetContextMenu();
+
+                _isInitialized = true;
+
+                LoadAdvances();
+            }
+            catch (Exception ex)
+            {
+                ShowUnexpectedError(ex);
+            }
+        }
+
+        #endregion
+
+
+        #region Data
+
+        private void LoadAdvances()
+        {
+            if (_isLoading)
+                return;
+
+            try
+            {
+                _isLoading = true;
+
+                ClearSelectedAdvance();
+
+                var result = _advanceBusiness.GetAll();
+
+                if (!result.Success)
+                {
+                    _advances.Clear();
+                    BindAdvances();
+
+                    ShowError(
+                        string.IsNullOrWhiteSpace(result.Message)
+                            ? "تعذر تحميل السلف."
+                            : result.Message);
+
+                    return;
+                }
+
+                _advances.Clear();
+
+                if (result.Data != null)
+                {
+                    _advances.AddRange(result.Data);
+                }
+
+                BindAdvances();
+            }
+            catch (Exception ex)
+            {
+                ShowUnexpectedError(ex);
+            }
+            finally
+            {
+                _isLoading = false;
+            }
+        }
+
+
+        private void BindAdvances()
+        {
+            dgvAdvances.DataSource = null;
+            dgvAdvances.DataSource = _advances;
+        }
+
+        #endregion
+
+
+        #region Grid Configuration
 
         private void ConfigureGrid()
         {
+            ConfigureGridAppearance();
+            ConfigureGridBehavior();
+            ConfigureGridFonts();
+            SetupColumns();
+        }
+
+
+        private void ConfigureGridAppearance()
+        {
             dgvAdvances.RightToLeft = RightToLeft.Yes;
 
+            dgvAdvances.RowHeadersVisible = false;
+
+            dgvAdvances.RowTemplate.Height = 45;
+            dgvAdvances.ColumnHeadersHeight = 45;
+
+            dgvAdvances.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvAdvances.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvAdvances.EnableHeadersVisualStyles = false;
+        }
+
+
+        private void ConfigureGridBehavior()
+        {
             dgvAdvances.AutoGenerateColumns = false;
+
             dgvAdvances.AllowUserToAddRows = false;
             dgvAdvances.AllowUserToDeleteRows = false;
+            dgvAdvances.AllowUserToResizeRows = false;
+
             dgvAdvances.ReadOnly = true;
 
             dgvAdvances.SelectionMode =
@@ -114,457 +206,757 @@ namespace SabraForSpareParts.Screens
 
             dgvAdvances.MultiSelect = false;
 
-            dgvAdvances.RowHeadersVisible = false;
+            dgvAdvances.EditMode =
+                DataGridViewEditMode.EditProgrammatically;
 
             dgvAdvances.AutoSizeRowsMode =
                 DataGridViewAutoSizeRowsMode.None;
+        }
 
-            dgvAdvances.RowTemplate.Height = 45;
 
-            dgvAdvances.CellBorderStyle =
-                DataGridViewCellBorderStyle.SingleHorizontal;
-
-            dgvAdvances.ColumnHeadersHeight = 50;
-
-            dgvAdvances.EnableHeadersVisualStyles = false;
-
-            dgvAdvances.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
-            dgvAdvances.DefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
+        private void ConfigureGridFonts()
+        {
             dgvAdvances.DefaultCellStyle.Font =
                 new Font("Cairo", 10F);
 
             dgvAdvances.ColumnHeadersDefaultCellStyle.Font =
-                new Font("Cairo", 10F, FontStyle.Bold);
-
-            dgvAdvances.CellContentClick -=
-                dgvAdvances_CellContentClick;
-
-            dgvAdvances.CellContentClick +=
-                dgvAdvances_CellContentClick;
-
-            SetupColumns();
+                new Font(
+                    "Cairo",
+                    10F,
+                    FontStyle.Bold);
         }
+
 
         private void SetupColumns()
         {
             dgvAdvances.Columns.Clear();
 
-            dgvAdvances.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "colEmployee",
-                HeaderText = "الموظف",
-                DataPropertyName = "Employee",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-            });
+            AddEmployeeColumn();
+            AddAdvanceDateColumn();
+            AddAmountColumn();
+            AddApproverColumn();
+            AddStatusColumn();
+        }
 
-            dgvAdvances.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "colAdvanceDate",
-                HeaderText = "تاريخ السلفة",
-                DataPropertyName = "AdvanceDate",
-                Width = 150,
-                DefaultCellStyle = new DataGridViewCellStyle
+
+        private void AddEmployeeColumn()
+        {
+            dgvAdvances.Columns.Add(
+                new DataGridViewTextBoxColumn
                 {
-                    Format = "d/M/yyyy",
-                    Alignment = DataGridViewContentAlignment.MiddleCenter
-                }
-            });
+                    Name = "colEmployee",
+                    HeaderText = "الموظف",
+                    DataPropertyName = "EmployeeName",
+                    AutoSizeMode =
+                        DataGridViewAutoSizeColumnMode.Fill
+                });
+        }
 
-            dgvAdvances.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "colAmount",
-                HeaderText = "المبلغ",
-                DataPropertyName = "Amount",
-                Width = 130,
-                DefaultCellStyle = new DataGridViewCellStyle
+
+        private void AddAdvanceDateColumn()
+        {
+            dgvAdvances.Columns.Add(
+                new DataGridViewTextBoxColumn
                 {
-                    Format = "#,##0.## ج",
-                    Alignment = DataGridViewContentAlignment.MiddleCenter
-                }
-            });
+                    Name = "colAdvanceDate",
+                    HeaderText = "تاريخ السلفة",
+                    DataPropertyName = "AdvanceDate",
+                    Width = 150,
 
-            dgvAdvances.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "colPaid",
-                HeaderText = "المسدد",
-                DataPropertyName = "Paid",
-                Width = 130,
-                DefaultCellStyle = new DataGridViewCellStyle
+                    DefaultCellStyle =
+                        new DataGridViewCellStyle
+                        {
+                            Format = "dd/MM/yyyy"
+                        }
+                });
+        }
+
+
+        private void AddAmountColumn()
+        {
+            dgvAdvances.Columns.Add(
+                new DataGridViewTextBoxColumn
                 {
-                    Format = "#,##0.## ج",
-                    Alignment = DataGridViewContentAlignment.MiddleCenter
-                }
-            });
+                    Name = "colAmount",
+                    HeaderText = "المبلغ",
+                    DataPropertyName = "Amount",
+                    Width = 150,
 
-            dgvAdvances.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "colRemaining",
-                HeaderText = "المتبقي",
-                DataPropertyName = "Remaining",
-                Width = 130,
-                DefaultCellStyle = new DataGridViewCellStyle
+                    DefaultCellStyle =
+                        new DataGridViewCellStyle
+                        {
+                            Format = "#,##0.00 ج"
+                        }
+                });
+        }
+
+
+        private void AddApproverColumn()
+        {
+            dgvAdvances.Columns.Add(
+                new DataGridViewTextBoxColumn
                 {
-                    Format = "#,##0.## ج",
-                    Alignment = DataGridViewContentAlignment.MiddleCenter,
-                    Font = new Font("Cairo", 10F, FontStyle.Bold)
-                }
-            });
+                    Name = "colApprover",
+                    HeaderText = "الموافق",
+                    DataPropertyName = "ApproverName",
+                    Width = 180
+                });
+        }
 
-            dgvAdvances.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "colMonthlyDeduction",
-                HeaderText = "الخصم الشهري",
-                DataPropertyName = "MonthlyDeduction",
-                Width = 150,
-                DefaultCellStyle = new DataGridViewCellStyle
+
+        private void AddStatusColumn()
+        {
+            dgvAdvances.Columns.Add(
+                new DataGridViewTextBoxColumn
                 {
-                    Format = "#,##0.## ج",
-                    Alignment = DataGridViewContentAlignment.MiddleCenter
-                }
-            });
-
-            dgvAdvances.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "colStatus",
-                HeaderText = "الحالة",
-                DataPropertyName = "Status",
-                Width = 120
-            });
-
-            dgvAdvances.Columns.Add(new DataGridViewButtonColumn
-            {
-                Name = "colDetails",
-                HeaderText = "الإجراءات",
-                Text = "تفاصيل",
-                UseColumnTextForButtonValue = true,
-                Width = 110,
-                FlatStyle = FlatStyle.Flat
-            });
+                    Name = "colStatus",
+                    HeaderText = "الحالة",
+                    DataPropertyName = "StatusName",
+                    Width = 150
+                });
         }
 
         #endregion
 
-        #region Statistics
 
-        private void RefreshStatistics()
-        {
-            if (_dtAdvances == null)
-                return;
+        #region Grid Selection
 
-            decimal totalAdvances =
-                _dtAdvances.AsEnumerable()
-                    .Sum(row => row.Field<decimal>("Amount"));
-
-            decimal totalPaid =
-                _dtAdvances.AsEnumerable()
-                    .Sum(row => row.Field<decimal>("Paid"));
-
-            decimal totalRemaining =
-                _dtAdvances.AsEnumerable()
-                    .Sum(row => row.Field<decimal>("Remaining"));
-
-            // لو عندك Cards في الشاشة:
-            //
-            // lblTotalAdvances.Text = $"{totalAdvances:N0} ج";
-            // lblTotalPaid.Text = $"{totalPaid:N0} ج";
-            // lblTotalRemaining.Text = $"{totalRemaining:N0} ج";
-            //
-            // lblAdvanceCount.Text = _dtAdvances.Rows.Count.ToString();
-        }
-
-        #endregion
-
-        #region Export / Print
-
-        private void sbtnExportAsExcel_Click(object sender, EventArgs e)
-        {
-            clsGlobalClass.ExportDataGridViewToExcel(
-                dgvAdvances,
-                "",
-                "Advances"
-            );
-        }
-
-        private void sbtnPrint_Click(object sender, EventArgs e)
-        {
-            clsGlobalClass.PrintDataGridView(
-                dgvAdvances,
-                "Advances"
-            );
-        }
-
-        #endregion
-
-        #region Add Advance
-
-        private void sbtnAddAdvance_Click(object sender, EventArgs e)
-        {
-            using (Form frm = CreateAddAdvanceForm())
-            {
-                if (frm.ShowDialog() == DialogResult.OK)
-                {
-                    string employee =
-                        frm.Controls["txtEmployee"].Text.Trim();
-
-                    decimal amount =
-                        Convert.ToDecimal(
-                            ((NumericUpDown)frm.Controls["nudAmount"]).Value
-                        );
-
-                    decimal monthlyDeduction =
-                        Convert.ToDecimal(
-                            ((NumericUpDown)frm.Controls["nudMonthly"]).Value
-                        );
-
-                    DateTime date =
-                        ((DateTimePicker)frm.Controls["dtpDate"]).Value;
-
-                    if (amount <= 0)
-                    {
-                        MessageBox.Show(
-                            "يجب إدخال مبلغ سلفة صحيح.",
-                            "تنبيه",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning
-                        );
-
-                        return;
-                    }
-
-                    if (monthlyDeduction <= 0)
-                    {
-                        MessageBox.Show(
-                            "يجب إدخال قيمة الخصم الشهري.",
-                            "تنبيه",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning
-                        );
-
-                        return;
-                    }
-
-                    if (monthlyDeduction > amount)
-                    {
-                        monthlyDeduction = amount;
-                    }
-
-                    int newID =
-                        _dtAdvances.AsEnumerable()
-                            .Select(r => r.Field<int>("AdvanceID"))
-                            .DefaultIfEmpty(0)
-                            .Max() + 1;
-
-                    _dtAdvances.Rows.Add(
-                        newID,
-                        employee,
-                        date,
-                        amount,
-                        0,
-                        amount,
-                        monthlyDeduction,
-                        "غير مسددة"
-                    );
-
-                    dgvAdvances.DataSource = null;
-                    dgvAdvances.DataSource = _dtAdvances;
-
-                    RefreshStatistics();
-
-                    MessageBox.Show(
-                        "تمت إضافة السلفة بنجاح.",
-                        "تم",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                }
-            }
-        }
-
-        private Form CreateAddAdvanceForm()
-        {
-            Form frm = new Form();
-
-            frm.Name = "frmAddAdvance";
-            frm.Text = "سلفة جديدة";
-            frm.StartPosition = FormStartPosition.CenterParent;
-            frm.FormBorderStyle = FormBorderStyle.FixedDialog;
-            frm.MaximizeBox = false;
-            frm.MinimizeBox = false;
-            frm.Size = new Size(500, 420);
-            frm.RightToLeft = RightToLeft.Yes;
-            frm.Font = new Font("Cairo", 10F);
-
-            Label lblEmployee = new Label
-            {
-                Text = "الموظف",
-                Location = new Point(330, 35),
-                AutoSize = true
-            };
-
-            TextBox txtEmployee = new TextBox
-            {
-                Name = "txtEmployee",
-                Location = new Point(40, 65),
-                Width = 390
-            };
-
-            Label lblAmount = new Label
-            {
-                Text = "مبلغ السلفة",
-                Location = new Point(330, 110),
-                AutoSize = true
-            };
-
-            NumericUpDown nudAmount = new NumericUpDown
-            {
-                Name = "nudAmount",
-                Location = new Point(40, 140),
-                Width = 390,
-                Minimum = 1,
-                Maximum = 100000000,
-                Increment = 100,
-                ThousandsSeparator = true
-            };
-
-            Label lblMonthly = new Label
-            {
-                Text = "الخصم الشهري",
-                Location = new Point(330, 185),
-                AutoSize = true
-            };
-
-            NumericUpDown nudMonthly = new NumericUpDown
-            {
-                Name = "nudMonthly",
-                Location = new Point(40, 215),
-                Width = 390,
-                Minimum = 1,
-                Maximum = 100000000,
-                Increment = 50,
-                ThousandsSeparator = true
-            };
-
-            Label lblDate = new Label
-            {
-                Text = "تاريخ السلفة",
-                Location = new Point(330, 260),
-                AutoSize = true
-            };
-
-            DateTimePicker dtpDate = new DateTimePicker
-            {
-                Name = "dtpDate",
-                Location = new Point(40, 290),
-                Width = 390,
-                Format = DateTimePickerFormat.Short
-            };
-
-            Button btnSave = new Button
-            {
-                Text = "حفظ السلفة",
-                DialogResult = DialogResult.OK,
-                Location = new Point(250, 335),
-                Width = 180,
-                Height = 40
-            };
-
-            Button btnCancel = new Button
-            {
-                Text = "إلغاء",
-                DialogResult = DialogResult.Cancel,
-                Location = new Point(40, 335),
-                Width = 180,
-                Height = 40
-            };
-
-            frm.Controls.Add(lblEmployee);
-            frm.Controls.Add(txtEmployee);
-
-            frm.Controls.Add(lblAmount);
-            frm.Controls.Add(nudAmount);
-
-            frm.Controls.Add(lblMonthly);
-            frm.Controls.Add(nudMonthly);
-
-            frm.Controls.Add(lblDate);
-            frm.Controls.Add(dtpDate);
-
-            frm.Controls.Add(btnSave);
-            frm.Controls.Add(btnCancel);
-
-            frm.AcceptButton = btnSave;
-            frm.CancelButton = btnCancel;
-
-            return frm;
-        }
-
-        #endregion
-
-        #region Details
-
-        private void dgvAdvances_CellContentClick(
+        private void dgvAdvances_CellDoubleClick(
             object sender,
             DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
                 return;
 
-            if (dgvAdvances.Columns[e.ColumnIndex].Name != "colDetails")
+            Advance advance = GetAdvanceFromRow(e.RowIndex);
+
+            if (advance == null)
                 return;
 
+            ShowAdvanceDetails(advance);
+        }
+
+
+        private Advance GetAdvanceFromRow(int rowIndex)
+        {
+            if (rowIndex < 0 ||
+                rowIndex >= dgvAdvances.Rows.Count)
+            {
+                return null;
+            }
+
             DataGridViewRow row =
-                dgvAdvances.Rows[e.RowIndex];
+                dgvAdvances.Rows[rowIndex];
 
-            string employee =
-                row.Cells["colEmployee"].Value?.ToString();
+            return row.DataBoundItem as Advance;
+        }
 
-            DateTime date =
-                Convert.ToDateTime(
-                    row.Cells["colAdvanceDate"].Value
-                );
 
-            decimal amount =
-                Convert.ToDecimal(
-                    row.Cells["colAmount"].Value
-                );
+        private void ShowAdvanceDetails(Advance advance)
+        {
+            if (advance == null)
+                return;
 
-            decimal paid =
-                Convert.ToDecimal(
-                    row.Cells["colPaid"].Value
-                );
-
-            decimal remaining =
-                Convert.ToDecimal(
-                    row.Cells["colRemaining"].Value
-                );
-
-            decimal monthly =
-                Convert.ToDecimal(
-                    row.Cells["colMonthlyDeduction"].Value
-                );
+            string approver =
+                string.IsNullOrWhiteSpace(advance.ApproverName)
+                    ? "لم تتم الموافقة بعد"
+                    : advance.ApproverName.Trim();
 
             string status =
-                row.Cells["colStatus"].Value?.ToString();
+                string.IsNullOrWhiteSpace(advance.StatusName)
+                    ? "غير محددة"
+                    : advance.StatusName.Trim();
+
+            string employee =
+                string.IsNullOrWhiteSpace(advance.EmployeeName)
+                    ? "غير محدد"
+                    : advance.EmployeeName.Trim();
 
             string message =
+                $"رقم السلفة: {advance.AdvanceID}\n\n" +
                 $"الموظف: {employee}\n\n" +
-                $"تاريخ السلفة: {date:d/M/yyyy}\n\n" +
-                $"مبلغ السلفة: {amount:N0} ج\n\n" +
-                $"المسدد: {paid:N0} ج\n\n" +
-                $"المتبقي: {remaining:N0} ج\n\n" +
-                $"الخصم الشهري: {monthly:N0} ج\n\n" +
-                $"الحالة: {status}";
+                $"المبلغ: {advance.Amount:N2} ج\n\n" +
+                $"تاريخ السلفة: {advance.AdvanceDate:dd/MM/yyyy}\n\n" +
+                $"الحالة: {status}\n\n" +
+                $"الموافق: {approver}\n\n" +
+                $"تاريخ الإنشاء: {advance.CreatedAt:dd/MM/yyyy HH:mm}";
 
             MessageBox.Show(
                 message,
                 "تفاصيل السلفة",
                 MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
+                MessageBoxIcon.Information);
+        }
+
+        #endregion
+
+
+        #region Add Advance
+
+        private void sbtnAddAdvance_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (_isProcessing)
+                return;
+
+            try
+            {
+                using (var frm = new frmRequireAdvance())
+                {
+                    if (frm.ShowDialog() == DialogResult.OK)
+                    {
+                        LoadAdvances();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowUnexpectedError(ex);
+            }
+        }
+
+        #endregion
+
+
+        #region Export
+
+        private void sbtnExportAsExcel_Click(
+            object sender,
+            EventArgs e)
+        {
+            try
+            {
+                if (dgvAdvances.Rows.Count == 0)
+                {
+                    ShowError("لا توجد بيانات لتصديرها.");
+                    return;
+                }
+
+                clsGlobalClass.ExportDataGridViewToExcel(
+                    dgvAdvances,
+                    "",
+                    "Advances");
+            }
+            catch (Exception ex)
+            {
+                ShowUnexpectedError(ex);
+            }
+        }
+
+        #endregion
+
+
+        #region Print
+
+        private void sbtnPrint_Click(
+            object sender,
+            EventArgs e)
+        {
+            try
+            {
+                if (dgvAdvances.Rows.Count == 0)
+                {
+                    ShowError("لا توجد بيانات لطباعتها.");
+                    return;
+                }
+
+                clsGlobalClass.PrintDataGridView(
+                    dgvAdvances,
+                    "Advances");
+            }
+            catch (Exception ex)
+            {
+                ShowUnexpectedError(ex);
+            }
+        }
+
+        #endregion
+
+
+        #region Context Menu
+
+        private void dgvAdvances_CellMouseDown(
+            object sender,
+            DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            if (e.RowIndex < 0)
+                return;
+
+            Advance advance =
+                GetAdvanceFromRow(e.RowIndex);
+
+            if (advance == null)
+                return;
+
+            _selectedAdvance = advance;
+
+            dgvAdvances.ClearSelection();
+
+            dgvAdvances.Rows[e.RowIndex].Selected = true;
+
+            ConfigureAdvanceMenu(advance);
+
+            Point location =
+                dgvAdvances.PointToClient(
+                    Cursor.Position);
+
+            AdvanceOptions.Show(
+                dgvAdvances,
+                location);
+        }
+
+
+        private void ConfigureAdvanceMenu(Advance advance)
+        {
+            ResetContextMenu();
+
+            if (advance == null)
+                return;
+
+            bool isManager =
+                clsAppSession.IsManager;
+
+            bool isPending =
+                IsPendingAdvance(advance);
+
+            bool isCurrentUserAdvance =
+                IsCurrentUserAdvance(advance);
+
+
+            // ==========================================
+            // المدير
+            // ==========================================
+
+            if (isManager)
+            {
+                ctmApprove.Visible = true;
+                ctmReject.Visible = true;
+
+                ctmApprove.Enabled = isPending;
+                ctmReject.Enabled = isPending;
+
+                // المدير يستطيع إلغاء طلبه هو فقط
+                ctmCancelRequest.Visible =
+                    isCurrentUserAdvance;
+
+                ctmCancelRequest.Enabled =
+                    isPending && isCurrentUserAdvance;
+
+                return;
+            }
+
+
+            // ==========================================
+            // الموظف العادي
+            // ==========================================
+
+            ctmApprove.Visible = false;
+            ctmReject.Visible = false;
+
+            // الموظف يستطيع إلغاء طلبه فقط
+            ctmCancelRequest.Visible =
+                isCurrentUserAdvance;
+
+            ctmCancelRequest.Enabled =
+                isPending && isCurrentUserAdvance;
+        }
+
+
+        private void ResetContextMenu()
+        {
+            ctmApprove.Visible = false;
+            ctmApprove.Enabled = false;
+
+            ctmReject.Visible = false;
+            ctmReject.Enabled = false;
+
+            ctmCancelRequest.Visible = false;
+            ctmCancelRequest.Enabled = false;
+        }
+
+
+        private void ClearSelectedAdvance()
+        {
+            _selectedAdvance = null;
+
+            dgvAdvances.ClearSelection();
+
+            ResetContextMenu();
+        }
+
+
+        private bool IsCurrentUserAdvance(Advance advance)
+        {
+            if (advance == null)
+                return false;
+
+            if (clsAppSession.CurrentEmployee == null)
+                return false;
+
+            return advance.EmployeeID ==
+                   clsAppSession.CurrentEmployee.EmployeeID;
+        }
+
+
+        private bool IsPendingAdvance(Advance advance)
+        {
+            if (advance == null)
+                return false;
+
+            if (string.IsNullOrWhiteSpace(
+                    advance.StatusName))
+            {
+                return false;
+            }
+
+            string status =
+                advance.StatusName.Trim();
+
+            return
+                status.Equals(
+                    "معلق",
+                    StringComparison.OrdinalIgnoreCase)
+                ||
+                status.Equals(
+                    "قيد الانتظار",
+                    StringComparison.OrdinalIgnoreCase)
+                ||
+                status.Equals(
+                    "Pending",
+                    StringComparison.OrdinalIgnoreCase);
+        }
+
+        #endregion
+
+
+        #region Approve
+
+        private void ctmApprove_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (_isProcessing)
+                return;
+
+            Advance advance = _selectedAdvance;
+
+            if (!CanProcessAdvance(advance))
+                return;
+
+            if (!clsAppSession.IsManager)
+            {
+                ShowError(
+                    "ليس لديك صلاحية الموافقة على السلف.");
+
+                return;
+            }
+
+
+            // ==========================================
+            // منع المدير من الموافقة على سلفته الشخصية
+            // ==========================================
+
+            if (IsCurrentUserAdvance(advance))
+            {
+                ShowError(
+                    "لا يمكنك الموافقة على سلفتك الشخصية.");
+
+                return;
+            }
+
+
+            try
+            {
+                using (var frm =
+                       new frmSelectPaymentMethod())
+                {
+                    if (frm.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    int paymentMethodID =
+                        frm.SelectedPaymentMethodId;
+
+                    if (paymentMethodID <= 0)
+                    {
+                        ShowError(
+                            "يرجى اختيار طريقة دفع صحيحة.");
+
+                        return;
+                    }
+
+                    _isProcessing = true;
+
+                    var result =
+                        _advanceBusiness.ApproveAndPay(
+                            advance.AdvanceID,
+                            paymentMethodID);
+
+                    if (!result.Success)
+                    {
+                        ShowOperationError(
+                            result.Message);
+
+                        return;
+                    }
+
+                    ShowSuccess(
+                        $"تمت الموافقة وصرف السلفة رقم " +
+                        $"{advance.AdvanceID} بنجاح.");
+
+                    LoadAdvances();
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowUnexpectedError(ex);
+            }
+            finally
+            {
+                _isProcessing = false;
+                ClearSelectedAdvance();
+            }
+        }
+
+        #endregion
+
+
+        #region Reject
+
+        private void ctmReject_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (_isProcessing)
+                return;
+
+            Advance advance = _selectedAdvance;
+
+            if (!CanProcessAdvance(advance))
+                return;
+
+            if (!clsAppSession.IsManager)
+            {
+                ShowError(
+                    "ليس لديك صلاحية رفض السلف.");
+
+                return;
+            }
+
+
+            // منع المدير من رفض سلفته الشخصية
+            if (IsCurrentUserAdvance(advance))
+            {
+                ShowError(
+                    "لا يمكنك رفض سلفتك الشخصية.");
+
+                return;
+            }
+
+
+            DialogResult confirmation =
+                MessageBox.Show(
+                    $"هل أنت متأكد من رفض السلفة رقم " +
+                    $"{advance.AdvanceID}؟",
+                    "تأكيد رفض السلفة",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+            if (confirmation != DialogResult.Yes)
+                return;
+
+
+            try
+            {
+                _isProcessing = true;
+
+                var result =
+                    _advanceBusiness.Reject(
+                        advance.AdvanceID);
+
+                if (!result.Success)
+                {
+                    ShowOperationError(
+                        result.Message);
+
+                    return;
+                }
+
+                ShowSuccess(
+                    $"تم رفض السلفة رقم " +
+                    $"{advance.AdvanceID} بنجاح.");
+
+                LoadAdvances();
+            }
+            catch (Exception ex)
+            {
+                ShowUnexpectedError(ex);
+            }
+            finally
+            {
+                _isProcessing = false;
+                ClearSelectedAdvance();
+            }
+        }
+
+        #endregion
+
+
+        #region Cancel Request
+
+        private void ctmCancelRequest_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (_isProcessing)
+                return;
+
+            Advance advance = _selectedAdvance;
+
+            if (!CanProcessAdvance(advance))
+                return;
+
+
+            // ==========================================
+            // أهم نقطة:
+            // الموظف لا يستطيع إلغاء سلفة غيره
+            // ==========================================
+
+            if (!IsCurrentUserAdvance(advance))
+            {
+                ShowError(
+                    "لا يمكنك إلغاء طلب سلفة خاص بموظف آخر.");
+
+                return;
+            }
+
+
+            DialogResult confirmation =
+                MessageBox.Show(
+                    $"هل أنت متأكد من إلغاء السلفة رقم " +
+                    $"{advance.AdvanceID}؟",
+                    "تأكيد إلغاء الطلب",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+            if (confirmation != DialogResult.Yes)
+                return;
+
+
+            try
+            {
+                _isProcessing = true;
+
+                var result =
+                    _advanceBusiness.CancelAdvance(
+                        advance.AdvanceID);
+
+                if (!result.Success)
+                {
+                    ShowOperationError(
+                        result.Message);
+
+                    return;
+                }
+
+                ShowSuccess(
+                    $"تم إلغاء السلفة رقم " +
+                    $"{advance.AdvanceID} بنجاح.");
+
+                LoadAdvances();
+            }
+            catch (Exception ex)
+            {
+                ShowUnexpectedError(ex);
+            }
+            finally
+            {
+                _isProcessing = false;
+                ClearSelectedAdvance();
+            }
+        }
+
+        #endregion
+
+
+        #region Validation
+
+        private bool CanProcessAdvance(
+            Advance advance)
+        {
+            if (advance == null)
+            {
+                ShowError(
+                    "لم يتم تحديد سلفة.");
+
+                return false;
+            }
+
+
+            if (!IsPendingAdvance(advance))
+            {
+                ShowError(
+                    "لا يمكن تنفيذ هذه العملية.\n\n" +
+                    "حالة السلفة الحالية لا تسمح بذلك.");
+
+                return false;
+            }
+
+
+            return true;
+        }
+
+        #endregion
+
+
+        #region Messages
+
+        private void ShowError(string message)
+        {
+            MessageBox.Show(
+                string.IsNullOrWhiteSpace(message)
+                    ? "حدث خطأ أثناء تنفيذ العملية."
+                    : message,
+                "تنبيه",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+        }
+
+
+        private void ShowOperationError(
+            string message)
+        {
+            MessageBox.Show(
+                string.IsNullOrWhiteSpace(message)
+                    ? "فشلت العملية."
+                    : message,
+                "فشل العملية",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
+
+
+        private void ShowSuccess(string message)
+        {
+            MessageBox.Show(
+                message,
+                "تمت العملية",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+
+        private void ShowUnexpectedError(Exception ex)
+        {
+            MessageBox.Show(
+                "حدث خطأ غير متوقع.\n\n" +
+                ex.Message,
+                "خطأ",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
         }
 
         #endregion

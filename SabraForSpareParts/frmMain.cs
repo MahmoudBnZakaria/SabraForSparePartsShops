@@ -7,8 +7,7 @@ namespace SabraForSpareParts
 {
     public partial class frmMain : Form
     {
-        // افترض أن لديك متغير عام يحفظ اسم المستخدم الذي سجل الدخول
-        private string _loggedInUserName = "أحمد صبره"; // قم بتغييره حسب نظام الدخول الخاص بك
+        private string _loggedInUserName = "أحمد صبره";
 
         public frmMain()
         {
@@ -71,10 +70,17 @@ namespace SabraForSpareParts
 
             if (uc == null) return;
 
+            if (uc is ucInventoryAlerts inventoryAlerts)
+            {
+                inventoryAlerts.CreatePurchaseOrderRequested += (s, e) =>
+                {
+                    LoadScreen(MenuScreen.NewPurchaseOrder);
+                };
+            }
+
             ShowScreen(uc);
             ucMenue1.SetActiveScreen(screen);
 
-            // التحديث الاحترافي للشريط السفلي بمجرد تحميل الشاشة
             if (ucBottomBar1 != null)
             {
                 ucBottomBar1.UpdateBottomBarInfo(screen, _loggedInUserName);

@@ -60,6 +60,7 @@
             sbtnPurchaseOrder.Text = "طلب شراء";
             sbtnPurchaseOrder.TextAlign = ContentAlignment.MiddleLeft;
             sbtnPurchaseOrder.UseVisualStyleBackColor = false;
+            sbtnPurchaseOrder.Click += sbtnPurchaseOrder_Click;
             // 
             // icnDecreasedParts
             // 
@@ -84,11 +85,11 @@
             lblInventoryInfo.BackColor = Color.Transparent;
             lblInventoryInfo.BorderColor = Color.Transparent;
             lblInventoryInfo.BorderRadius = 0;
-            lblInventoryInfo.BorderSize = 0;
             lblInventoryInfo.Font = new Font("Cairo", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblInventoryInfo.ForeColor = Color.FromArgb(71, 85, 105);
             lblInventoryInfo.Location = new Point(1174, 51);
             lblInventoryInfo.Name = "lblInventoryInfo";
+            lblInventoryInfo.RightToLeft = RightToLeft.Yes;
             lblInventoryInfo.Size = new Size(316, 24);
             lblInventoryInfo.TabIndex = 12;
             lblInventoryInfo.Text = "المخزون الحالي: 0 | الحد الأدني: 20";
@@ -99,8 +100,6 @@
             slblAlertRowTiltle.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             slblAlertRowTiltle.BackColor = Color.Transparent;
             slblAlertRowTiltle.BorderColor = Color.Black;
-            slblAlertRowTiltle.BorderRadius = 8;
-            slblAlertRowTiltle.BorderSize = 0;
             slblAlertRowTiltle.Font = new Font("Cairo", 10F);
             slblAlertRowTiltle.ForeColor = Color.Black;
             slblAlertRowTiltle.Location = new Point(1116, 19);

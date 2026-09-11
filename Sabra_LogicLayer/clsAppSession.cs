@@ -7,6 +7,7 @@ namespace Sabra.LogicLayer
         public static User CurrentUser { get; private set; }
         public static Employee CurrentEmployee { get; private set; }
         public static bool IsLoggedIn => CurrentUser != null;
+        public static bool IsManager => CurrentEmployee?.PositionName == "مدير فرع";
 
         public static void SetSession(User user, Employee employee)
         {

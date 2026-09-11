@@ -16,7 +16,7 @@ namespace SabraForSpareParts.Screens
         {
             InitializeComponent();
         }
-        public void SetData(string poCode, string supplierName, decimal amount)
+        public void SetData(int poCode, string supplierName, decimal amount)
         {
             lblPOInfo.Text = $"{poCode} — {supplierName}";
             lblAmount.Text = $"{amount:N0} ج";

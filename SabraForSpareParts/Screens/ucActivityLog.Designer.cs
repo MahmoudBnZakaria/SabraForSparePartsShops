@@ -262,7 +262,6 @@
             sabraDateTimePickerTo.TabIndex = 21;
             sabraDateTimePickerTo.TextColor = Color.FromArgb(45, 45, 45);
             sabraDateTimePickerTo.Value = new DateTime(2026, 8, 30, 0, 0, 0, 0);
-            sabraDateTimePickerTo.Load += sabraDateTimePickerTo_Load;
             // 
             // sabraDateTimePickerFrom
             // 
@@ -285,7 +284,6 @@
             sabraDateTimePickerFrom.TabIndex = 15;
             sabraDateTimePickerFrom.TextColor = Color.FromArgb(45, 45, 45);
             sabraDateTimePickerFrom.Value = new DateTime(2026, 8, 30, 0, 0, 0, 0);
-            sabraDateTimePickerFrom.Load += sabraDateTimePickerFrom_Load;
             // 
             // scbtnRestFilters
             // 

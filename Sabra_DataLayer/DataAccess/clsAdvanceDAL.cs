@@ -12,14 +12,34 @@ namespace Sabra.DataLayer
         {
             AdvanceID = (int)r["Advance_ID"],
             EmployeeID = (int)r["Employee_ID"],
-            EmployeeName = r["Full_Name"] == DBNull.Value ? null : r["Full_Name"].ToString(),
+
+            EmployeeName =
+         r["Employee_Name"] == DBNull.Value
+             ? null
+             : r["Employee_Name"].ToString(),
+
             Amount = (decimal)r["Amount"],
             AdvanceDate = (DateTime)r["Advance_Date"],
             StatusID = (int)r["Status_ID"],
-            StatusName = r["Status_Name"] == DBNull.Value ? null : r["Status_Name"].ToString(),
-            ApprovedBy = r["Approved_By"] == DBNull.Value ? (int?)null : (int)r["Approved_By"],
+
+            StatusName =
+         r["Status_Name"] == DBNull.Value
+             ? null
+             : r["Status_Name"].ToString(),
+
+            ApprovedBy =
+         r["Approved_By"] == DBNull.Value
+             ? (int?)null
+             : (int)r["Approved_By"],
+
+            ApproverName =
+         r["Approver_Name"] == DBNull.Value
+             ? null
+             : r["Approver_Name"].ToString(),
+
             CreatedAt = (DateTime)r["Created_At"]
         };
+
 
         public List<Advance> GetAll(int? statusID = null, int? employeeID = null)
         {

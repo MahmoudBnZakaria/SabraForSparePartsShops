@@ -3,6 +3,7 @@ using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.WinForms;
+using Sabra.DataLayer.DataAccess;
 using Sabra.LogicLayer;
 using SkiaSharp;
 using System;
@@ -16,6 +17,9 @@ namespace SabraForSpareParts.Screens
     public partial class usDashboard : SabraUserControl
     {
         private clsReportsBusiness _reportsBusiness = new clsReportsBusiness();
+        private clsSalesInvoiceBusiness _salesInvoiceBusiness = new clsSalesInvoiceBusiness();
+        private clsPurchaseOrderBusiness _purchaseOrderBusiness = new clsPurchaseOrderBusiness();
+        private clsLookupDAL _lookUpDAL = new clsLookupDAL();
         public usDashboard()
         {
             InitializeComponent();
@@ -26,12 +30,19 @@ namespace SabraForSpareParts.Screens
         {
             LoadWeeklySalesChart();
             LoadSalesDistributionChart();
-            LoadRecentInvoicesMock();
-            LoadUrgentAlertsMock();
-            LoadPendingOrdersMock();
+            LoadRecentInvoices();
+            LoadUrgentAlerts();
+            LoadPendingOrders();
+            LoadPanelsNumbers();
+
+            var culture = new System.Globalization.CultureInfo("ar-EG");
+
+            lblDate.Text = DateTime.Now.ToString("dddd d MMMM yyyy", culture);
+
+            lblLastRefresh.Text = "آخر تحديث " + DateTime.Now.ToString("hh:mm tt", culture);
         }
 
-        //Linked
+
         private void LoadWeeklySalesChart()
         {
             var from = DateTime.Today.AddDays(-6);
@@ -93,19 +104,19 @@ namespace SabraForSpareParts.Screens
             cartesianChart1.LegendPosition = LegendPosition.Bottom;
         }
 
-        //linked
         private void LoadSalesDistributionChart()
         {
             var result = _reportsBusiness.GetTopSellingParts(5);
             if (!result.Success || result.Data == null || !result.Data.Any())
                 return;
 
-            var series = result.Data.Select(part => new PieSeries<double>{ 
-                    Name = part.PartName,
-                    Values = new[] { 
+            var series = result.Data.Select(part => new PieSeries<double>
+            {
+                Name = part.PartName,
+                Values = new[] {
                         (double)part.TotalQtySold
                     },
-                    InnerRadius = 60,
+                InnerRadius = 60,
 
             }).ToArray();
 
@@ -113,10 +124,9 @@ namespace SabraForSpareParts.Screens
             pieChart1.LegendPosition = LegendPosition.Right;
         }
 
-        //Linked
-        private void LoadUrgentAlertsMock()
+        private void LoadUrgentAlerts()
         {
-            var result= _reportsBusiness.GetLowStockSuggestions();
+            var result = _reportsBusiness.GetLowStockSuggestions();
             if (!result.Success || result.Data == null)
                 return;
 
@@ -129,41 +139,48 @@ namespace SabraForSpareParts.Screens
         }
 
 
-
-        private void LoadRecentInvoicesMock()
+        private void LoadRecentInvoices()
         {
-            var sampleInvoices = new List<(int Id, string Customer, decimal Amount, string Status)>
-            {
-                (1084, "ورشة النيل", 3200m, "مسدد"),
-                (1083, "محمد علي", 850m, "جزئي"),
-                (1082, "عميل نقدي", 1450m, "مسدد"),
-                (1081, "ورشة الأمل", 7600m, "آجل")
-            };
+            flpRecentInvoices.SuspendLayout();
 
-            PopulateFlowLayoutPanel(flpRecentInvoices, sampleInvoices, inv =>
+            foreach (Control control in flpRecentInvoices.Controls)
             {
-                var row = new ucInvoiceRow();
-                row.SetData(inv.Id, inv.Customer, inv.Amount, inv.Status);
-                return row;
-            }, 10);
+                control.Dispose();
+            }
+            flpRecentInvoices.Controls.Clear();
+
+            var invoices = _salesInvoiceBusiness.GetAll(DateTime.Now.AddDays(-3), DateTime.Now);
+            if (invoices != null)
+            {
+                PopulateFlowLayoutPanel(flpRecentInvoices, invoices.Data, inv =>
+                {
+                    var row = new ucInvoiceRow();
+                    row.SetData(inv.InvoiceID, inv.CustomerName, inv.FinalAmount, inv.PaymentStatus);
+                    return row;
+                }, 10);
+            }
+
+
+            flpRecentInvoices.ResumeLayout();
         }
 
-        private void LoadPendingOrdersMock()
+        private void LoadPendingOrders()
         {
-            var pendingOrders = new List<(string Code, string Supplier, decimal Amount)>
-            {
-                ("PO-0045", "بوش", 15200m),
-                ("PO-0044", "NGK", 8400m)
-            };
+            var POStatuses = _lookUpDAL.GetAllPOStatuses();
+            var status = POStatuses.FirstOrDefault(s => s.StatusName == "قيد الانتظار");
+            var pendingOrders = _purchaseOrderBusiness.GetAll(null, status?.StatusID);
 
-            PopulateFlowLayoutPanel(flpPendingOrders, pendingOrders, po =>
+            if (pendingOrders != null)
             {
-                var row = new ucPendingPORow();
-                row.SetData(po.Code, po.Supplier, po.Amount);
-                return row;
-            }, 5);
+
+                PopulateFlowLayoutPanel(flpPendingOrders, pendingOrders.Data, po =>
+                {
+                    var row = new ucPendingPORow();
+                    row.SetData(po.POID, po.SupplierName, po.TotalAmount);
+                    return row;
+                }, 5);
+            }
         }
-
 
         private void PopulateFlowLayoutPanel<T>(FlowLayoutPanel panel, IEnumerable<T> data, Func<T, UserControl> controlCreator, int widthMargin)
         {
@@ -180,6 +197,20 @@ namespace SabraForSpareParts.Screens
             }
 
             panel.ResumeLayout();
+        }
+
+        private void LoadPanelsNumbers()
+        {
+            var Info = _reportsBusiness.GetDashboardSummary();
+            lblSales.Text = Info.Data.TodaySales.ToString();
+            lblNetProfit.Text = Info.Data.TodayNetProfit.ToString();
+            lblLowStockCount.Text = Info.Data.LowStockCount.ToString();
+            lblUnpaidInvoices.Text = Info.Data.TodayInvoiceCount.ToString();
+        }
+
+        private void sbtnRefresh_Click(object sender, EventArgs e)
+        {
+            LoadDashboardData();
         }
     }
 }

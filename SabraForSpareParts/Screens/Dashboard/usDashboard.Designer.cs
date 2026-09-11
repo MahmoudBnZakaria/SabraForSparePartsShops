@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultLegend skDefaultLegend1 = new LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultLegend();
+            LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultLegend skDefaultLegend3 = new LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultLegend();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(usDashboard));
-            LiveChartsCore.Drawing.Padding padding1 = new LiveChartsCore.Drawing.Padding();
-            LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultTooltip skDefaultTooltip1 = new LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultTooltip();
-            LiveChartsCore.Drawing.Padding padding2 = new LiveChartsCore.Drawing.Padding();
-            LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultLegend skDefaultLegend2 = new LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultLegend();
-            LiveChartsCore.Drawing.Padding padding3 = new LiveChartsCore.Drawing.Padding();
-            LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultTooltip skDefaultTooltip2 = new LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultTooltip();
-            LiveChartsCore.Drawing.Padding padding4 = new LiveChartsCore.Drawing.Padding();
+            LiveChartsCore.Drawing.Padding padding5 = new LiveChartsCore.Drawing.Padding();
+            LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultTooltip skDefaultTooltip3 = new LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultTooltip();
+            LiveChartsCore.Drawing.Padding padding6 = new LiveChartsCore.Drawing.Padding();
+            LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultLegend skDefaultLegend4 = new LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultLegend();
+            LiveChartsCore.Drawing.Padding padding7 = new LiveChartsCore.Drawing.Padding();
+            LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultTooltip skDefaultTooltip4 = new LiveChartsCore.SkiaSharpView.SKCharts.SKDefaultTooltip();
+            LiveChartsCore.Drawing.Padding padding8 = new LiveChartsCore.Drawing.Padding();
             spnlTopPanel = new SabraPanel();
             sabraButton2 = new SabraButton();
             sbtnRefresh = new SabraButton();
             lblLastRefresh = new SabraLabel();
-            sabraLabel1 = new SabraLabel();
+            lblDate = new SabraLabel();
             slblTitleOfTopPanel = new SabraLabel();
             pnlSales = new SabraPanel();
             lblSalesDisc = new SabraLabel();
@@ -57,7 +57,7 @@
             icnUnpaidInvoices = new FontAwesome.Sharp.IconPictureBox();
             pnlLowStock = new SabraPanel();
             lblLowStockPartsDisc = new SabraLabel();
-            lblLowStockParts = new SabraLabel();
+            lblLowStockCount = new SabraLabel();
             icnDecreasedParts = new FontAwesome.Sharp.IconPictureBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             sabraPanel5 = new SabraPanel();
@@ -101,7 +101,7 @@
             spnlTopPanel.Controls.Add(sabraButton2);
             spnlTopPanel.Controls.Add(sbtnRefresh);
             spnlTopPanel.Controls.Add(lblLastRefresh);
-            spnlTopPanel.Controls.Add(sabraLabel1);
+            spnlTopPanel.Controls.Add(lblDate);
             spnlTopPanel.Controls.Add(slblTitleOfTopPanel);
             spnlTopPanel.Dock = DockStyle.Top;
             spnlTopPanel.EnableHover = true;
@@ -160,6 +160,7 @@
             sbtnRefresh.TabIndex = 3;
             sbtnRefresh.Text = "تحديث";
             sbtnRefresh.UseVisualStyleBackColor = false;
+            sbtnRefresh.Click += sbtnRefresh_Click;
             // 
             // lblLastRefresh
             // 
@@ -168,7 +169,7 @@
             lblLastRefresh.BackColor = Color.Transparent;
             lblLastRefresh.Font = new Font("Cairo", 10F);
             lblLastRefresh.ForeColor = Color.DimGray;
-            lblLastRefresh.Location = new Point(1161, 58);
+            lblLastRefresh.Location = new Point(1149, 58);
             lblLastRefresh.Margin = new Padding(0);
             lblLastRefresh.Name = "lblLastRefresh";
             lblLastRefresh.RightToLeft = RightToLeft.Yes;
@@ -177,22 +178,22 @@
             lblLastRefresh.Text = "آخر تحديث 11:23 ص";
             lblLastRefresh.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // sabraLabel1
+            // lblDate
             // 
-            sabraLabel1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            sabraLabel1.AutoSize = true;
-            sabraLabel1.BackColor = Color.Transparent;
-            sabraLabel1.BorderColor = Color.Firebrick;
-            sabraLabel1.Font = new Font("Cairo", 10F);
-            sabraLabel1.ForeColor = Color.DimGray;
-            sabraLabel1.Location = new Point(1326, 58);
-            sabraLabel1.Margin = new Padding(0);
-            sabraLabel1.Name = "sabraLabel1";
-            sabraLabel1.RightToLeft = RightToLeft.Yes;
-            sabraLabel1.Size = new Size(161, 32);
-            sabraLabel1.TabIndex = 1;
-            sabraLabel1.Text = "الأربعاء 15 يناير 2025";
-            sabraLabel1.TextAlign = ContentAlignment.MiddleCenter;
+            lblDate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblDate.AutoSize = true;
+            lblDate.BackColor = Color.Transparent;
+            lblDate.BorderColor = Color.Firebrick;
+            lblDate.Font = new Font("Cairo", 10F);
+            lblDate.ForeColor = Color.DimGray;
+            lblDate.Location = new Point(1326, 58);
+            lblDate.Margin = new Padding(0);
+            lblDate.Name = "lblDate";
+            lblDate.RightToLeft = RightToLeft.Yes;
+            lblDate.Size = new Size(161, 32);
+            lblDate.TabIndex = 1;
+            lblDate.Text = "الأربعاء 15 يناير 2025";
+            lblDate.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // slblTitleOfTopPanel
             // 
@@ -382,9 +383,9 @@
             lblUnpaidInvoicesDisc.Margin = new Padding(0);
             lblUnpaidInvoicesDisc.Name = "lblUnpaidInvoicesDisc";
             lblUnpaidInvoicesDisc.RightToLeft = RightToLeft.Yes;
-            lblUnpaidInvoicesDisc.Size = new Size(135, 32);
+            lblUnpaidInvoicesDisc.Size = new Size(146, 32);
             lblUnpaidInvoicesDisc.TabIndex = 2;
-            lblUnpaidInvoicesDisc.Text = "فواتير غير مسددة";
+            lblUnpaidInvoicesDisc.Text = "عدد الفواتير (اليوم)";
             lblUnpaidInvoicesDisc.TextAlign = ContentAlignment.MiddleRight;
             // 
             // lblUnpaidInvoices
@@ -427,7 +428,7 @@
             pnlLowStock.BorderSize = 0;
             tableLayoutPanel1.SetColumnSpan(pnlLowStock, 3);
             pnlLowStock.Controls.Add(lblLowStockPartsDisc);
-            pnlLowStock.Controls.Add(lblLowStockParts);
+            pnlLowStock.Controls.Add(lblLowStockCount);
             pnlLowStock.Controls.Add(icnDecreasedParts);
             pnlLowStock.EnableHover = true;
             pnlLowStock.ForeColor = Color.Black;
@@ -457,21 +458,21 @@
             lblLowStockPartsDisc.Text = "قطع مخزون منخفض";
             lblLowStockPartsDisc.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // lblLowStockParts
+            // lblLowStockCount
             // 
-            lblLowStockParts.AutoSize = true;
-            lblLowStockParts.BackColor = Color.Transparent;
-            lblLowStockParts.Font = new Font("Cairo", 12F, FontStyle.Bold);
-            lblLowStockParts.ForeColor = Color.DarkRed;
-            lblLowStockParts.IsTitle = true;
-            lblLowStockParts.Location = new Point(129, 16);
-            lblLowStockParts.Margin = new Padding(0);
-            lblLowStockParts.Name = "lblLowStockParts";
-            lblLowStockParts.RightToLeft = RightToLeft.Yes;
-            lblLowStockParts.Size = new Size(39, 37);
-            lblLowStockParts.TabIndex = 2;
-            lblLowStockParts.Text = "22";
-            lblLowStockParts.TextAlign = ContentAlignment.MiddleRight;
+            lblLowStockCount.AutoSize = true;
+            lblLowStockCount.BackColor = Color.Transparent;
+            lblLowStockCount.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            lblLowStockCount.ForeColor = Color.DarkRed;
+            lblLowStockCount.IsTitle = true;
+            lblLowStockCount.Location = new Point(129, 16);
+            lblLowStockCount.Margin = new Padding(0);
+            lblLowStockCount.Name = "lblLowStockCount";
+            lblLowStockCount.RightToLeft = RightToLeft.Yes;
+            lblLowStockCount.Size = new Size(39, 37);
+            lblLowStockCount.TabIndex = 2;
+            lblLowStockCount.Text = "22";
+            lblLowStockCount.TextAlign = ContentAlignment.MiddleRight;
             // 
             // icnDecreasedParts
             // 
@@ -655,20 +656,20 @@
             cartesianChart1.AutoUpdateEnabled = true;
             cartesianChart1.ChartTheme = null;
             cartesianChart1.ForeColor = Color.Black;
-            skDefaultLegend1.AnimationsSpeed = TimeSpan.Parse("00:00:00.1500000");
-            skDefaultLegend1.Content = null;
-            skDefaultLegend1.IsValid = false;
-            skDefaultLegend1.Opacity = 1F;
-            padding1.Bottom = 0F;
-            padding1.Left = 0F;
-            padding1.Right = 0F;
-            padding1.Top = 0F;
-            skDefaultLegend1.Padding = padding1;
-            skDefaultLegend1.RemoveOnCompleted = false;
-            skDefaultLegend1.RotateTransform = 0F;
-            skDefaultLegend1.X = 0F;
-            skDefaultLegend1.Y = 0F;
-            cartesianChart1.Legend = skDefaultLegend1;
+            skDefaultLegend3.AnimationsSpeed = TimeSpan.Parse("00:00:00.1500000");
+            skDefaultLegend3.Content = null;
+            skDefaultLegend3.IsValid = false;
+            skDefaultLegend3.Opacity = 1F;
+            padding5.Bottom = 0F;
+            padding5.Left = 0F;
+            padding5.Right = 0F;
+            padding5.Top = 0F;
+            skDefaultLegend3.Padding = padding5;
+            skDefaultLegend3.RemoveOnCompleted = false;
+            skDefaultLegend3.RotateTransform = 0F;
+            skDefaultLegend3.X = 0F;
+            skDefaultLegend3.Y = 0F;
+            cartesianChart1.Legend = skDefaultLegend3;
             cartesianChart1.Location = new Point(16, 59);
             cartesianChart1.Margin = new Padding(30);
             cartesianChart1.MatchAxesScreenDataRatio = false;
@@ -676,21 +677,21 @@
             cartesianChart1.RightToLeft = RightToLeft.Yes;
             cartesianChart1.Size = new Size(760, 250);
             cartesianChart1.TabIndex = 1;
-            skDefaultTooltip1.AnimationsSpeed = TimeSpan.Parse("00:00:00.1500000");
-            skDefaultTooltip1.Content = null;
-            skDefaultTooltip1.IsValid = false;
-            skDefaultTooltip1.Opacity = 1F;
-            padding2.Bottom = 0F;
-            padding2.Left = 0F;
-            padding2.Right = 0F;
-            padding2.Top = 0F;
-            skDefaultTooltip1.Padding = padding2;
-            skDefaultTooltip1.RemoveOnCompleted = false;
-            skDefaultTooltip1.RotateTransform = 0F;
-            skDefaultTooltip1.Wedge = 10;
-            skDefaultTooltip1.X = 0F;
-            skDefaultTooltip1.Y = 0F;
-            cartesianChart1.Tooltip = skDefaultTooltip1;
+            skDefaultTooltip3.AnimationsSpeed = TimeSpan.Parse("00:00:00.1500000");
+            skDefaultTooltip3.Content = null;
+            skDefaultTooltip3.IsValid = false;
+            skDefaultTooltip3.Opacity = 1F;
+            padding6.Bottom = 0F;
+            padding6.Left = 0F;
+            padding6.Right = 0F;
+            padding6.Top = 0F;
+            skDefaultTooltip3.Padding = padding6;
+            skDefaultTooltip3.RemoveOnCompleted = false;
+            skDefaultTooltip3.RotateTransform = 0F;
+            skDefaultTooltip3.Wedge = 10;
+            skDefaultTooltip3.X = 0F;
+            skDefaultTooltip3.Y = 0F;
+            cartesianChart1.Tooltip = skDefaultTooltip3;
             cartesianChart1.TooltipFindingStrategy = LiveChartsCore.Measure.TooltipFindingStrategy.Automatic;
             cartesianChart1.UpdaterThrottler = TimeSpan.Parse("00:00:00.0500000");
             // 
@@ -803,40 +804,40 @@
             pieChart1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             pieChart1.AutoUpdateEnabled = true;
             pieChart1.ChartTheme = null;
-            skDefaultLegend2.AnimationsSpeed = TimeSpan.Parse("00:00:00.1500000");
-            skDefaultLegend2.Content = null;
-            skDefaultLegend2.IsValid = false;
-            skDefaultLegend2.Opacity = 1F;
-            padding3.Bottom = 0F;
-            padding3.Left = 0F;
-            padding3.Right = 0F;
-            padding3.Top = 0F;
-            skDefaultLegend2.Padding = padding3;
-            skDefaultLegend2.RemoveOnCompleted = false;
-            skDefaultLegend2.RotateTransform = 0F;
-            skDefaultLegend2.X = 0F;
-            skDefaultLegend2.Y = 0F;
-            pieChart1.Legend = skDefaultLegend2;
+            skDefaultLegend4.AnimationsSpeed = TimeSpan.Parse("00:00:00.1500000");
+            skDefaultLegend4.Content = null;
+            skDefaultLegend4.IsValid = false;
+            skDefaultLegend4.Opacity = 1F;
+            padding7.Bottom = 0F;
+            padding7.Left = 0F;
+            padding7.Right = 0F;
+            padding7.Top = 0F;
+            skDefaultLegend4.Padding = padding7;
+            skDefaultLegend4.RemoveOnCompleted = false;
+            skDefaultLegend4.RotateTransform = 0F;
+            skDefaultLegend4.X = 0F;
+            skDefaultLegend4.Y = 0F;
+            pieChart1.Legend = skDefaultLegend4;
             pieChart1.Location = new Point(27, 59);
             pieChart1.Margin = new Padding(3, 138, 3, 138);
             pieChart1.Name = "pieChart1";
             pieChart1.Size = new Size(400, 250);
             pieChart1.TabIndex = 0;
-            skDefaultTooltip2.AnimationsSpeed = TimeSpan.Parse("00:00:00.1500000");
-            skDefaultTooltip2.Content = null;
-            skDefaultTooltip2.IsValid = false;
-            skDefaultTooltip2.Opacity = 1F;
-            padding4.Bottom = 0F;
-            padding4.Left = 0F;
-            padding4.Right = 0F;
-            padding4.Top = 0F;
-            skDefaultTooltip2.Padding = padding4;
-            skDefaultTooltip2.RemoveOnCompleted = false;
-            skDefaultTooltip2.RotateTransform = 0F;
-            skDefaultTooltip2.Wedge = 10;
-            skDefaultTooltip2.X = 0F;
-            skDefaultTooltip2.Y = 0F;
-            pieChart1.Tooltip = skDefaultTooltip2;
+            skDefaultTooltip4.AnimationsSpeed = TimeSpan.Parse("00:00:00.1500000");
+            skDefaultTooltip4.Content = null;
+            skDefaultTooltip4.IsValid = false;
+            skDefaultTooltip4.Opacity = 1F;
+            padding8.Bottom = 0F;
+            padding8.Left = 0F;
+            padding8.Right = 0F;
+            padding8.Top = 0F;
+            skDefaultTooltip4.Padding = padding8;
+            skDefaultTooltip4.RemoveOnCompleted = false;
+            skDefaultTooltip4.RotateTransform = 0F;
+            skDefaultTooltip4.Wedge = 10;
+            skDefaultTooltip4.X = 0F;
+            skDefaultTooltip4.Y = 0F;
+            pieChart1.Tooltip = skDefaultTooltip4;
             pieChart1.UpdaterThrottler = TimeSpan.Parse("00:00:00.0500000");
             // 
             // usDashboard
@@ -879,7 +880,7 @@
 
         private SabraPanel spnlTopPanel;
         private SabraLabel slblTitleOfTopPanel;
-        private SabraLabel sabraLabel1;
+        private SabraLabel lblDate;
         private SabraButton sabraButton2;
         private SabraButton sbtnRefresh;
         private SabraLabel lblLastRefresh;
@@ -897,7 +898,7 @@
         private FontAwesome.Sharp.IconPictureBox icnUnpaidInvoices;
         private SabraPanel pnlLowStock;
         private SabraLabel lblLowStockPartsDisc;
-        private SabraLabel lblLowStockParts;
+        private SabraLabel lblLowStockCount;
         private FontAwesome.Sharp.IconPictureBox icnDecreasedParts;
         private TableLayoutPanel tableLayoutPanel1;
         private SabraPanel sabraPanel1;
