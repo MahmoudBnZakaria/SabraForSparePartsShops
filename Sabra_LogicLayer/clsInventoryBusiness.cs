@@ -17,10 +17,11 @@ namespace Sabra.LogicLayer
         private readonly clsAuditDAL _auditDAL = new clsAuditDAL();
         private readonly clsLookupDAL _lookupDAL = new clsLookupDAL();
 
-        public OperationResult<List<InventoryItem>> GetAll() 
+        public OperationResult<List<InventoryItem>> GetAll()
             => OperationResult<List<InventoryItem>>.Ok(_inventoryDAL.GetAll());
 
-        public OperationResult<InventoryItem> GetByID(int partID) { 
+        public OperationResult<InventoryItem> GetByID(int partID)
+        {
             var item = _inventoryDAL.GetByID(partID);
             if (item == null)
                 return OperationResult<InventoryItem>.Fail("القطعة غير موجودة");
@@ -28,23 +29,24 @@ namespace Sabra.LogicLayer
             return OperationResult<InventoryItem>.Ok(item);
         }
 
-        public OperationResult<InventoryItem> GetByBarcode(string barcode) {
-
+        public OperationResult<InventoryItem> GetByBarcode(string barcode)
+        {
             if (string.IsNullOrWhiteSpace(barcode))
                 return OperationResult<InventoryItem>.Fail("الباركود فارغ.");
 
             var item = _inventoryDAL.GetByBarcode(barcode);
             if (item == null)
                 return OperationResult<InventoryItem>.Fail("لا توجد قطعة بهذا الباركود.");
-            return OperationResult <InventoryItem>.Ok(item);
+            return OperationResult<InventoryItem>.Ok(item);
         }
 
         public OperationResult<List<InventoryItem>> Search(string keyword, int? categoryID = null, int? brandID = null, string stockFilter = null)
             => OperationResult<List<InventoryItem>>.Ok(_inventoryDAL.Search(keyword, categoryID, brandID, stockFilter));
 
-        public OperationResult AddPart(InventoryItem item) {
+        public OperationResult AddPart(InventoryItem item)
+        {
             if (string.IsNullOrWhiteSpace(item.PartName))
-                OperationResult.Fail("أسم القطعة مطلوب");
+                return OperationResult.Fail("أسم القطعة مطلوب");
             if (item.PurchasePrice < 0)
                 return OperationResult.Fail("سعر الشراء لا يمكن أن يكون سالبا");
             if (item.SellingPrice < item.PurchasePrice)
@@ -58,28 +60,27 @@ namespace Sabra.LogicLayer
             if (!string.IsNullOrWhiteSpace(item.Barcode) && _inventoryDAL.BarcodeExists(item.Barcode))
                 return OperationResult.Fail("الباركود موجود مسبقاً لقطعة أخرى.");
 
-            if(item.SellingPrice == 0 && item.MarkupPercent > 0)
-                    item.SellingPrice = item.PurchasePrice * (1 + item.MarkupPercent / 100);
+            if (item.SellingPrice == 0 && item.MarkupPercent > 0)
+                item.SellingPrice = item.PurchasePrice * (1 + item.MarkupPercent / 100);
 
             int newID = _inventoryDAL.Add(item);
 
-
             // تسجيل السعر في تاريخ الأسعار
-
             if (item.SellingPrice > 0)
-                _priceHistDAL.AddPriceRecord(newID, item.SellingPrice, DateTime.Today);
+                _priceHistDAL.UpdatePrice(newID, item.SellingPrice);
 
             // تسجيل الكمية الأولية في سجل الحركة
-
-            if (item.CurrentStock > 0 && clsAppSession.IsLoggedIn) {
+            if (item.CurrentStock > 0 && clsAppSession.IsLoggedIn)
+            {
                 var movTypes = _lookupDAL.GetAllMovementTypes();
                 var purchaseType = movTypes.FirstOrDefault(m => m.TypeName == "شراء");
 
                 if (purchaseType != null)
                 {
-                    _auditDAL.Add(new AuditLog { 
+                    _auditDAL.Add(new AuditLog
+                    {
                         PartID = newID,
-                        MovementTypeID= purchaseType.MovementTypeID,
+                        MovementTypeID = purchaseType.MovementTypeID,
                         QuantityChange = item.CurrentStock,
                         UserID = clsAppSession.CurrentUser.UserID,
                         ActionDate = DateTime.Now,
@@ -87,10 +88,11 @@ namespace Sabra.LogicLayer
                     });
                 }
             }
-                    return OperationResult.Ok("تمت إضافة القطعة بنجاح.", newID);
+            return OperationResult.Ok("تمت إضافة القطعة بنجاح.", newID);
         }
 
-        public OperationResult UpdatePart(InventoryItem item) {
+        public OperationResult UpdatePart(InventoryItem item)
+        {
             if (string.IsNullOrWhiteSpace(item.PartName))
                 return OperationResult.Fail("أسم القطعة مطلوب");
             if (item.PurchasePrice < 0 || item.SellingPrice < 0)
@@ -101,23 +103,24 @@ namespace Sabra.LogicLayer
             return OperationResult.Ok("تم تحديث بيانات القطعة");
         }
 
-        public OperationResult UpdatePrice(int partID, decimal newPrice) {
+        public OperationResult UpdatePrice(int partID, decimal newPrice)
+        {
             if (newPrice <= 0)
                 return OperationResult.Fail("سعر البيع يجب أن يكون أكبر من الصفر");
 
-            _priceHistDAL.CloseCurrentPrice(partID, DateTime.Today);
-            _priceHistDAL.AddPriceRecord(partID, newPrice, DateTime.Today);
-
+            _priceHistDAL.UpdatePrice(partID, newPrice);
             _inventoryDAL.UpdatePrice(partID, newPrice);
             return OperationResult.Ok("تم تحديث سعر البيع بنجاح");
-            
         }
 
-        public OperationResult AdjustStock(int partID, int newStock, string reason) {
+        public OperationResult AdjustStock(int partID, int newStock, string reason)
+        {
             if (newStock < 0)
                 return OperationResult.Fail("الكمية لايمكن أن تكون سالبة");
+
             if (string.IsNullOrWhiteSpace(reason))
                 return OperationResult.Fail("سبب التعديل مطلوب");
+
             if (!clsAppSession.IsLoggedIn)
                 return OperationResult.Fail("يجب تسجيل الدخول أولا");
 
@@ -126,32 +129,40 @@ namespace Sabra.LogicLayer
                 return OperationResult.Fail("القطعة غير موجودة");
 
             int diff = newStock - item.CurrentStock;
+            if (diff == 0)
+                return OperationResult.Ok("لا يوجد تغيير في الكمية");
 
-            _inventoryDAL.UpdateStock(partID, newStock);
+            var movTypes = _lookupDAL.GetAllMovementTypes();
+            var adjType = movTypes.FirstOrDefault(m => m.TypeName == "تعديل يدوي");
+            if (adjType == null)
+                return OperationResult.Fail("نوع الحركة (تعديل يدوي) غير معرف في النظام");
 
-            var movType = _lookupDAL.GetAllMovementTypes();
-            var adjType = movType.FirstOrDefault(m => m.TypeName == "تعديل يدوي");
-            if (adjType != null)
-                _auditDAL.Add(new AuditLog
-                {
-                    PartID = partID,
-                    MovementTypeID = adjType.MovementTypeID,
-                    QuantityChange = diff,
-                    UserID = clsAppSession.CurrentUser.UserID,
-                    ActionDate = DateTime.Now,
-                    Remarks = reason
-                }
-                    );
+            bool updated = _inventoryDAL.AdjustStock(partID, diff, adjType.MovementTypeID, clsAppSession.CurrentUser.UserID, reason);
+            if (!updated)
+                return OperationResult.Fail("فشل تعديل الكمية");
+
+            _auditDAL.Add(new AuditLog
+            {
+                PartID = partID,
+                MovementTypeID = adjType.MovementTypeID,
+                QuantityChange = diff,
+                UserID = clsAppSession.CurrentUser.UserID,
+                ActionDate = DateTime.Now,
+                Remarks = reason
+            });
+
             return OperationResult.Ok("تم تعديل الكمية بنجاح");
         }
 
-        public OperationResult SoftDelete(int PartID) { 
+        public OperationResult SoftDelete(int PartID)
+        {
             _inventoryDAL.SoftDelete(PartID);
             return OperationResult.Ok("تم حذف القطعة من النظام");
         }
 
         public OperationResult<List<PriceHistory>> GetPriceHistory(int partID)
             => OperationResult<List<PriceHistory>>.Ok(_priceHistDAL.GetByPart(partID));
+
         public OperationResult<List<Category>> GetCategories()
             => OperationResult<List<Category>>.Ok(_lookupDAL.GetAllCategories());
 
@@ -161,13 +172,14 @@ namespace Sabra.LogicLayer
         public OperationResult<List<Unit>> GetUnits()
             => OperationResult<List<Unit>>.Ok(_lookupDAL.GetAllUnits());
 
-        public OperationResult AddCategory(string name) {
-
+        public OperationResult AddCategory(string name)
+        {
             if (string.IsNullOrWhiteSpace(name))
                 return OperationResult.Fail("الإسم مطلوب");
             _lookupDAL.AddCategory(name.Trim());
             return OperationResult.Ok("تمت إضافة التصنيف");
         }
+
         public OperationResult AddBrand(string name, string country = null)
         {
             if (string.IsNullOrWhiteSpace(name)) return OperationResult.Fail("الاسم مطلوب.");
@@ -183,7 +195,7 @@ namespace Sabra.LogicLayer
         }
 
         public decimal CalcSellingPrice(decimal purchasePrice, decimal markupPercent)
-            => purchasePrice > 0 ?Math.Round(purchasePrice * (1 + markupPercent / 100),2) : 0;
+            => purchasePrice > 0 ? Math.Round(purchasePrice * (1 + markupPercent / 100), 2) : 0;
 
         public decimal CalcMarkupPercent(decimal purchasePrice, decimal sellingPrice)
             => purchasePrice > 0 ? Math.Round((sellingPrice - purchasePrice) / purchasePrice * 100, 2) : 0;

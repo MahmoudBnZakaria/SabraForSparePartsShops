@@ -51,7 +51,7 @@ namespace Sabra.LogicLayer
                 return OperationResult.Fail("كلمة المرور الجديدة و تأكيدها غير متطابقتين");
             if (!PasswordHelper.IsStrong(newPassword))
                 return OperationResult.Fail("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
-            var user = _userDAL.GetByUserID(userID);
+            var user = _userDAL.GetByID(userID);
 
             if (user == null)
                 return OperationResult.Fail("المستخدم غير موجود");

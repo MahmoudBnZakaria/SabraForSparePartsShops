@@ -44,6 +44,18 @@ namespace Sabra.DataLayer
             }
         }
 
+        public User GetByEmployeeID(int employeeID)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_User_GetByEmployeeID"))
+            {
+                clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
+                conn.Open();
+                using (var r = cmd.ExecuteReader())
+                    return r.Read() ? MapUser(r) : null;
+            }
+        }
+
         public List<User> GetAll()
         {
             var list = new List<User>();

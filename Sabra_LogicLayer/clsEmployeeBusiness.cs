@@ -60,17 +60,19 @@ namespace Sabra.LogicLayer
             return OperationResult.Ok("تم تحديث بيانات الموظف");
         }
 
+
         public OperationResult DeactiveEmployee(int employeeID) {
             _employeeDAL.Deactivate(employeeID);
 
             var user = _userDAL.GetByEmployeeID(employeeID);
+
             if (user != null)
                 _userDAL.SetActive(user.UserID, false);
             return OperationResult.Ok("تم إيقاف الموظف بنجاح");
         }
 
         public OperationResult<List<EmployeePosition>> GetEmployee_Positions() { 
-            var list = _lookupDAL.GetAllEmployee_Positions();
+            var list = _lookupDAL.GetAllPositions();
             return OperationResult<List<EmployeePosition>>.Ok(list);
         }
 

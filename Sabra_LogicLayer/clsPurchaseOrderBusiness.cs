@@ -12,7 +12,7 @@ namespace Sabra.LogicLayer
     public class clsPurchaseOrderBusiness
     {
 
-        private readonly clsPurshaseOrderDAL _poDal = new clsPurshaseOrderDAL();
+        private readonly clsPurchaseOrderDAL _poDal = new clsPurchaseOrderDAL();
         private readonly clsInventoryDAL _inventoryDAL = new clsInventoryDAL();
         private readonly clsSupplierDAL _supplierDAL = new clsSupplierDAL();
         private readonly clsTreasuryLogDAL _treasuryDAL = new clsTreasuryLogDAL();

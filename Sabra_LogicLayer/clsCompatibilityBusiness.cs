@@ -10,7 +10,7 @@ namespace Sabra.LogicLayer
 {
     public class clsCompatibilityBusiness
     {
-        private readonly clsCarCompatibiltyDAL _dal = new clsCarCompatibiltyDAL();
+        private readonly clsCarCompatibilityDAL _dal = new clsCarCompatibilityDAL();
 
         public OperationResult<List<CarCompatibility>> GetByPart(int partID)
             => OperationResult<List<CarCompatibility>>.Ok(_dal.GetByPart(partID));
