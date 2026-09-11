@@ -43,7 +43,7 @@ namespace Sabra.LogicLayer
             if (method?.MethodName == "محفظة إلكترونية") { 
                 var wallet = _walletDAL.GetByEmployee(payroll.EmployeeID);
                 if(wallet != null)
-                    _walletDAL.UpdateBalance(payroll.EmployeeID, wallet.CurrentBalance + payroll.AmountPaid);
+                    _walletDAL.AdjustBalance(payroll.EmployeeID,payroll.AmountPaid);
             }
             var txTypes = _lookupDAL.GetAllTransactionTypes();
             var outType = txTypes.First(t => t.TypeName == "صادر");
@@ -64,7 +64,7 @@ namespace Sabra.LogicLayer
         }
 
         public OperationResult<List<Payroll>> PrepareMonthlyPayroll(string monthYear) {
-            var employees = _employeeDAL.GetAll(ActiveOnly: true);
+            var employees = _employeeDAL.GetAll(true);
             var list = employees.Select(emp => new Payroll {
                 EmployeeID = emp.EmployeeID,
                 EmployeeName = emp.FullName,

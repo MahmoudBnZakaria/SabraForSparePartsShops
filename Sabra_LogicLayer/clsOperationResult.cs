@@ -10,7 +10,7 @@ namespace Sabra.LogicLayer
     {
         public bool Success { get; set; }
         public string Message { get; set; }
-        public int NewID { get; set; } // To Get Idenentitiy
+        public int NewID { get; set; } // للحصول على الـ Identity الجديد عند الإضافة
 
         public static OperationResult Ok(string message = "تمت العملية بنجاح", int newID = 0) => new OperationResult
         {
@@ -20,16 +20,17 @@ namespace Sabra.LogicLayer
         };
 
         public static OperationResult Fail(string message) => new OperationResult { Success = false, Message = message };
-
     }
 
-    public class OperationResult<T> : OperationResult { 
+    public class OperationResult<T> : OperationResult
+    {
         public T Data { get; set; }
 
-        public static OperationResult<T> Ok ( T data, string message = "تمت العملية بنجاح") 
-            => new OperationResult<T> { Success = true, Message = message, Data = data};
+        public static OperationResult<T> Ok(T data, string message = "تمت العملية بنجاح")
+            => new OperationResult<T> { Success = true, Message = message, Data = data };
 
-        public static OperationResult<T> Fail(string message)
+        public new static OperationResult<T> Fail(string message)
             => new OperationResult<T> { Success = false, Message = message };
     }
+
 }

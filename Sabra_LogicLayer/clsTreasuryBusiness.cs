@@ -11,9 +11,11 @@ namespace Sabra.LogicLayer
 {
     public class clsTreasuryBusiness
     {
-
         private readonly clsTreasuryLogDAL _treasuryDAL = new clsTreasuryLogDAL();
         private readonly clsLookupDAL _lookupDAL = new clsLookupDAL();
+
+        private const string InTransactionType = "وارد";
+        private const string OutTransactionType = "صادر";
 
         public OperationResult<decimal> GetCurrentBalance()
             => OperationResult<decimal>.Ok(_treasuryDAL.GetCurrentBalance());
@@ -24,21 +26,22 @@ namespace Sabra.LogicLayer
             => OperationResult<List<TreasuryLog>>.Ok(
                 _treasuryDAL.GetAll(from, to, typeID, methodID));
 
-        /// <summary>
-        /// إيداع يدوي في الخزنة (وارد بدون مستند)
-        /// </summary>
+        /// <summary>إيداع يدوي في الخزنة (وارد بدون مستند).</summary>
         public OperationResult ManualDeposit(decimal amount, int paymentMethodID, string notes)
         {
             if (amount <= 0)
                 return OperationResult.Fail("المبلغ يجب أن يكون أكبر من صفر.");
-
+            if (paymentMethodID <= 0)
+                return OperationResult.Fail("يجب اختيار طريقة الدفع.");
             if (string.IsNullOrWhiteSpace(notes))
                 return OperationResult.Fail("ملاحظات الإيداع مطلوبة.");
 
             var txTypes = _lookupDAL.GetAllTransactionTypes();
-            var inType = txTypes.First(t => t.TypeName == "وارد");
-            decimal bal = _treasuryDAL.GetCurrentBalance();
+            var inType = txTypes.FirstOrDefault(t => t.TypeName == InTransactionType);
+            if (inType == null)
+                return OperationResult.Fail($"نوع الحركة ({InTransactionType}) غير معرّف في النظام.");
 
+            decimal bal = _treasuryDAL.GetCurrentBalance();
             _treasuryDAL.Add(new TreasuryLog
             {
                 TransactionTypeID = inType.TransactionTypeID,
@@ -52,14 +55,13 @@ namespace Sabra.LogicLayer
             return OperationResult.Ok($"تم إيداع {amount:N2} جنيه بنجاح.");
         }
 
-        /// <summary>
-        /// سحب يدوي من الخزنة (صادر بدون مستند)
-        /// </summary>
+        /// <summary>سحب يدوي من الخزنة (صادر بدون مستند).</summary>
         public OperationResult ManualWithdraw(decimal amount, int paymentMethodID, string notes)
         {
             if (amount <= 0)
                 return OperationResult.Fail("المبلغ يجب أن يكون أكبر من صفر.");
-
+            if (paymentMethodID <= 0)
+                return OperationResult.Fail("يجب اختيار طريقة الدفع.");
             if (string.IsNullOrWhiteSpace(notes))
                 return OperationResult.Fail("ملاحظات السحب مطلوبة.");
 
@@ -68,7 +70,9 @@ namespace Sabra.LogicLayer
                 return OperationResult.Fail($"المبلغ أكبر من الرصيد الحالي ({bal:N2} جنيه).");
 
             var txTypes = _lookupDAL.GetAllTransactionTypes();
-            var outType = txTypes.First(t => t.TypeName == "صادر");
+            var outType = txTypes.FirstOrDefault(t => t.TypeName == OutTransactionType);
+            if (outType == null)
+                return OperationResult.Fail($"نوع الحركة ({OutTransactionType}) غير معرّف في النظام.");
 
             _treasuryDAL.Add(new TreasuryLog
             {
@@ -85,6 +89,6 @@ namespace Sabra.LogicLayer
 
         public OperationResult<List<PaymentMethod>> GetPaymentMethods()
             => OperationResult<List<PaymentMethod>>.Ok(_lookupDAL.GetAllPaymentMethods());
-
     }
+
 }

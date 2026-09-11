@@ -11,10 +11,12 @@ namespace Sabra.LogicLayer
     public class clsCustomerBusiness
     {
         private readonly clsCustomerDAL _dal = new clsCustomerDAL();
+
         public OperationResult<List<Customer>> GetAll()
             => OperationResult<List<Customer>>.Ok(_dal.GetAll());
 
-        public OperationResult<Customer> GetByID(int id) { 
+        public OperationResult<Customer> GetByID(int id)
+        {
             var cust = _dal.GetByID(id);
             if (cust == null)
                 return OperationResult<Customer>.Fail("العميل غير موجود");
@@ -24,7 +26,8 @@ namespace Sabra.LogicLayer
         public OperationResult<List<Customer>> Search(string keyword, int? typeID = null, string debtFilter = null)
             => OperationResult<List<Customer>>.Ok(_dal.Search(keyword, typeID, debtFilter));
 
-        public OperationResult Add(Customer cust) {
+        public OperationResult Add(Customer cust)
+        {
             if (string.IsNullOrWhiteSpace(cust.CustomerName))
                 return OperationResult.Fail("اسم العميل مطلوب.");
             if (cust.CreditLimit < 0)
@@ -32,19 +35,26 @@ namespace Sabra.LogicLayer
 
             int newID = _dal.Add(cust);
             return OperationResult.Ok("تمت إضافة العميل بنجاح.", newID);
-
         }
 
-        public OperationResult Update(Customer cust) {
+        public OperationResult Update(Customer cust)
+        {
             if (string.IsNullOrWhiteSpace(cust.CustomerName))
                 return OperationResult.Fail("اسم العميل مطلوب");
+            if (cust.CreditLimit < 0)
+                return OperationResult.Fail("الحد الائتماني لا يمكن أن يكون سالباً.");
+
+            var existing = _dal.GetByID(cust.CustomerID);
+            if (existing == null)
+                return OperationResult.Fail("العميل غير موجود");
+
             _dal.Update(cust);
             return OperationResult.Ok("تم تحديث بيانات العميل");
-            
         }
 
         public bool HasExceededCreditLimit(Customer customer, decimal additionalAmount)
             => customer.CreditLimit > 0 &&
-                (customer.TotalBalance + additionalAmount) > customer.CreditLimit;
+               (customer.TotalBalance + additionalAmount) > customer.CreditLimit;
     }
+
 }

@@ -16,31 +16,30 @@ namespace Sabra.LogicLayer
             => OperationResult<List<CarCompatibility>>.Ok(_dal.GetByPart(partID));
 
         public OperationResult<List<CarCompatibility>> SearchByCar(string make, string model, string year = null)
-        { 
-            if(string.IsNullOrWhiteSpace(make) || string.IsNullOrWhiteSpace(model))
+        {
+            if (string.IsNullOrWhiteSpace(make) || string.IsNullOrWhiteSpace(model))
                 return OperationResult<List<CarCompatibility>>.Fail("يجب إدخال الشركة والموديل.");
 
-            var list = _dal.SearchByCar(make.Trim(), model.Trim(), year.Trim());
+            var list = _dal.SearchByCar(make.Trim(), model.Trim(), string.IsNullOrWhiteSpace(year) ? null : year.Trim());
             return OperationResult<List<CarCompatibility>>.Ok(list);
-
         }
 
         public OperationResult Add(CarCompatibility cc)
         {
             if (cc.PartID <= 0)
-                return OperationResult.Fail("يجب أختيار قطعة");
+                return OperationResult.Fail("يجب اختيار قطعة");
             if (string.IsNullOrWhiteSpace(cc.CarMake) || string.IsNullOrWhiteSpace(cc.CarModel))
-                return OperationResult.Fail("الشركة و الموديل مطلوبين");
+                return OperationResult.Fail("الشركة والموديل مطلوبان");
 
             _dal.Add(cc);
-
             return OperationResult.Ok("تمت إضافة التوافق");
-
         }
 
-        public OperationResult Delete(int compatibilityID) { 
+        public OperationResult Delete(int compatibilityID)
+        {
             _dal.Delete(compatibilityID);
             return OperationResult.Ok("تم حذف التوافق");
         }
     }
+
 }

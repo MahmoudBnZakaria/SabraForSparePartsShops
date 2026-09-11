@@ -16,72 +16,89 @@ namespace Sabra.LogicLayer
         private readonly clsStaffWalletDAL _walletDAL = new clsStaffWalletDAL();
         private readonly clsLookupDAL _lookupDAL = new clsLookupDAL();
 
-        public OperationResult<List<Employee>> GetAll(bool activeOnly = true) { 
-            var list = _employeeDAL.GetAll(activeOnly);
-            return OperationResult<List<Employee>>.Ok(list);
-        }
-        public OperationResult<Employee> GetByID(int employeeID) { 
+        public OperationResult<List<Employee>> GetAll(bool activeOnly = true)
+            => OperationResult<List<Employee>>.Ok(_employeeDAL.GetAll(activeOnly));
+
+        public OperationResult<Employee> GetByID(int employeeID)
+        {
             var emp = _employeeDAL.GetByID(employeeID);
             if (emp == null)
                 return OperationResult<Employee>.Fail("الموظف غير موجود");
             return OperationResult<Employee>.Ok(emp);
         }
-        public OperationResult<List<Employee>> Search(string keyword) {
+
+        public OperationResult<List<Employee>> Search(string keyword)
+        {
             if (string.IsNullOrWhiteSpace(keyword))
                 return OperationResult<List<Employee>>.Fail("أدخل كلمة للبحث");
-            var list = _employeeDAL.Search(keyword.Trim());
-            return OperationResult<List<Employee>>.Ok(list);
+            return OperationResult<List<Employee>>.Ok(_employeeDAL.Search(keyword.Trim()));
         }
 
-        public OperationResult AddEmployee(Employee emp, bool createdWallet = true) {
+        public OperationResult AddEmployee(Employee emp, bool createWallet = true)
+        {
             if (string.IsNullOrWhiteSpace(emp.FullName))
                 return OperationResult.Fail("اسم الموظف مطلوب");
-            if(emp.PositionID <= 0)
+            if (emp.PositionID <= 0)
                 return OperationResult.Fail("يجب اختيار وظيفة للموظف");
-            if(emp.BasicSalary < 0)
-                return OperationResult.Fail("الراتب الأساسي لا يمكن أن يكون سالبا");
+            if (emp.BasicSalary < 0)
+                return OperationResult.Fail("الراتب الأساسي لا يمكن أن يكون سالباً");
+            if (emp.HireDate == default)
+                emp.HireDate = DateTime.Today;
             if (emp.HireDate > DateTime.Today)
-                return OperationResult.Fail("تاريخ التعيين لا يمكن أن يكون في المستبقل");
+                return OperationResult.Fail("تاريخ التعيين لا يمكن أن يكون في المستقبل");
+
             emp.IsActive = true;
             int newID = _employeeDAL.Add(emp);
 
-            if (createdWallet)
+            if (createWallet)
                 _walletDAL.CreateWallet(newID);
+
             return OperationResult.Ok("تم إضافة الموظف بنجاح", newID);
         }
 
-        public OperationResult UpdateEmployee(Employee emp) {
+        public OperationResult UpdateEmployee(Employee emp)
+        {
             if (string.IsNullOrWhiteSpace(emp.FullName))
-                return OperationResult.Fail("أسم الموظف مطلوب");
+                return OperationResult.Fail("اسم الموظف مطلوب");
             if (emp.BasicSalary < 0)
-                return OperationResult.Fail("الراتب الأساسي لا يمكن أن يكون سالبا");
+                return OperationResult.Fail("الراتب الأساسي لا يمكن أن يكون سالباً");
+            if (emp.HireDate > DateTime.Today)
+                return OperationResult.Fail("تاريخ التعيين لا يمكن أن يكون في المستقبل");
+
+            var existing = _employeeDAL.GetByID(emp.EmployeeID);
+            if (existing == null)
+                return OperationResult.Fail("الموظف غير موجود");
 
             _employeeDAL.Update(emp);
             return OperationResult.Ok("تم تحديث بيانات الموظف");
         }
 
+        public OperationResult DeactivateEmployee(int employeeID)
+        {
+            var emp = _employeeDAL.GetByID(employeeID);
+            if (emp == null)
+                return OperationResult.Fail("الموظف غير موجود");
 
-        public OperationResult DeactiveEmployee(int employeeID) {
             _employeeDAL.Deactivate(employeeID);
 
             var user = _userDAL.GetByEmployeeID(employeeID);
-
             if (user != null)
                 _userDAL.SetActive(user.UserID, false);
+
             return OperationResult.Ok("تم إيقاف الموظف بنجاح");
         }
 
-        public OperationResult<List<EmployeePosition>> GetEmployee_Positions() { 
-            var list = _lookupDAL.GetAllPositions();
-            return OperationResult<List<EmployeePosition>>.Ok(list);
-        }
+        public OperationResult<List<EmployeePosition>> GetPositions()
+            => OperationResult<List<EmployeePosition>>.Ok(_lookupDAL.GetAllPositions());
 
-        public OperationResult AddPosition(string Name) {
-            if (string.IsNullOrWhiteSpace(Name))
+        public OperationResult AddPosition(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
                 return OperationResult.Fail("اسم الوظيفة مطلوب");
 
-            _lookupDAL.AddPosition(Name.Trim());
+            _lookupDAL.AddPosition(name.Trim());
             return OperationResult.Ok("تم إضافة الوظيفة");
         }
     }
+
 }

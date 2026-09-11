@@ -10,7 +10,6 @@ namespace Sabra.LogicLayer
 {
     public class clsReportsBusiness
     {
-
         private readonly clsReportsDAL _reportsDAL = new clsReportsDAL();
 
         // ── المالية ─────────────────────────────────────────────
@@ -53,7 +52,7 @@ namespace Sabra.LogicLayer
             return OperationResult<List<TopCustomerView>>.Ok(_reportsDAL.GetTopCustomers(top));
         }
 
-        // ── الموظفين ─────────────────────────────────────────────
+        // ── الموظفون ─────────────────────────────────────────────
         public OperationResult<List<EmployeePerformanceView>> GetEmployeePerformance()
             => OperationResult<List<EmployeePerformanceView>>.Ok(_reportsDAL.GetEmployeePerformance());
 

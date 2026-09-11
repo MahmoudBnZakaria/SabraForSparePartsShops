@@ -13,14 +13,15 @@ namespace Sabra.LogicLayer
     public class clsReturnsBusiness
     {
         private readonly clsReturnsDAL _returnsDAL = new clsReturnsDAL();
-        private readonly clsInventoryDAL _inventoryDAL = new clsInventoryDAL();
         private readonly clsInvoiceDAL _invoiceDAL = new clsInvoiceDAL();
         private readonly clsCustomerDAL _customerDAL = new clsCustomerDAL();
-        private readonly clsAuditDAL _auditDAL = new clsAuditDAL();
         private readonly clsLookupDAL _lookupDAL = new clsLookupDAL();
 
+        private const string ReturnToStockStatus = "سليمة ترجع للمخزون";
+        private const string ReturnMovement = "مرتجع بيع";
+
         public OperationResult<List<Return>> GetAll(DateTime? from = null, DateTime? to = null)
-            => OperationResult<List<Return>>.Ok(_returnsDAL.GetAll(from , to));
+            => OperationResult<List<Return>>.Ok(_returnsDAL.GetAll(from, to));
 
         public OperationResult ProcessReturn(Return ret)
         {
@@ -35,62 +36,45 @@ namespace Sabra.LogicLayer
 
             var details = _invoiceDAL.GetDetails(ret.InvoiceID);
             var original = details.FirstOrDefault(d => d.PartID == ret.PartID);
-
             if (original == null)
                 return OperationResult.Fail("هذه القطعة غير موجودة في الفاتورة الأصلية");
 
-            if(ret.Quantity > original.Quantity)
+            if (ret.Quantity > original.Quantity)
                 return OperationResult.Fail(
                     $"الكمية المرتجعة ({ret.Quantity}) أكبر من الكمية في الفاتورة ({original.Quantity}).");
 
-            ret.ReturnDate = DateTime.Today;
-            int returnID = _returnsDAL.Add(ret);
-
-
-            // التحقيق من حالة القطعة المرتجعة 
+            // الإجراء المخزن (sp_Returns_Add) هو من يعيد القطعة فعلياً للمخزون ويسجل
+            // حركتها تلقائياً، بشرط تمرير حالة القبول ونوع حركة الإرجاع ومطابقة StatusID لها.
             var statuses = _lookupDAL.GetAllItemStatuses();
-            var returnToStock = statuses.FirstOrDefault(s => s.StatusName == "سليمة ترجع للمخزون");
+            var returnToStock = statuses.FirstOrDefault(s => s.StatusName == ReturnToStockStatus);
 
-            if (returnToStock != null && ret.StatusID == returnToStock.StatusID)
-            {
-                var part = _inventoryDAL.GetByID(ret.PartID);
-                if (part != null)
-                    _inventoryDAL.UpdateStock(ret.PartID, part.CurrentStock += ret.Quantity);
+            var movTypes = _lookupDAL.GetAllMovementTypes();
+            var returnType = movTypes.FirstOrDefault(m => m.TypeName == ReturnMovement);
 
-                var movTypes = _lookupDAL.GetAllMovementTypes();
-                var returnType = movTypes.FirstOrDefault(m => m.TypeName == "مرتجع بيع");
-                if (returnType != null)
-                    _auditDAL.Add(new AuditLog
-                    {
-                        PartID = ret.PartID,
-                        MovementTypeID = returnType.MovementTypeID,
-                        QuantityChange = ret.Quantity,
-                        UserID = clsAppSession.CurrentUser.UserID,
-                        ActionDate = DateTime.Now,
-                        Remarks = $"مرتجع من فاتورة {ret.InvoiceID} — {ret.Reason}"
-                    });
+            ret.ReturnDate = DateTime.Today;
 
-            }
+            int returnID = _returnsDAL.Add(
+                ret,
+                restockOnAccept: returnToStock != null && returnType != null,
+                acceptedStatusID: returnToStock?.StatusID,
+                restockMovementTypeID: returnType?.MovementTypeID,
+                userID: clsAppSession.CurrentUser.UserID);
 
-            // تحديث رصيد العميل لو الفاتورة كانت آجل
-
+            // تحديث رصيد العميل لو الفاتورة كانت آجلة وعليه مديونية بالفعل
             var invoice = _invoiceDAL.GetByID(ret.InvoiceID);
-            if (invoice?.CustomerID.HasValue == true) {
+            if (invoice?.CustomerID.HasValue == true)
+            {
                 decimal returnValue = ret.Quantity * original.UnitPrice;
                 var customer = _customerDAL.GetByID(invoice.CustomerID.Value);
 
                 if (customer != null && customer.TotalBalance > 0)
                 {
-                    _customerDAL.UpdateBalance(
-                            invoice.CustomerID.Value,
-                            Math.Max(0, customer.TotalBalance - returnValue),
-                            null
-                        );
+                    decimal delta = -Math.Min(returnValue, customer.TotalBalance);
+                    _customerDAL.AdjustBalance(invoice.CustomerID.Value, delta, isPayment: false, enforceCreditLimit: false);
                 }
             }
 
             return OperationResult.Ok("تم تسجيل المرتجع بنجاح.", returnID);
-
         }
 
         public OperationResult<List<ItemStatus>> GetItemStatuses()
