@@ -33,7 +33,9 @@
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             sabraPanel1 = new SabraPanel();
-            lblNumberAndtheSupplierOfTheOrder = new SabraLabel();
+            sbtnSearch = new SabraButton();
+            lblNumberOfCustomers = new SabraLabel();
+            stbxSearchForCustomer = new SabraTextBox();
             sbtnAddCustomer = new SabraButton();
             sbtnPrint = new SabraButton();
             sbtnExportAsExcel = new SabraButton();
@@ -51,7 +53,9 @@
             sabraPanel1.BorderColor = Color.LightGray;
             sabraPanel1.BorderRadius = 15;
             sabraPanel1.BorderSize = 1;
-            sabraPanel1.Controls.Add(lblNumberAndtheSupplierOfTheOrder);
+            sabraPanel1.Controls.Add(sbtnSearch);
+            sabraPanel1.Controls.Add(lblNumberOfCustomers);
+            sabraPanel1.Controls.Add(stbxSearchForCustomer);
             sabraPanel1.Controls.Add(sbtnAddCustomer);
             sabraPanel1.Controls.Add(sbtnPrint);
             sabraPanel1.Controls.Add(sbtnExportAsExcel);
@@ -71,21 +75,67 @@
             sabraPanel1.Size = new Size(1502, 119);
             sabraPanel1.TabIndex = 6;
             // 
-            // lblNumberAndtheSupplierOfTheOrder
+            // sbtnSearch
             // 
-            lblNumberAndtheSupplierOfTheOrder.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblNumberAndtheSupplierOfTheOrder.AutoSize = true;
-            lblNumberAndtheSupplierOfTheOrder.BackColor = Color.Transparent;
-            lblNumberAndtheSupplierOfTheOrder.Font = new Font("Cairo", 12F);
-            lblNumberAndtheSupplierOfTheOrder.ForeColor = SystemColors.WindowFrame;
-            lblNumberAndtheSupplierOfTheOrder.Location = new Point(1252, 63);
-            lblNumberAndtheSupplierOfTheOrder.Name = "lblNumberAndtheSupplierOfTheOrder";
-            lblNumberAndtheSupplierOfTheOrder.RightToLeft = RightToLeft.Yes;
-            lblNumberAndtheSupplierOfTheOrder.Size = new Size(149, 37);
-            lblNumberAndtheSupplierOfTheOrder.TabIndex = 20;
-            lblNumberAndtheSupplierOfTheOrder.Text = "87 عميل مسجل";
-            lblNumberAndtheSupplierOfTheOrder.TextAlign = ContentAlignment.MiddleRight;
-            lblNumberAndtheSupplierOfTheOrder.Click += lblNumberAndtheSupplierOfTheOrder_Click;
+            sbtnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            sbtnSearch.BackColor = Color.RoyalBlue;
+            sbtnSearch.BorderColor = Color.DodgerBlue;
+            sbtnSearch.BorderRadius = 10;
+            sbtnSearch.BorderSize = 0;
+            sbtnSearch.FlatAppearance.BorderSize = 0;
+            sbtnSearch.FlatStyle = FlatStyle.Flat;
+            sbtnSearch.Font = new Font("Cairo", 10F, FontStyle.Bold);
+            sbtnSearch.ForeColor = Color.White;
+            sbtnSearch.HoverColor = Color.CornflowerBlue;
+            sbtnSearch.IconChar = FontAwesome.Sharp.IconChar.Search;
+            sbtnSearch.IconColor = Color.Beige;
+            sbtnSearch.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            sbtnSearch.IconSize = 30;
+            sbtnSearch.ImageAlign = ContentAlignment.MiddleRight;
+            sbtnSearch.Location = new Point(576, 27);
+            sbtnSearch.Name = "sbtnSearch";
+            sbtnSearch.NormalColor = Color.RoyalBlue;
+            sbtnSearch.Padding = new Padding(10, 0, 10, 0);
+            sbtnSearch.Size = new Size(65, 61);
+            sbtnSearch.TabIndex = 22;
+            sbtnSearch.TextAlign = ContentAlignment.MiddleLeft;
+            sbtnSearch.UseVisualStyleBackColor = false;
+            sbtnSearch.Click += sbtnSearch_Click;
+            // 
+            // lblNumberOfCustomers
+            // 
+            lblNumberOfCustomers.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblNumberOfCustomers.AutoSize = true;
+            lblNumberOfCustomers.BackColor = Color.Transparent;
+            lblNumberOfCustomers.Font = new Font("Cairo", 12F);
+            lblNumberOfCustomers.ForeColor = SystemColors.WindowFrame;
+            lblNumberOfCustomers.Location = new Point(1252, 63);
+            lblNumberOfCustomers.Name = "lblNumberOfCustomers";
+            lblNumberOfCustomers.RightToLeft = RightToLeft.Yes;
+            lblNumberOfCustomers.Size = new Size(149, 37);
+            lblNumberOfCustomers.TabIndex = 20;
+            lblNumberOfCustomers.Text = "87 عميل مسجل";
+            lblNumberOfCustomers.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // stbxSearchForCustomer
+            // 
+            stbxSearchForCustomer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            stbxSearchForCustomer.AutoSize = true;
+            stbxSearchForCustomer.BackColor = Color.White;
+            stbxSearchForCustomer.Font = new Font("Cairo", 15F);
+            stbxSearchForCustomer.ForeColor = Color.FromArgb(64, 64, 64);
+            stbxSearchForCustomer.Location = new Point(647, 26);
+            stbxSearchForCustomer.Name = "stbxSearchForCustomer";
+            stbxSearchForCustomer.Padding = new Padding(10, 7, 25, 7);
+            stbxSearchForCustomer.PlaceholderText = "بحث عن عميل..";
+            stbxSearchForCustomer.Required = true;
+            stbxSearchForCustomer.RightToLeft = RightToLeft.Yes;
+            stbxSearchForCustomer.SelectedText = "";
+            stbxSearchForCustomer.SelectionLength = 0;
+            stbxSearchForCustomer.SelectionStart = 0;
+            stbxSearchForCustomer.Size = new Size(444, 62);
+            stbxSearchForCustomer.TabIndex = 21;
+            stbxSearchForCustomer.Texts = "";
             // 
             // sbtnAddCustomer
             // 
@@ -248,7 +298,7 @@
             dgvCustomers.HeaderForeColor = Color.FromArgb(30, 41, 59);
             dgvCustomers.HeaderHeight = 4;
             dgvCustomers.HoverBackColor = Color.FromArgb(241, 245, 249);
-            dgvCustomers.Location = new Point(13, 159);
+            dgvCustomers.Location = new Point(13, 152);
             dgvCustomers.MultiSelect = false;
             dgvCustomers.Name = "dgvCustomers";
             dgvCustomers.RightToLeft = RightToLeft.Yes;
@@ -269,7 +319,7 @@
             dgvCustomers.SelectionBackColor = Color.FromArgb(30, 58, 138);
             dgvCustomers.SelectionForeColor = Color.White;
             dgvCustomers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCustomers.Size = new Size(1476, 831);
+            dgvCustomers.Size = new Size(1476, 838);
             dgvCustomers.TabIndex = 7;
             dgvCustomers.CellContentClick += dgvCustomers_CellContentClick;
             // 
@@ -291,12 +341,14 @@
         #endregion
 
         private SabraPanel sabraPanel1;
-        private SabraLabel lblNumberAndtheSupplierOfTheOrder;
+        private SabraLabel lblNumberOfCustomers;
         private SabraButton sbtnAddCustomer;
         private SabraButton sbtnPrint;
         private SabraButton sbtnExportAsExcel;
         private FontAwesome.Sharp.IconPictureBox icnDecreasedParts;
         private SabraLabel slblTitleOfTopPanel;
         private SabraDataGridView dgvCustomers;
+        private SabraButton sbtnSearch;
+        private SabraTextBox stbxSearchForCustomer;
     }
 }

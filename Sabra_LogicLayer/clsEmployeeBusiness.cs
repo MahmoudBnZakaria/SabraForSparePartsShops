@@ -88,6 +88,32 @@ namespace Sabra.LogicLayer
             return OperationResult.Ok("تم إيقاف الموظف بنجاح");
         }
 
+        public OperationResult ActivateEmployee(int employeeID)
+        {
+            var employee =
+                _employeeDAL.GetByID(employeeID);
+
+            if (employee == null)
+                return OperationResult
+                    .Fail("الموظف غير موجود");
+
+            _employeeDAL.Activate(employeeID);
+
+            var user =
+                _userDAL.GetByEmployeeID(employeeID);
+
+            if (user != null)
+            {
+                _userDAL.SetActive(
+                    user.UserID,
+                    true);
+            }
+
+            return OperationResult
+                .Ok("تم تفعيل الموظف بنجاح");
+        }
+
+
         public OperationResult<List<EmployeePosition>> GetPositions()
             => OperationResult<List<EmployeePosition>>.Ok(_lookupDAL.GetAllPositions());
 

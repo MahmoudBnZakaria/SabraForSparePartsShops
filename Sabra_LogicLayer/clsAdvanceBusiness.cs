@@ -7,14 +7,6 @@ using System.Linq;
 
 namespace Sabra.LogicLayer
 {
-    public enum AdvanceStatus
-    {
-        Pending = 1,  // قيد الانتظار
-        Approved = 2, // تمت الموافقة
-        Rejected = 3, // مرفوضة
-        Canceled = 4  // ملغاة
-    }
-
     public class clsAdvanceBusiness
     {
         private readonly clsAdvanceDAL _advDAL = new clsAdvanceDAL();
@@ -22,36 +14,34 @@ namespace Sabra.LogicLayer
         private readonly clsTreasuryLogDAL _treasuryDAL = new clsTreasuryLogDAL();
         private readonly clsLookupDAL _lookupDAL = new clsLookupDAL();
 
+        private const string PendingStatus = "قيد الانتظار";
+        private const string ApprovedStatus = "موافق عليها";
+        private const string RejectedStatus = "مرفوضة";
+        private const string SettledStatus = "مسددة";
+        private const string CancelledStatus = "ملغاة";
+
         private const string OutTransactionType = "صادر";
 
         public OperationResult<List<Advance>> GetAll(int? statusID = null, int? employeeID = null)
-        {
-            var user = clsAppSession.CurrentUser;
-            if (user == null)
-                return OperationResult<List<Advance>>.Fail("لا يوجد مستخدم مسجل الدخول.");
-
-            if (clsAppSession.IsManager)
-            {
-                return OperationResult<List<Advance>>.Ok(_advDAL.GetAll());
-            }
-
-            return OperationResult<List<Advance>>.Ok(
-                _advDAL.GetAll(null, clsAppSession.CurrentEmployee.EmployeeID));
-        }
+            => OperationResult<List<Advance>>.Ok(_advDAL.GetAll(statusID, employeeID));
 
         public OperationResult RequestAdvance(Advance adv)
         {
             if (adv.EmployeeID <= 0)
-                return OperationResult.Fail("يجب تحديد الموظف.");
-
+                return OperationResult.Fail("يجب تحديد الموظف");
             if (adv.Amount <= 0)
-                return OperationResult.Fail("قيمة السلفة يجب أن تكون أكبر من الصفر.");
+                return OperationResult.Fail("قيمة السلفة يجب أن تكون أكبر من الصفر");
 
             var employee = _employeeDAL.GetByID(adv.EmployeeID);
             if (employee == null)
-                return OperationResult.Fail("الموظف غير موجود.");
+                return OperationResult.Fail("الموظف غير موجود");
 
-            adv.StatusID = (int)AdvanceStatus.Pending;
+            var statuses = _lookupDAL.GetAllAdvanceStatuses();
+            var pending = statuses.FirstOrDefault(s => s.StatusName == PendingStatus);
+            if (pending == null)
+                return OperationResult.Fail($"حالة ({PendingStatus}) غير معرّفة في النظام.");
+
+            adv.StatusID = pending.StatusID;
             adv.AdvanceDate = DateTime.Today;
 
             int newID = _advDAL.Add(adv);
@@ -62,27 +52,29 @@ namespace Sabra.LogicLayer
         {
             if (!clsAppSession.IsLoggedIn)
                 return OperationResult.Fail("يجب تسجيل الدخول أولاً.");
-
             if (paymentMethodID <= 0)
                 return OperationResult.Fail("يجب اختيار طريقة الدفع.");
 
             var adv = _advDAL.GetAll().FirstOrDefault(a => a.AdvanceID == advanceID);
             if (adv == null)
-                return OperationResult.Fail("السلفة غير موجودة.");
+                return OperationResult.Fail("السلفة غير موجودة");
 
-            if (adv.StatusID == (int)AdvanceStatus.Approved)
+            var statuses = _lookupDAL.GetAllAdvanceStatuses();
+            var approvedSt = statuses.FirstOrDefault(s => s.StatusName == ApprovedStatus);
+            if (approvedSt == null)
+                return OperationResult.Fail($"حالة ({ApprovedStatus}) غير معرّفة في النظام.");
+
+            if (adv.StatusID == approvedSt.StatusID)
                 return OperationResult.Fail("تمت الموافقة على هذه السلفة وصرفها بالفعل.");
-
 
             var txTypes = _lookupDAL.GetAllTransactionTypes();
             var outType = txTypes.FirstOrDefault(t => t.TypeName == OutTransactionType);
             if (outType == null)
                 return OperationResult.Fail($"نوع الحركة ({OutTransactionType}) غير معرّف في النظام.");
 
-            bool updated = _advDAL.UpdateStatus(advanceID, (int)AdvanceStatus.Approved, clsAppSession.CurrentEmployee.EmployeeID);
+            bool updated = _advDAL.UpdateStatus(advanceID, approvedSt.StatusID, clsAppSession.CurrentEmployee.EmployeeID);
             if (!updated)
                 return OperationResult.Fail("فشل تحديث حالة السلفة.");
-
 
             decimal bal = _treasuryDAL.GetCurrentBalance();
             _treasuryDAL.Add(new TreasuryLog
@@ -104,30 +96,67 @@ namespace Sabra.LogicLayer
         {
             var adv = _advDAL.GetAll().FirstOrDefault(a => a.AdvanceID == advanceID);
             if (adv == null)
-                return OperationResult.Fail("السلفة غير موجودة.");
+                return OperationResult.Fail("السلفة غير موجودة");
 
-            // تحديث الحالة إلى (مرفوضة = 3)
-            int? actionByUserId = clsAppSession.IsLoggedIn ? clsAppSession.CurrentEmployee.EmployeeID : (int?)null;
+            var statuses = _lookupDAL.GetAllAdvanceStatuses();
+            var rejectedSt = statuses.FirstOrDefault(s => s.StatusName == RejectedStatus);
+            if (rejectedSt == null)
+                return OperationResult.Fail($"حالة ({RejectedStatus}) غير معرّفة في النظام.");
 
-            _advDAL.UpdateStatus(advanceID, (int)AdvanceStatus.Rejected, actionByUserId);
+            _advDAL.UpdateStatus(advanceID, rejectedSt.StatusID,
+                clsAppSession.IsLoggedIn ? clsAppSession.CurrentEmployee.EmployeeID : (int?)null);
 
-            return OperationResult.Ok("تم رفض طلب السلفة بنجاح.");
+            return OperationResult.Ok("تم رفض طلب السلفة");
         }
 
-        public OperationResult CancelAdvance(int advanceID)
+        public OperationResult CancelAdvance(int advanceID, int requestingEmployeeID)
         {
             var adv = _advDAL.GetAll().FirstOrDefault(a => a.AdvanceID == advanceID);
             if (adv == null)
-                return OperationResult.Fail("السلفة غير موجودة.");
+                return OperationResult.Fail("السلفة غير موجودة");
 
-            if (adv.StatusID == (int)AdvanceStatus.Approved)
-                return OperationResult.Fail("لا يمكن إلغاء سلفة تم صرفها بالفعل.");
+            if (adv.EmployeeID != requestingEmployeeID)
+                return OperationResult.Fail("لا يمكنك إلغاء طلب سلفة خاص بموظف آخر.");
 
-            int? actionByUserId = clsAppSession.IsLoggedIn ? clsAppSession.CurrentEmployee.EmployeeID : (int?)null;
+            if (!IsPending(adv))
+                return OperationResult.Fail("لا يمكن إلغاء هذا الطلب لأن حالته الحالية لا تسمح بذلك.");
 
-            _advDAL.UpdateStatus(advanceID, (int)AdvanceStatus.Canceled, actionByUserId);
+            var statuses = _lookupDAL.GetAllAdvanceStatuses();
+            var cancelledSt = statuses.FirstOrDefault(s => s.StatusName == CancelledStatus);
+            if (cancelledSt == null)
+                return OperationResult.Fail($"حالة ({CancelledStatus}) غير معرّفة في النظام.");
+
+            bool updated = _advDAL.UpdateStatus(advanceID, cancelledSt.StatusID, requestingEmployeeID);
+            if (!updated)
+                return OperationResult.Fail("فشل إلغاء طلب السلفة.");
 
             return OperationResult.Ok("تم إلغاء طلب السلفة.");
+        }
+
+        public OperationResult MarkSettled(int advanceID)
+        {
+            var adv = _advDAL.GetAll().FirstOrDefault(a => a.AdvanceID == advanceID);
+            if (adv == null)
+                return OperationResult.Fail("السلفة غير موجودة");
+
+            var statuses = _lookupDAL.GetAllAdvanceStatuses();
+            var settledSt = statuses.FirstOrDefault(s => s.StatusName == SettledStatus);
+            if (settledSt == null)
+                return OperationResult.Fail($"حالة ({SettledStatus}) غير معرّفة في النظام.");
+
+            _advDAL.UpdateStatus(advanceID, settledSt.StatusID, null);
+            return OperationResult.Ok("تم تسديد السلفة.");
+        }
+
+        public bool IsPending(Advance advance)
+        {
+            if (advance == null)
+                return false;
+
+            var statuses = _lookupDAL.GetAllAdvanceStatuses();
+            var pendingSt = statuses.FirstOrDefault(s => s.StatusName == PendingStatus);
+
+            return pendingSt != null && advance.StatusID == pendingSt.StatusID;
         }
     }
 }

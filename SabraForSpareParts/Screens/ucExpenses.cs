@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Sabra.DataLayer;
+using Sabra.DataLayer.Models;
+using Sabra.LogicLayer;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -8,258 +11,268 @@ namespace SabraForSpareParts.Screens
 {
     public partial class ucExpenses : SabraUserControl
     {
-        private readonly List<Expense> _expenses = new List<Expense>();
+#region Fields
+
+    private readonly clsExpenseBusiness _expenseBusiness =
+        new clsExpenseBusiness();
+
+        private readonly clsEmployeeBusiness _employeeBusiness =
+            new clsEmployeeBusiness();
+
+        private List<Expense> _expenses =
+            new List<Expense>();
+
+        private List<ExpenseCategory> _categories =
+            new List<ExpenseCategory>();
+
+        private List<PaymentMethod> _paymentMethods =
+            new List<PaymentMethod>();
+
+        private List<Employee> _employees =
+            new List<Employee>();
+
+        #endregion
+
+
+        #region Constructor
 
         public ucExpenses()
         {
             InitializeComponent();
 
             Load += ucExpenses_Load;
-            btnSearch.Click += btnSearch_Click;
-            smbxPeriod.SelectedIndexChanged += smbxPeriod_SelectedIndexChanged;
-            cmbClassification.SelectedIndexChanged += cmbClassification_SelectedIndexChanged;
+
+            btnSearch.Click +=
+                btnSearch_Click;
+
+            smbxPeriod.SelectedIndexChanged +=
+                smbxPeriod_SelectedIndexChanged;
+
+            cmbClassification.SelectedIndexChanged +=
+                cmbClassification_SelectedIndexChanged;
         }
 
-        private void ucExpenses_Load(object sender, EventArgs e)
+        #endregion
+
+
+        #region Load
+
+        private void ucExpenses_Load(
+            object sender,
+            EventArgs e)
         {
-            SetupExpenseScreen();
+            SetupScreen();
         }
 
-        #region Setup
 
-        private void SetupExpenseScreen()
+        private void SetupScreen()
         {
-            LoadMockData();
-            SetupFilters();
+            SetupPeriodFilter();
+
             SetupGrid();
 
-            dtpFrom.Value = DateTime.Today.AddDays(-30);
-            dtpTo.Value = DateTime.Today;
+            LoadCategories();
 
-            smbxPeriod.SelectedIndex = 0;
-            cmbClassification.SelectedIndex = 0;
+            LoadPaymentMethods();
+
+            LoadEmployees();
+
+            dtpFrom.Value =
+                DateTime.Today.AddDays(-30);
+
+            dtpTo.Value =
+                DateTime.Today;
+
+            smbxPeriod.SelectedIndex =
+                0;
 
             LoadExpenses();
         }
 
         #endregion
 
-        #region Mock Data
 
-        private void LoadMockData()
+        #region Categories
+
+        private void LoadCategories()
         {
-            _expenses.Clear();
+            var result =
+                _expenseBusiness
+                    .GetCategories();
 
-            string[] employees =
+
+            if (!result.Success)
             {
-                "أحمد محمد",
-                "سارة أحمد",
-                "محمود حسن",
-                "محمد علي",
-                "عبدالله محمد",
-                "إبراهيم أحمد",
-                "خالد حسن",
-                "مصطفى محمود"
-            };
+                ShowError(
+                    result.Message);
 
-            string[] paymentMethods =
-            {
-                "كاش",
-                "تحويل",
-                "بطاقة"
-            };
-
-            var random = new Random(2025);
-
-            DateTime startDate = DateTime.Today.AddDays(-60);
-
-            for (int i = 1; i <= 100; i++)
-            {
-                DateTime date =
-                    startDate.AddDays(random.Next(0, 61));
-
-                int type = random.Next(0, 5);
-
-                string classification;
-                string notes;
-
-                switch (type)
-                {
-                    case 0:
-                        classification = "كهرباء";
-                        notes = "فاتورة كهرباء شهرية";
-                        break;
-
-                    case 1:
-                        classification = "إيجار";
-                        notes = "إيجار المحل";
-                        break;
-
-                    case 2:
-                        classification = "مستلزمات";
-                        notes = "شراء مستلزمات للمحل";
-                        break;
-
-                    case 3:
-                        classification = "نقل وشحن";
-                        notes = "شحن بضاعة من المورد";
-                        break;
-
-                    default:
-                        classification = "أخرى";
-                        notes = "مصروفات تشغيلية";
-                        break;
-                }
-
-                decimal amount;
-
-                switch (classification)
-                {
-                    case "كهرباء":
-                        amount = random.Next(500, 2501);
-                        break;
-
-                    case "إيجار":
-                        amount = random.Next(2500, 6001);
-                        break;
-
-                    case "مستلزمات":
-                        amount = random.Next(150, 1501);
-                        break;
-
-                    case "نقل وشحن":
-                        amount = random.Next(100, 1201);
-                        break;
-
-                    default:
-                        amount = random.Next(100, 2001);
-                        break;
-                }
-
-                _expenses.Add(new Expense
-                {
-                    Id = i,
-                    Date = date,
-                    Classification = classification,
-                    Amount = amount,
-                    PaidBy = employees[random.Next(employees.Length)],
-                    PaymentMethod = paymentMethods[
-                        random.Next(paymentMethods.Length)
-                    ],
-                    Notes = notes
-                });
+                return;
             }
 
-            // بيانات واضحة وثابتة للتجربة
 
-            _expenses.Add(new Expense
-            {
-                Id = 101,
-                Date = new DateTime(2025, 1, 15),
-                Classification = "كهرباء",
-                Amount = 850,
-                PaidBy = "أحمد محمد",
-                PaymentMethod = "كاش",
-                Notes = "فاتورة كهرباء يناير"
-            });
+            _categories =
+                result.Data ??
+                new List<ExpenseCategory>();
 
-            _expenses.Add(new Expense
-            {
-                Id = 102,
-                Date = new DateTime(2025, 1, 1),
-                Classification = "إيجار",
-                Amount = 3500,
-                PaidBy = "أحمد محمد",
-                PaymentMethod = "تحويل",
-                Notes = "إيجار يناير 2025"
-            });
 
-            _expenses.Add(new Expense
-            {
-                Id = 103,
-                Date = new DateTime(2025, 1, 5),
-                Classification = "مستلزمات",
-                Amount = 450,
-                PaidBy = "سارة أحمد",
-                PaymentMethod = "كاش",
-                Notes = "أوراق طباعة وأقلام"
-            });
+            cmbClassification.Items.Clear();
 
-            _expenses.Add(new Expense
-            {
-                Id = 104,
-                Date = new DateTime(2025, 1, 8),
-                Classification = "نقل وشحن",
-                Amount = 600,
-                PaidBy = "أحمد محمد",
-                PaymentMethod = "كاش",
-                Notes = "شحن من المورد"
-            });
 
-            _expenses.Add(new Expense
+            cmbClassification.Items.Add(
+                new ExpenseCategory
+                {
+                    CategoryID = 0,
+
+                    CategoryName =
+                        "كل التصنيفات"
+                });
+
+
+            foreach (var category in _categories)
             {
-                Id = 105,
-                Date = new DateTime(2025, 1, 10),
-                Classification = "أخرى",
-                Amount = 750,
-                PaidBy = "محمود حسن",
-                PaymentMethod = "بطاقة",
-                Notes = "مصاريف تشغيل"
-            });
+                cmbClassification.Items.Add(
+                    category);
+            }
+
+
+            cmbClassification.DisplayMember =
+                "CategoryName";
+
+            cmbClassification.ValueMember =
+                "CategoryID";
+
+
+            if (cmbClassification.Items.Count > 0)
+            {
+                cmbClassification.SelectedIndex =
+                    0;
+            }
         }
 
         #endregion
 
-        #region Filters
 
-        private void SetupFilters()
+        #region Payment Methods
+
+        private void LoadPaymentMethods()
+        {
+            var result =
+                _expenseBusiness
+                    .GetPaymentMethods();
+
+
+            if (!result.Success)
+            {
+                ShowError(
+                    result.Message);
+
+                return;
+            }
+
+
+            _paymentMethods =
+                result.Data ??
+                new List<PaymentMethod>();
+        }
+
+        #endregion
+
+
+        #region Employees
+
+        private void LoadEmployees()
+        {
+            var result =
+                _employeeBusiness
+                    .GetAll(true);
+
+
+            if (!result.Success)
+            {
+                ShowError(
+                    result.Message);
+
+                return;
+            }
+
+
+            _employees =
+                result.Data ??
+                new List<Employee>();
+        }
+
+        #endregion
+
+
+        #region Period
+
+        private void SetupPeriodFilter()
         {
             smbxPeriod.Items.Clear();
 
-            smbxPeriod.Items.Add("كل الفترات");
-            smbxPeriod.Items.Add("اليوم");
-            smbxPeriod.Items.Add("هذا الأسبوع");
-            smbxPeriod.Items.Add("هذا الشهر");
+            smbxPeriod.Items.Add(
+                "كل الفترات");
 
-            cmbClassification.Items.Clear();
+            smbxPeriod.Items.Add(
+                "اليوم");
 
-            cmbClassification.Items.Add("كل التصنيفات");
-            cmbClassification.Items.Add("إيجار");
-            cmbClassification.Items.Add("كهرباء");
-            cmbClassification.Items.Add("مستلزمات");
-            cmbClassification.Items.Add("نقل وشحن");
-            cmbClassification.Items.Add("أخرى");
+            smbxPeriod.Items.Add(
+                "هذا الأسبوع");
+
+            smbxPeriod.Items.Add(
+                "هذا الشهر");
         }
+
 
         private void ApplyPeriodFilter()
         {
             string period =
-                smbxPeriod.SelectedItem?.ToString();
+                smbxPeriod.SelectedItem
+                    ?.ToString();
 
-            if (period == null)
+
+            if (string.IsNullOrWhiteSpace(
+                period))
+            {
                 return;
+            }
 
-            DateTime today = DateTime.Today;
+
+            DateTime today =
+                DateTime.Today;
+
 
             switch (period)
             {
                 case "اليوم":
-                    dtpFrom.Value = today;
-                    dtpTo.Value = today;
+
+                    dtpFrom.Value =
+                        today;
+
+                    dtpTo.Value =
+                        today;
+
                     break;
+
 
                 case "هذا الأسبوع":
 
                     int difference =
-                        (7 + (today.DayOfWeek - DayOfWeek.Saturday)) % 7;
+                        (7 +
+                         (today.DayOfWeek -
+                          DayOfWeek.Saturday))
+                        % 7;
 
-                    DateTime startOfWeek =
-                        today.AddDays(-difference);
 
-                    dtpFrom.Value = startOfWeek;
-                    dtpTo.Value = today;
+                    dtpFrom.Value =
+                        today.AddDays(
+                            -difference);
+
+                    dtpTo.Value =
+                        today;
 
                     break;
+
 
                 case "هذا الشهر":
 
@@ -267,122 +280,144 @@ namespace SabraForSpareParts.Screens
                         new DateTime(
                             today.Year,
                             today.Month,
-                            1
-                        );
+                            1);
 
-                    dtpTo.Value = today;
+                    dtpTo.Value =
+                        today;
 
                     break;
             }
+
 
             LoadExpenses();
         }
 
         #endregion
 
-        #region DataGridView
+
+        #region Grid
 
         private void SetupGrid()
         {
-            dgvExpenses.AutoGenerateColumns = false;
+            dgvExpenses.AutoGenerateColumns =
+                false;
+
             dgvExpenses.Columns.Clear();
 
-            dgvExpenses.RightToLeft = RightToLeft.Yes;
+            dgvExpenses.RightToLeft =
+                RightToLeft.Yes;
 
-            dgvExpenses.AllowUserToAddRows = false;
-            dgvExpenses.AllowUserToDeleteRows = false;
+            dgvExpenses.AllowUserToAddRows =
+                false;
 
-            dgvExpenses.ReadOnly = true;
+            dgvExpenses.AllowUserToDeleteRows =
+                false;
 
-            dgvExpenses.RowHeadersVisible = false;
+            dgvExpenses.ReadOnly =
+                true;
+
+            dgvExpenses.RowHeadersVisible =
+                false;
 
             dgvExpenses.SelectionMode =
                 DataGridViewSelectionMode.FullRowSelect;
 
-            dgvExpenses.MultiSelect = false;
+            dgvExpenses.MultiSelect =
+                false;
 
             dgvExpenses.AutoSizeColumnsMode =
                 DataGridViewAutoSizeColumnsMode.Fill;
 
-            dgvExpenses.ColumnHeadersHeight = 45;
-            dgvExpenses.RowTemplate.Height = 48;
+            dgvExpenses.ColumnHeadersHeight =
+                45;
 
-            dgvExpenses.EnableHeadersVisualStyles = false;
-
-            dgvExpenses.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
+            dgvExpenses.RowTemplate.Height =
+                48;
 
             dgvExpenses.DefaultCellStyle.Alignment =
                 DataGridViewContentAlignment.MiddleCenter;
 
+            dgvExpenses.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
             dgvExpenses.DefaultCellStyle.Font =
-                new Font("Cairo", 10F);
+                new Font(
+                    "Cairo",
+                    10F);
 
             dgvExpenses.ColumnHeadersDefaultCellStyle.Font =
-                new Font("Cairo", 10F, FontStyle.Bold);
+                new Font(
+                    "Cairo",
+                    10F,
+                    FontStyle.Bold);
 
-            // التاريخ
 
             AddTextColumn(
                 "colDate",
                 "التاريخ",
-                "Date",
-                "dd/MM/yyyy"
-            );
+                "ExpenseDate",
+                "dd/MM/yyyy");
 
-            // التصنيف
 
             AddTextColumn(
                 "colClassification",
                 "التصنيف",
-                "Classification"
-            );
+                "CategoryName");
 
-            // المبلغ
 
             AddTextColumn(
                 "colAmount",
                 "المبلغ",
                 "Amount",
-                "N2"
-            );
+                "N2");
 
-            // دفع بواسطة
 
             AddTextColumn(
                 "colPaidBy",
                 "دفع بواسطة",
-                "PaidBy"
-            );
+                "PaidByName");
 
-            // طريقة الدفع
-
-            AddTextColumn(
-                "colPaymentMethod",
-                "طريقة الدفع",
-                "PaymentMethod"
-            );
-
-            // ملاحظات
 
             AddTextColumn(
                 "colNotes",
                 "ملاحظات",
-                "Notes"
-            );
+                "Notes");
 
-            // الإجراءات
 
-            DataGridViewTextBoxColumn actions =
-                new DataGridViewTextBoxColumn();
+            DataGridViewButtonColumn actions =
+                new DataGridViewButtonColumn
+                {
+                    Name =
+                        "colActions",
 
-            actions.Name = "colActions";
-            actions.HeaderText = "الإجراءات";
-            actions.ReadOnly = true;
-            actions.FillWeight = 100;
+                    HeaderText =
+                        "الإجراءات",
 
-            dgvExpenses.Columns.Add(actions);
+                    Text =
+                        "إجراءات",
+
+                    UseColumnTextForButtonValue =
+                        true,
+
+                    ReadOnly =
+                        true,
+
+                    FillWeight =
+                        100
+                };
+
+
+            dgvExpenses.Columns.Add(
+                actions);
+
+
+            dgvExpenses.CellContentClick -=
+                dgvExpenses_CellContentClick;
+
+            dgvExpenses.CellContentClick +=
+                dgvExpenses_CellContentClick;
         }
+
 
         private void AddTextColumn(
             string name,
@@ -393,19 +428,33 @@ namespace SabraForSpareParts.Screens
             DataGridViewTextBoxColumn column =
                 new DataGridViewTextBoxColumn();
 
-            column.Name = name;
-            column.HeaderText = header;
-            column.DataPropertyName = property;
+
+            column.Name =
+                name;
+
+            column.HeaderText =
+                header;
+
+            column.DataPropertyName =
+                property;
+
             column.SortMode =
                 DataGridViewColumnSortMode.NotSortable;
 
-            if (!string.IsNullOrEmpty(format))
-                column.DefaultCellStyle.Format = format;
 
-            dgvExpenses.Columns.Add(column);
+            if (!string.IsNullOrEmpty(format))
+            {
+                column.DefaultCellStyle.Format =
+                    format;
+            }
+
+
+            dgvExpenses.Columns.Add(
+                column);
         }
 
         #endregion
+
 
         #region Load Expenses
 
@@ -414,101 +463,190 @@ namespace SabraForSpareParts.Screens
             DateTime from =
                 dtpFrom.Value.Date;
 
+
             DateTime to =
-                dtpTo.Value.Date.AddDays(1).AddTicks(-1);
+                dtpTo.Value.Date;
 
-            string classification =
-                cmbClassification.SelectedItem?.ToString()
-                ?? "كل التصنيفات";
 
-            IEnumerable<Expense> query =
-                _expenses.Where(x =>
-                    x.Date >= from &&
-                    x.Date <= to
-                );
-
-            if (classification != "كل التصنيفات")
+            if (from > to)
             {
-                query = query.Where(x =>
-                    x.Classification == classification
-                );
+                ShowWarning(
+                    "تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية.");
+
+                return;
             }
 
-            List<Expense> result =
-                query
-                    .OrderByDescending(x => x.Date)
-                    .ThenByDescending(x => x.Id)
+
+            int? categoryID =
+                GetSelectedCategoryID();
+
+
+            var result =
+                _expenseBusiness.GetAll(
+                    from,
+                    to,
+                    categoryID);
+
+
+            if (!result.Success)
+            {
+                ShowError(
+                    result.Message);
+
+                return;
+            }
+
+
+            _expenses =
+                result.Data ??
+                new List<Expense>();
+
+
+            _expenses =
+                _expenses
+                    .OrderByDescending(
+                        x => x.ExpenseDate)
+                    .ThenByDescending(
+                        x => x.ExpenseID)
                     .ToList();
 
-            dgvExpenses.DataSource = null;
-            dgvExpenses.DataSource = result;
 
-            UpdateSummary(result);
+            dgvExpenses.DataSource =
+                null;
+
+            dgvExpenses.DataSource =
+                _expenses;
+
+
+            UpdateSummary(
+                _expenses);
+        }
+
+
+        private int? GetSelectedCategoryID()
+        {
+            if (cmbClassification.SelectedItem
+                is ExpenseCategory category)
+            {
+                if (category.CategoryID <= 0)
+                    return null;
+
+
+                return category.CategoryID;
+            }
+
+
+            return null;
         }
 
         #endregion
 
+
         #region Summary
 
-        private void UpdateSummary(List<Expense> expenses)
+        private void UpdateSummary(
+            List<Expense> expenses)
         {
             decimal total =
-                expenses.Sum(x => x.Amount);
+                expenses.Sum(
+                    x => x.Amount);
 
-            decimal releaseFees =
+
+            decimal rent =
                 expenses
-                    .Where(x => x.Classification == "إيجار")
-                    .Sum(x => x.Amount);
+                    .Where(
+                        x => x.CategoryName ==
+                             "إيجار")
+                    .Sum(
+                        x => x.Amount);
+
 
             decimal electricity =
                 expenses
-                    .Where(x => x.Classification == "كهرباء")
-                    .Sum(x => x.Amount);
+                    .Where(
+                        x => x.CategoryName ==
+                             "كهرباء")
+                    .Sum(
+                        x => x.Amount);
+
 
             decimal other =
                 expenses
-                    .Where(x =>
-                        x.Classification != "إيجار" &&
-                        x.Classification != "كهرباء")
-                    .Sum(x => x.Amount);
+                    .Where(
+                        x =>
+                            x.CategoryName !=
+                                "إيجار"
+                            &&
+                            x.CategoryName !=
+                                "كهرباء")
+                    .Sum(
+                        x => x.Amount);
+
 
             lblTotalExpenses.Text =
-                total.ToString("N2") + " ج";
+                total.ToString("N2") +
+                " ج";
+
 
             lblReleaseFees.Text =
-                releaseFees.ToString("N2") + " ج";
+                rent.ToString("N2") +
+                " ج";
+
 
             lblElectricity.Text =
-                electricity.ToString("N2") + " ج";
+                electricity.ToString("N2") +
+                " ج";
+
 
             lblOtherExpenses.Text =
-                other.ToString("N2") + " ج";
+                other.ToString("N2") +
+                " ج";
+
 
             lblNameOfTheMonthAndYear.Text =
                 GetPeriodTitle();
         }
 
+
         private string GetPeriodTitle()
         {
             string period =
-                smbxPeriod.SelectedItem?.ToString();
+                smbxPeriod.SelectedItem
+                    ?.ToString();
+
 
             if (period == "اليوم")
-                return DateTime.Today.ToString("dd/MM/yyyy");
+            {
+                return DateTime.Today
+                    .ToString("dd/MM/yyyy");
+            }
 
-            if (period == "هذا الشهر")
-                return DateTime.Today.ToString("MMMM yyyy");
 
             if (period == "هذا الأسبوع")
+            {
                 return "هذا الأسبوع";
+            }
+
+
+            if (period == "هذا الشهر")
+            {
+                return DateTime.Today
+                    .ToString("MMMM yyyy");
+            }
+
 
             return
-                dtpFrom.Value.ToString("dd/MM/yyyy")
-                + " - "
-                + dtpTo.Value.ToString("dd/MM/yyyy");
+                dtpFrom.Value
+                    .ToString("dd/MM/yyyy")
+                +
+                " - "
+                +
+                dtpTo.Value
+                    .ToString("dd/MM/yyyy");
         }
 
         #endregion
+
 
         #region Search
 
@@ -519,6 +657,7 @@ namespace SabraForSpareParts.Screens
             LoadExpenses();
         }
 
+
         private void smbxPeriod_SelectedIndexChanged(
             object sender,
             EventArgs e)
@@ -526,49 +665,640 @@ namespace SabraForSpareParts.Screens
             ApplyPeriodFilter();
         }
 
+
         private void cmbClassification_SelectedIndexChanged(
             object sender,
             EventArgs e)
         {
             if (IsHandleCreated)
+            {
                 LoadExpenses();
+            }
         }
 
         #endregion
 
-        #region Add Expense
+
+        #region Add
 
         private void sbtnAddNewExpense_Click(
             object sender,
             EventArgs e)
         {
-            int newId =
-                _expenses.Any()
-                    ? _expenses.Max(x => x.Id) + 1
-                    : 1;
-
-            _expenses.Add(new Expense
-            {
-                Id = newId,
-                Date = DateTime.Today,
-                Classification = "أخرى",
-                Amount = 500,
-                PaidBy = "المستخدم الحالي",
-                PaymentMethod = "كاش",
-                Notes = "مصروف تجريبي جديد"
-            });
-
-            LoadExpenses();
-
-            MessageBox.Show(
-                "تم إضافة المصروف بنجاح",
-                "المصروفات",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
+            ShowExpenseForm(
+                null);
         }
 
         #endregion
+
+
+        #region Edit
+
+        private void EditExpense(
+            Expense expense)
+        {
+            ShowExpenseForm(
+                expense);
+        }
+
+        #endregion
+
+
+        #region Expense Form
+
+        private void ShowExpenseForm(
+            Expense expense)
+        {
+            bool isEdit =
+                expense != null;
+
+
+            using Form form =
+                new Form();
+
+
+            form.Text =
+                isEdit
+                    ? "تعديل المصروف"
+                    : "إضافة مصروف جديد";
+
+
+            form.StartPosition =
+                FormStartPosition.CenterParent;
+
+
+            form.FormBorderStyle =
+                FormBorderStyle.FixedDialog;
+
+
+            form.MaximizeBox =
+                false;
+
+            form.MinimizeBox =
+                false;
+
+
+            form.Size =
+                new Size(
+                    520,
+                    600);
+
+
+            form.RightToLeft =
+                RightToLeft.Yes;
+
+            form.RightToLeftLayout =
+                true;
+
+
+            // =====================================================
+            // Category
+            // =====================================================
+
+            Label lblCategory =
+                CreateLabel(
+                    "تصنيف المصروف");
+
+
+            lblCategory.Location =
+                new Point(
+                    30,
+                    25);
+
+
+            ComboBox cmbCategory =
+                new ComboBox
+                {
+                    Location =
+                        new Point(
+                            30,
+                            60),
+
+                    Width =
+                        440,
+
+                    DropDownStyle =
+                        ComboBoxStyle.DropDownList,
+
+                    Font =
+                        new Font(
+                            "Cairo",
+                            10),
+
+                    DisplayMember =
+                        "CategoryName",
+
+                    ValueMember =
+                        "CategoryID"
+                };
+
+
+            cmbCategory.DataSource =
+                new List<ExpenseCategory>(
+                    _categories);
+
+
+            if (isEdit)
+            {
+                cmbCategory.SelectedValue =
+                    expense.CategoryID;
+            }
+
+
+            // =====================================================
+            // Date
+            // =====================================================
+
+            Label lblDate =
+                CreateLabel(
+                    "التاريخ");
+
+
+            lblDate.Location =
+                new Point(
+                    30,
+                    110);
+
+
+            DateTimePicker dtpDate =
+                new DateTimePicker
+                {
+                    Location =
+                        new Point(
+                            30,
+                            145),
+
+                    Width =
+                        440,
+
+                    Format =
+                        DateTimePickerFormat.Short,
+
+                    MaxDate =
+                        DateTime.Today,
+
+                    Value =
+                        isEdit
+                            ? expense.ExpenseDate
+                            : DateTime.Today
+                };
+
+
+            // =====================================================
+            // Amount
+            // =====================================================
+
+            Label lblAmount =
+                CreateLabel(
+                    "المبلغ");
+
+
+            lblAmount.Location =
+                new Point(
+                    30,
+                    195);
+
+
+            TextBox txtAmount =
+                CreateTextBox();
+
+
+            txtAmount.Location =
+                new Point(
+                    30,
+                    230);
+
+
+            txtAmount.Width =
+                440;
+
+
+            if (isEdit)
+            {
+                txtAmount.Text =
+                    expense.Amount
+                        .ToString("0.##");
+            }
+
+
+            // =====================================================
+            // Paid By
+            // =====================================================
+
+            Label lblPaidBy =
+                CreateLabel(
+                    "دفع بواسطة");
+
+
+            lblPaidBy.Location =
+                new Point(
+                    30,
+                    280);
+
+
+            ComboBox cmbPaidBy =
+                new ComboBox
+                {
+                    Location =
+                        new Point(
+                            30,
+                            315),
+
+                    Width =
+                        440,
+
+                    DropDownStyle =
+                        ComboBoxStyle.DropDownList,
+
+                    Font =
+                        new Font(
+                            "Cairo",
+                            10),
+
+                    DisplayMember =
+                        "FullName",
+
+                    ValueMember =
+                        "EmployeeID"
+                };
+
+
+            cmbPaidBy.DataSource =
+                new List<Employee>(
+                    _employees);
+
+
+            if (isEdit &&
+                expense.PaidBy.HasValue)
+            {
+                cmbPaidBy.SelectedValue =
+                    expense.PaidBy.Value;
+            }
+
+
+            // =====================================================
+            // Payment Method
+            // =====================================================
+
+            Label lblPaymentMethod =
+                CreateLabel(
+                    "طريقة الدفع");
+
+
+            lblPaymentMethod.Location =
+                new Point(
+                    30,
+                    365);
+
+
+            ComboBox cmbPaymentMethod =
+                new ComboBox
+                {
+                    Location =
+                        new Point(
+                            30,
+                            400),
+
+                    Width =
+                        440,
+
+                    DropDownStyle =
+                        ComboBoxStyle.DropDownList,
+
+                    Font =
+                        new Font(
+                            "Cairo",
+                            10),
+
+                    DisplayMember =
+                        "MethodName",
+
+                    ValueMember =
+                        "PaymentMethodID"
+                };
+
+
+            cmbPaymentMethod.DataSource =
+                new List<PaymentMethod>(
+                    _paymentMethods);
+
+
+            // =====================================================
+            // Notes
+            // =====================================================
+
+            Label lblNotes =
+                CreateLabel(
+                    "ملاحظات");
+
+
+            lblNotes.Location =
+                new Point(
+                    30,
+                    450);
+
+
+            TextBox txtNotes =
+                CreateTextBox();
+
+
+            txtNotes.Location =
+                new Point(
+                    30,
+                    485);
+
+
+            txtNotes.Width =
+                440;
+
+
+            if (isEdit)
+            {
+                txtNotes.Text =
+                    expense.Notes;
+            }
+
+
+            // =====================================================
+            // Save
+            // =====================================================
+
+            Button btnSave =
+                new Button
+                {
+                    Text =
+                        isEdit
+                            ? "حفظ التعديل"
+                            : "حفظ",
+
+                    Width =
+                        130,
+
+                    Height =
+                        40,
+
+                    Location =
+                        new Point(
+                            340,
+                            525),
+
+                    BackColor =
+                        Color.RoyalBlue,
+
+                    ForeColor =
+                        Color.White,
+
+                    FlatStyle =
+                        FlatStyle.Flat,
+
+                    Font =
+                        new Font(
+                            "Cairo",
+                            9,
+                            FontStyle.Bold)
+                };
+
+
+            btnSave.Click +=
+                (s, e) =>
+                {
+                    // =================================================
+                    // Validation
+                    // =================================================
+
+                    if (cmbCategory.SelectedValue == null)
+                    {
+                        ShowWarning(
+                            "يجب اختيار تصنيف المصروف.");
+
+                        return;
+                    }
+
+
+                    if (!decimal.TryParse(
+                        txtAmount.Text.Trim(),
+                        out decimal amount))
+                    {
+                        ShowWarning(
+                            "أدخل مبلغًا صحيحًا.");
+
+                        txtAmount.Focus();
+
+                        return;
+                    }
+
+
+                    if (amount <= 0)
+                    {
+                        ShowWarning(
+                            "المبلغ يجب أن يكون أكبر من صفر.");
+
+                        txtAmount.Focus();
+
+                        return;
+                    }
+
+
+                    if (cmbPaidBy.SelectedValue == null)
+                    {
+                        ShowWarning(
+                            "يجب اختيار الموظف الذي قام بالدفع.");
+
+                        return;
+                    }
+
+
+                    // =================================================
+                    // ADD
+                    // =================================================
+
+                    if (!isEdit)
+                    {
+                        if (cmbPaymentMethod.SelectedValue == null)
+                        {
+                            ShowWarning(
+                                "يجب اختيار طريقة الدفع.");
+
+                            return;
+                        }
+
+
+                        Expense newExpense =
+                            new Expense
+                            {
+                                CategoryID =
+                                    Convert.ToInt32(
+                                        cmbCategory.SelectedValue),
+
+                                Amount =
+                                    amount,
+
+                                ExpenseDate =
+                                    dtpDate.Value.Date,
+
+                                PaidBy =
+                                    Convert.ToInt32(
+                                        cmbPaidBy.SelectedValue),
+
+                                Notes =
+                                    txtNotes.Text.Trim()
+                            };
+
+
+                        int paymentMethodID =
+                            Convert.ToInt32(
+                                cmbPaymentMethod.SelectedValue);
+
+
+                        var result =
+                            _expenseBusiness.Add(
+                                newExpense,
+                                paymentMethodID);
+
+
+                        if (!result.Success)
+                        {
+                            ShowError(
+                                result.Message);
+
+                            return;
+                        }
+
+
+                        MessageBox.Show(
+                            result.Message,
+                            "المصروفات",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+
+
+                        form.DialogResult =
+                            DialogResult.OK;
+
+
+                        form.Close();
+
+                        return;
+                    }
+
+
+                    // =================================================
+                    // UPDATE
+                    // =================================================
+
+                    Expense updatedExpense =
+                        new Expense
+                        {
+                            ExpenseID =
+                                expense.ExpenseID,
+
+                            CategoryID =
+                                Convert.ToInt32(
+                                    cmbCategory.SelectedValue),
+
+                            Amount =
+                                amount,
+
+                            ExpenseDate =
+                                dtpDate.Value.Date,
+
+                            PaidBy =
+                                Convert.ToInt32(
+                                    cmbPaidBy.SelectedValue),
+
+                            Notes =
+                                txtNotes.Text.Trim()
+                        };
+
+
+                    var updateResult =
+                        _expenseBusiness.Update(
+                            updatedExpense);
+
+
+                    if (!updateResult.Success)
+                    {
+                        ShowError(
+                            updateResult.Message);
+
+                        return;
+                    }
+
+
+                    MessageBox.Show(
+                        updateResult.Message,
+                        "المصروفات",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+
+                    form.DialogResult =
+                        DialogResult.OK;
+
+
+                    form.Close();
+                };
+
+
+            // =====================================================
+            // Add Controls
+            // =====================================================
+
+            form.Controls.Add(
+                lblCategory);
+
+            form.Controls.Add(
+                cmbCategory);
+
+
+            form.Controls.Add(
+                lblDate);
+
+            form.Controls.Add(
+                dtpDate);
+
+
+            form.Controls.Add(
+                lblAmount);
+
+            form.Controls.Add(
+                txtAmount);
+
+
+            form.Controls.Add(
+                lblPaidBy);
+
+            form.Controls.Add(
+                cmbPaidBy);
+
+
+            form.Controls.Add(
+                lblPaymentMethod);
+
+            form.Controls.Add(
+                cmbPaymentMethod);
+
+
+            form.Controls.Add(
+                lblNotes);
+
+            form.Controls.Add(
+                txtNotes);
+
+
+            form.Controls.Add(
+                btnSave);
+
+
+            if (form.ShowDialog(this) ==
+                DialogResult.OK)
+            {
+                LoadExpenses();
+            }
+        }
+
+        #endregion
+
 
         #region Grid Actions
 
@@ -579,100 +1309,398 @@ namespace SabraForSpareParts.Screens
             if (e.RowIndex < 0)
                 return;
 
+
             if (e.ColumnIndex < 0)
                 return;
 
-            if (dgvExpenses.Columns[e.ColumnIndex].Name
-                != "colActions")
+
+            if (dgvExpenses
+                    .Columns[e.ColumnIndex]
+                    .Name !=
+                "colActions")
+            {
                 return;
+            }
+
 
             Expense expense =
-                dgvExpenses.Rows[e.RowIndex].DataBoundItem
-                as Expense;
+                dgvExpenses
+                    .Rows[e.RowIndex]
+                    .DataBoundItem
+                    as Expense;
+
 
             if (expense == null)
                 return;
 
-            ShowExpenseActions(expense);
+
+            ShowExpenseActions(
+                expense);
         }
 
-        private void ShowExpenseActions(Expense expense)
+
+        private void ShowExpenseActions(
+            Expense expense)
         {
-            ContextMenuStrip menu =
+            using ContextMenuStrip menu =
                 new ContextMenuStrip();
 
+
             ToolStripMenuItem edit =
-                new ToolStripMenuItem("تعديل");
+                new ToolStripMenuItem(
+                    "تعديل");
+
 
             ToolStripMenuItem delete =
-                new ToolStripMenuItem("حذف");
+                new ToolStripMenuItem(
+                    "حذف");
 
-            edit.Click += (s, e) =>
-            {
-                MessageBox.Show(
-                    "تعديل المصروف رقم " + expense.Id,
-                    "تعديل",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
-            };
 
-            delete.Click += (s, e) =>
-            {
-                DialogResult result =
-                    MessageBox.Show(
-                        "هل أنت متأكد من حذف هذا المصروف؟",
-                        "تأكيد الحذف",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Warning
-                    );
-
-                if (result == DialogResult.Yes)
+            edit.Click +=
+                (s, e) =>
                 {
-                    _expenses.Remove(expense);
-                    LoadExpenses();
-                }
-            };
+                    EditExpense(
+                        expense);
+                };
 
-            menu.Items.Add(edit);
-            menu.Items.Add(delete);
+
+            delete.Click +=
+                (s, e) =>
+                {
+                    DeleteExpense(
+                        expense);
+                };
+
+
+            menu.Items.Add(
+                edit);
+
+            menu.Items.Add(
+                delete);
+
 
             menu.Show(
                 dgvExpenses,
                 dgvExpenses.PointToClient(
-                    Cursor.Position
-                )
-            );
+                    Cursor.Position));
         }
 
         #endregion
 
-        #region Export & Print
+
+        #region Delete
+
+        private void DeleteExpense(
+            Expense expense)
+        {
+            DialogResult result =
+                MessageBox.Show(
+                    $"هل أنت متأكد من حذف المصروف؟\n\n" +
+                    $"التصنيف: {expense.CategoryName}\n" +
+                    $"المبلغ: {expense.Amount:N2} ج\n" +
+                    $"التاريخ: {expense.ExpenseDate:dd/MM/yyyy}",
+                    "تأكيد الحذف",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+
+            if (result !=
+                DialogResult.Yes)
+            {
+                return;
+            }
+
+
+            var deleteResult =
+                _expenseBusiness.Delete(
+                    expense.ExpenseID);
+
+
+            if (!deleteResult.Success)
+            {
+                ShowError(
+                    deleteResult.Message);
+
+                return;
+            }
+
+
+            MessageBox.Show(
+                deleteResult.Message,
+                "المصروفات",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+
+            LoadExpenses();
+        }
+
+        #endregion
+
+
+        #region Add Category
+
+        private void AddCategory()
+        {
+            using Form form =
+                new Form();
+
+
+            form.Text =
+                "إضافة تصنيف مصروف";
+
+
+            form.StartPosition =
+                FormStartPosition.CenterParent;
+
+
+            form.FormBorderStyle =
+                FormBorderStyle.FixedDialog;
+
+
+            form.MaximizeBox =
+                false;
+
+            form.MinimizeBox =
+                false;
+
+
+            form.Size =
+                new Size(
+                    420,
+                    230);
+
+
+            form.RightToLeft =
+                RightToLeft.Yes;
+
+            form.RightToLeftLayout =
+                true;
+
+
+            Label label =
+                CreateLabel(
+                    "اسم التصنيف");
+
+
+            label.Location =
+                new Point(
+                    30,
+                    30);
+
+
+            TextBox textBox =
+                CreateTextBox();
+
+
+            textBox.Location =
+                new Point(
+                    30,
+                    65);
+
+
+            textBox.Width =
+                340;
+
+
+            Button save =
+                new Button
+                {
+                    Text =
+                        "حفظ",
+
+                    Width =
+                        100,
+
+                    Height =
+                        35,
+
+                    Location =
+                        new Point(
+                            270,
+                            120),
+
+                    BackColor =
+                        Color.RoyalBlue,
+
+                    ForeColor =
+                        Color.White,
+
+                    FlatStyle =
+                        FlatStyle.Flat
+                };
+
+
+            save.Click +=
+                (s, e) =>
+                {
+                    var result =
+                        _expenseBusiness
+                            .AddCategory(
+                                textBox.Text);
+
+
+                    if (!result.Success)
+                    {
+                        ShowError(
+                            result.Message);
+
+                        return;
+                    }
+
+
+                    MessageBox.Show(
+                        result.Message,
+                        "المصروفات",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+
+                    form.DialogResult =
+                        DialogResult.OK;
+
+
+                    form.Close();
+                };
+
+
+            form.Controls.Add(
+                label);
+
+            form.Controls.Add(
+                textBox);
+
+            form.Controls.Add(
+                save);
+
+
+            if (form.ShowDialog(this) ==
+                DialogResult.OK)
+            {
+                LoadCategories();
+
+                LoadExpenses();
+            }
+        }
+
+        #endregion
+
+
+        #region Helpers
+
+        private Label CreateLabel(
+            string text)
+        {
+            return new Label
+            {
+                Text =
+                    text,
+
+                AutoSize =
+                    true,
+
+                Font =
+                    new Font(
+                        "Cairo",
+                        10,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.FromArgb(
+                        55,
+                        65,
+                        81)
+            };
+        }
+
+
+        private TextBox CreateTextBox()
+        {
+            return new TextBox
+            {
+                Font =
+                    new Font(
+                        "Cairo",
+                        10),
+
+                Height =
+                    35,
+
+                BorderStyle =
+                    BorderStyle.FixedSingle
+            };
+        }
+
+
+        private void ShowError(
+            string message)
+        {
+            MessageBox.Show(
+                message,
+                "خطأ",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
+
+
+        private void ShowWarning(
+            string message)
+        {
+            MessageBox.Show(
+                message,
+                "تنبيه",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+        }
+
+        #endregion
+
+
+        #region Export
 
         private void sbtnExportAsExcel_Click(
             object sender,
             EventArgs e)
         {
-            clsGlobalClass.ExportDataGridViewToExcel(
-                dgvExpenses,
-                "",
-                "Expenses Report"
-            );
+            if (dgvExpenses.Rows.Count == 0)
+            {
+                ShowWarning(
+                    "لا توجد بيانات للتصدير.");
+
+                return;
+            }
+
+
+            clsGlobalClass
+                .ExportDataGridViewToExcel(
+                    dgvExpenses,
+                    "",
+                    "Expenses Report");
         }
+
 
         private void sbtnPrint_Click(
             object sender,
             EventArgs e)
         {
+            if (dgvExpenses.Rows.Count == 0)
+            {
+                ShowWarning(
+                    "لا توجد بيانات للطباعة.");
+
+                return;
+            }
+
+
             clsGlobalClass.PrintDataGridView(
                 dgvExpenses,
-                "Expenses Report"
-            );
+                "Expenses Report");
         }
 
         #endregion
 
-        #region Empty Events
+
+        #region Existing Designer Events
 
         private void lblNameOfTheMonthAndYear_Click(
             object sender,
@@ -680,11 +1708,13 @@ namespace SabraForSpareParts.Screens
         {
         }
 
+
         private void lblTotalExpenses_Click(
             object sender,
             EventArgs e)
         {
         }
+
 
         private void lblReleaseFees_Click(
             object sender,
@@ -692,11 +1722,13 @@ namespace SabraForSpareParts.Screens
         {
         }
 
+
         private void lblElectricity_Click(
             object sender,
             EventArgs e)
         {
         }
+
 
         private void lblOtherExpenses_Click(
             object sender,
@@ -704,17 +1736,20 @@ namespace SabraForSpareParts.Screens
         {
         }
 
+
         private void sabraPanel1_Paint(
             object sender,
             PaintEventArgs e)
         {
         }
 
+
         private void dtpFrom_Load(
             object sender,
             EventArgs e)
         {
         }
+
 
         private void dtpTo_Load(
             object sender,
@@ -725,24 +1760,4 @@ namespace SabraForSpareParts.Screens
         #endregion
     }
 
-    #region Expense Model
-
-    public class Expense
-    {
-        public int Id { get; set; }
-
-        public DateTime Date { get; set; }
-
-        public string Classification { get; set; }
-
-        public decimal Amount { get; set; }
-
-        public string PaidBy { get; set; }
-
-        public string PaymentMethod { get; set; }
-
-        public string Notes { get; set; }
-    }
-
-    #endregion
 }

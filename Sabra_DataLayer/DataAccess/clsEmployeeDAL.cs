@@ -113,5 +113,16 @@ namespace Sabra.DataLayer.DataAccess
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
+        public bool Activate(int employeeID)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Employee_Activate"))
+            {
+                clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
     }
 }

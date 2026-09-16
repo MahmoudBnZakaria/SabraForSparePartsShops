@@ -222,7 +222,6 @@ namespace SabraForSpareParts.Screens
             lblMonthAndYear.TabIndex = 16;
             lblMonthAndYear.Text = "يناير 2025";
             lblMonthAndYear.TextAlign = ContentAlignment.MiddleRight;
-            lblMonthAndYear.Click += lblMonthAndYear_Click;
             // 
             // tableLayoutPanel1
             // 
@@ -434,7 +433,6 @@ namespace SabraForSpareParts.Screens
             pnlNetProfit.Name = "pnlNetProfit";
             pnlNetProfit.Size = new Size(334, 97);
             pnlNetProfit.TabIndex = 16;
-            pnlNetProfit.Paint += pnlNetProfit_Paint;
             // 
             // sabraLabel2
             // 
@@ -551,7 +549,6 @@ namespace SabraForSpareParts.Screens
             cartesianChart1.Tooltip = skDefaultTooltip1;
             cartesianChart1.TooltipFindingStrategy = LiveChartsCore.Measure.TooltipFindingStrategy.Automatic;
             cartesianChart1.UpdaterThrottler = TimeSpan.Parse("00:00:00.0500000");
-            cartesianChart1.Load += cartesianChart1_Load;
             // 
             // pnlBestSellingItems
             // 
@@ -587,7 +584,6 @@ namespace SabraForSpareParts.Screens
             FlowLayoutPanelOutflowBreakdown.Name = "FlowLayoutPanelOutflowBreakdown";
             FlowLayoutPanelOutflowBreakdown.Size = new Size(293, 457);
             FlowLayoutPanelOutflowBreakdown.TabIndex = 8;
-            FlowLayoutPanelOutflowBreakdown.Paint += FlowLayoutPanelOutflowBreakdown_Paint;
             // 
             // sabraLabel5
             // 
@@ -604,7 +600,6 @@ namespace SabraForSpareParts.Screens
             sabraLabel5.TabIndex = 7;
             sabraLabel5.Text = "توزيع الصادر";
             sabraLabel5.TextAlign = ContentAlignment.MiddleRight;
-            sabraLabel5.Click += sabraLabel5_Click;
             // 
             // pieChart1
             // 

@@ -1,9 +1,9 @@
-﻿using Sabra.DataLayer.DataAccess;
-using Sabra.DataLayer.Models;
+﻿using Sabra.DataLayer.Models;
 using Sabra.LogicLayer;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace SabraForSpareParts.Screens
@@ -15,15 +15,18 @@ namespace SabraForSpareParts.Screens
         private readonly clsAdvanceBusiness _advanceBusiness =
             new clsAdvanceBusiness();
 
-        private readonly List<Advance> _advances =
+        private readonly clsEmployeeBusiness _employeeBusiness =
+            new clsEmployeeBusiness();
+
+        private List<Advance> _advances =
             new List<Advance>();
 
+        // اسم الموظف مقابل الـ ID — مستخدمة لحل اسم "الموافق" لأن
+        // Advance بيرجع Employee_ID (ApprovedBy) بس مش الاسم جاهز.
+        private Dictionary<int, string> _employeeNamesById =
+            new Dictionary<int, string>();
+
         private Advance _selectedAdvance;
-
-        private bool _isLoading;
-        private bool _isProcessing;
-
-        private bool _isInitialized;
 
         #endregion
 
@@ -33,7 +36,6 @@ namespace SabraForSpareParts.Screens
         public ucAdvances()
         {
             InitializeComponent();
-
             WireEvents();
         }
 
@@ -44,11 +46,9 @@ namespace SabraForSpareParts.Screens
 
         private void WireEvents()
         {
-            // Load
             Load -= ucAdvances_Load;
             Load += ucAdvances_Load;
 
-            // Buttons
             sbtnAddAdvance.Click -= sbtnAddAdvance_Click;
             sbtnAddAdvance.Click += sbtnAddAdvance_Click;
 
@@ -58,22 +58,13 @@ namespace SabraForSpareParts.Screens
             sbtnPrint.Click -= sbtnPrint_Click;
             sbtnPrint.Click += sbtnPrint_Click;
 
-            // Grid
-            dgvAdvances.CellMouseDown -= dgvAdvances_CellMouseDown;
-            dgvAdvances.CellMouseDown += dgvAdvances_CellMouseDown;
+            dgvAdvances.CellContentClick -= dgvAdvances_CellContentClick;
+            dgvAdvances.CellContentClick += dgvAdvances_CellContentClick;
 
-            dgvAdvances.CellDoubleClick -= dgvAdvances_CellDoubleClick;
-            dgvAdvances.CellDoubleClick += dgvAdvances_CellDoubleClick;
+            dgvAdvances.CellFormatting -= dgvAdvances_CellFormatting;
+            dgvAdvances.CellFormatting += dgvAdvances_CellFormatting;
 
-            // Context Menu
-            ctmApprove.Click -= ctmApprove_Click;
-            ctmApprove.Click += ctmApprove_Click;
-
-            ctmReject.Click -= ctmReject_Click;
-            ctmReject.Click += ctmReject_Click;
-
-            ctmCancelRequest.Click -= ctmCancelRequest_Click;
-            ctmCancelRequest.Click += ctmCancelRequest_Click;
+            WireAdvanceContextMenu();
         }
 
         #endregion
@@ -83,16 +74,10 @@ namespace SabraForSpareParts.Screens
 
         private void ucAdvances_Load(object sender, EventArgs e)
         {
-            if (_isInitialized)
-                return;
-
             try
             {
                 ConfigureGrid();
-                ResetContextMenu();
-
-                _isInitialized = true;
-
+                LoadEmployeeNames();
                 LoadAdvances();
             }
             catch (Exception ex)
@@ -106,49 +91,39 @@ namespace SabraForSpareParts.Screens
 
         #region Data
 
+        /// <summary>
+        /// بتجيب أسماء الموظفين كلها (نشطين وغير نشطين، عشان لو المدير
+        /// اللي وافق على سلفة قديمة بقى غير نشط، اسمه يفضل يظهر) لحل
+        /// عمود "الموافق" اللي بيتخزن كـ ID بس في الـ Advance.
+        /// </summary>
+        private void LoadEmployeeNames()
+        {
+            var result = _employeeBusiness.GetAll(activeOnly: false);
+
+            _employeeNamesById = result.Success && result.Data != null
+                ? result.Data.ToDictionary(emp => emp.EmployeeID, emp => emp.FullName)
+                : new Dictionary<int, string>();
+        }
+
         private void LoadAdvances()
         {
-            if (_isLoading)
+            // المدير يشوف سلف كل الموظفين، أما الموظف العادي فيشوف
+            // طلباته هو بس — بيانات السلف مالية وحساسة.
+            int? employeeFilter = clsAppSession.IsManager
+                ? (int?)null
+                : clsAppSession.CurrentEmployee?.EmployeeID;
+
+            var result = _advanceBusiness.GetAll(employeeID: employeeFilter);
+
+            if (!result.Success)
+            {
+                ShowError(result.Message);
                 return;
-
-            try
-            {
-                _isLoading = true;
-
-                ClearSelectedAdvance();
-
-                var result = _advanceBusiness.GetAll();
-
-                if (!result.Success)
-                {
-                    _advances.Clear();
-                    BindAdvances();
-
-                    ShowError(
-                        string.IsNullOrWhiteSpace(result.Message)
-                            ? "تعذر تحميل السلف."
-                            : result.Message);
-
-                    return;
-                }
-
-                _advances.Clear();
-
-                if (result.Data != null)
-                {
-                    _advances.AddRange(result.Data);
-                }
-
-                BindAdvances();
             }
-            catch (Exception ex)
-            {
-                ShowUnexpectedError(ex);
-            }
-            finally
-            {
-                _isLoading = false;
-            }
+
+            _advances = result.Data ?? new List<Advance>();
+
+            BindAdvances();
         }
 
 
@@ -186,8 +161,6 @@ namespace SabraForSpareParts.Screens
 
             dgvAdvances.ColumnHeadersDefaultCellStyle.Alignment =
                 DataGridViewContentAlignment.MiddleCenter;
-
-            dgvAdvances.EnableHeadersVisualStyles = false;
         }
 
 
@@ -197,7 +170,6 @@ namespace SabraForSpareParts.Screens
 
             dgvAdvances.AllowUserToAddRows = false;
             dgvAdvances.AllowUserToDeleteRows = false;
-            dgvAdvances.AllowUserToResizeRows = false;
 
             dgvAdvances.ReadOnly = true;
 
@@ -205,12 +177,6 @@ namespace SabraForSpareParts.Screens
                 DataGridViewSelectionMode.FullRowSelect;
 
             dgvAdvances.MultiSelect = false;
-
-            dgvAdvances.EditMode =
-                DataGridViewEditMode.EditProgrammatically;
-
-            dgvAdvances.AutoSizeRowsMode =
-                DataGridViewAutoSizeRowsMode.None;
         }
 
 
@@ -236,6 +202,7 @@ namespace SabraForSpareParts.Screens
             AddAmountColumn();
             AddApproverColumn();
             AddStatusColumn();
+            AddDetailsColumn();
         }
 
 
@@ -291,6 +258,11 @@ namespace SabraForSpareParts.Screens
         }
 
 
+        /// <summary>
+        /// عمود "الموافق" مش متربط مباشرة بـ Property (Advance معندهاش
+        /// ApproverName، بس ApprovedBy كـ ID) — قيمته بتتحدد يدوياً في
+        /// dgvAdvances_CellFormatting من _employeeNamesById.
+        /// </summary>
         private void AddApproverColumn()
         {
             dgvAdvances.Columns.Add(
@@ -298,7 +270,6 @@ namespace SabraForSpareParts.Screens
                 {
                     Name = "colApprover",
                     HeaderText = "الموافق",
-                    DataPropertyName = "ApproverName",
                     Width = 180
                 });
         }
@@ -316,16 +287,62 @@ namespace SabraForSpareParts.Screens
                 });
         }
 
+
+        private void AddDetailsColumn()
+        {
+            dgvAdvances.Columns.Add(
+                new DataGridViewButtonColumn
+                {
+                    Name = "colDetails",
+                    HeaderText = "",
+                    Text = "التفاصيل",
+                    UseColumnTextForButtonValue = true,
+                    Width = 110,
+                    FlatStyle = FlatStyle.Flat
+                });
+        }
+
+
+        /// <summary>يحل اسم الموافق من الـ ID المخزّن في الـ Advance.</summary>
+        private void dgvAdvances_CellFormatting(
+            object sender,
+            DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                return;
+
+            if (dgvAdvances.Columns[e.ColumnIndex].Name != "colApprover")
+                return;
+
+            if (!(dgvAdvances.Rows[e.RowIndex].DataBoundItem is Advance advance))
+                return;
+
+            e.Value = ResolveApproverName(advance);
+            e.FormattingApplied = true;
+        }
+
+
+        private string ResolveApproverName(Advance advance)
+        {
+            if (advance?.ApprovedBy == null)
+                return "لم تتم الموافقة بعد";
+
+            return _employeeNamesById.TryGetValue(advance.ApprovedBy.Value, out string name)
+                ? name
+                : "لم تتم الموافقة بعد";
+        }
+
         #endregion
 
 
-        #region Grid Selection
 
-        private void dgvAdvances_CellDoubleClick(
+        #region Details
+
+        private void dgvAdvances_CellContentClick(
             object sender,
             DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0)
+            if (!IsValidDetailsClick(e))
                 return;
 
             Advance advance = GetAdvanceFromRow(e.RowIndex);
@@ -334,6 +351,22 @@ namespace SabraForSpareParts.Screens
                 return;
 
             ShowAdvanceDetails(advance);
+        }
+
+
+        private bool IsValidDetailsClick(
+            DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return false;
+
+            if (e.ColumnIndex < 0)
+                return false;
+
+            string columnName =
+                dgvAdvances.Columns[e.ColumnIndex].Name;
+
+            return columnName == "colDetails";
         }
 
 
@@ -348,36 +381,23 @@ namespace SabraForSpareParts.Screens
             DataGridViewRow row =
                 dgvAdvances.Rows[rowIndex];
 
-            return row.DataBoundItem as Advance;
+            if (row.DataBoundItem is Advance advance)
+                return advance;
+
+            return null;
         }
 
 
         private void ShowAdvanceDetails(Advance advance)
         {
-            if (advance == null)
-                return;
-
-            string approver =
-                string.IsNullOrWhiteSpace(advance.ApproverName)
-                    ? "لم تتم الموافقة بعد"
-                    : advance.ApproverName.Trim();
-
-            string status =
-                string.IsNullOrWhiteSpace(advance.StatusName)
-                    ? "غير محددة"
-                    : advance.StatusName.Trim();
-
-            string employee =
-                string.IsNullOrWhiteSpace(advance.EmployeeName)
-                    ? "غير محدد"
-                    : advance.EmployeeName.Trim();
+            string approver = ResolveApproverName(advance);
 
             string message =
                 $"رقم السلفة: {advance.AdvanceID}\n\n" +
-                $"الموظف: {employee}\n\n" +
+                $"الموظف: {advance.EmployeeName}\n\n" +
                 $"المبلغ: {advance.Amount:N2} ج\n\n" +
                 $"تاريخ السلفة: {advance.AdvanceDate:dd/MM/yyyy}\n\n" +
-                $"الحالة: {status}\n\n" +
+                $"الحالة: {advance.StatusName}\n\n" +
                 $"الموافق: {approver}\n\n" +
                 $"تاريخ الإنشاء: {advance.CreatedAt:dd/MM/yyyy HH:mm}";
 
@@ -397,9 +417,6 @@ namespace SabraForSpareParts.Screens
             object sender,
             EventArgs e)
         {
-            if (_isProcessing)
-                return;
-
             try
             {
                 using (var frm = new frmRequireAdvance())
@@ -427,12 +444,6 @@ namespace SabraForSpareParts.Screens
         {
             try
             {
-                if (dgvAdvances.Rows.Count == 0)
-                {
-                    ShowError("لا توجد بيانات لتصديرها.");
-                    return;
-                }
-
                 clsGlobalClass.ExportDataGridViewToExcel(
                     dgvAdvances,
                     "",
@@ -455,12 +466,6 @@ namespace SabraForSpareParts.Screens
         {
             try
             {
-                if (dgvAdvances.Rows.Count == 0)
-                {
-                    ShowError("لا توجد بيانات لطباعتها.");
-                    return;
-                }
-
                 clsGlobalClass.PrintDataGridView(
                     dgvAdvances,
                     "Advances");
@@ -474,7 +479,47 @@ namespace SabraForSpareParts.Screens
         #endregion
 
 
+        #region Messages
+
+        private void ShowError(string message)
+        {
+            MessageBox.Show(
+                message,
+                "تنبيه",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+        }
+
+
+        private void ShowUnexpectedError(Exception ex)
+        {
+            MessageBox.Show(
+                "حدث خطأ غير متوقع:\n\n" +
+                ex.Message,
+                "خطأ",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
+
+        #endregion
+
+
         #region Context Menu
+
+        private void WireAdvanceContextMenu()
+        {
+            dgvAdvances.CellMouseDown -= dgvAdvances_CellMouseDown;
+            dgvAdvances.CellMouseDown += dgvAdvances_CellMouseDown;
+
+            ctmApprove.Click -= ctmApprove_Click;
+            ctmApprove.Click += ctmApprove_Click;
+
+            ctmReject.Click -= ctmReject_Click;
+            ctmReject.Click += ctmReject_Click;
+
+            ctmCancelRequest.Click -= ctmCancelRequest_Click;
+            ctmCancelRequest.Click += ctmCancelRequest_Click;
+        }
 
         private void dgvAdvances_CellMouseDown(
             object sender,
@@ -486,8 +531,7 @@ namespace SabraForSpareParts.Screens
             if (e.RowIndex < 0)
                 return;
 
-            Advance advance =
-                GetAdvanceFromRow(e.RowIndex);
+            Advance advance = GetAdvanceFromRow(e.RowIndex);
 
             if (advance == null)
                 return;
@@ -498,38 +542,23 @@ namespace SabraForSpareParts.Screens
 
             dgvAdvances.Rows[e.RowIndex].Selected = true;
 
-            ConfigureAdvanceMenu(advance);
+            ConfigureAdvanceMenu(_selectedAdvance);
 
-            Point location =
-                dgvAdvances.PointToClient(
-                    Cursor.Position);
+            Point location = dgvAdvances.PointToClient(Cursor.Position);
 
             AdvanceOptions.Show(
-                dgvAdvances,
-                location);
+                dgvAdvances, location);
         }
-
 
         private void ConfigureAdvanceMenu(Advance advance)
         {
-            ResetContextMenu();
-
             if (advance == null)
                 return;
 
-            bool isManager =
-                clsAppSession.IsManager;
-
-            bool isPending =
-                IsPendingAdvance(advance);
-
-            bool isCurrentUserAdvance =
-                IsCurrentUserAdvance(advance);
-
-
-            // ==========================================
-            // المدير
-            // ==========================================
+            bool isManager = clsAppSession.IsManager;
+            bool isPending = _advanceBusiness.IsPending(advance);
+            bool isOwnRequest = clsAppSession.CurrentEmployee != null &&
+                                 advance.EmployeeID == clsAppSession.CurrentEmployee.EmployeeID;
 
             if (isManager)
             {
@@ -539,427 +568,166 @@ namespace SabraForSpareParts.Screens
                 ctmApprove.Enabled = isPending;
                 ctmReject.Enabled = isPending;
 
-                // المدير يستطيع إلغاء طلبه هو فقط
-                ctmCancelRequest.Visible =
-                    isCurrentUserAdvance;
-
-                ctmCancelRequest.Enabled =
-                    isPending && isCurrentUserAdvance;
-
-                return;
+                // المدير برضه ممكن يكون صاحب طلب سلفة لنفسه.
+                ctmCancelRequest.Visible = isOwnRequest;
+                ctmCancelRequest.Enabled = isPending;
             }
-
-
-            // ==========================================
-            // الموظف العادي
-            // ==========================================
-
-            ctmApprove.Visible = false;
-            ctmReject.Visible = false;
-
-            // الموظف يستطيع إلغاء طلبه فقط
-            ctmCancelRequest.Visible =
-                isCurrentUserAdvance;
-
-            ctmCancelRequest.Enabled =
-                isPending && isCurrentUserAdvance;
-        }
-
-
-        private void ResetContextMenu()
-        {
-            ctmApprove.Visible = false;
-            ctmApprove.Enabled = false;
-
-            ctmReject.Visible = false;
-            ctmReject.Enabled = false;
-
-            ctmCancelRequest.Visible = false;
-            ctmCancelRequest.Enabled = false;
-        }
-
-
-        private void ClearSelectedAdvance()
-        {
-            _selectedAdvance = null;
-
-            dgvAdvances.ClearSelection();
-
-            ResetContextMenu();
-        }
-
-
-        private bool IsCurrentUserAdvance(Advance advance)
-        {
-            if (advance == null)
-                return false;
-
-            if (clsAppSession.CurrentEmployee == null)
-                return false;
-
-            return advance.EmployeeID ==
-                   clsAppSession.CurrentEmployee.EmployeeID;
-        }
-
-
-        private bool IsPendingAdvance(Advance advance)
-        {
-            if (advance == null)
-                return false;
-
-            if (string.IsNullOrWhiteSpace(
-                    advance.StatusName))
+            else
             {
-                return false;
+                ctmApprove.Visible = false;
+                ctmReject.Visible = false;
+
+                // احتياطي دفاعي: حتى لو ظهرت سلفة لموظف تاني في الليستة،
+                // مينفعش غير صاحبها يلغيها.
+                ctmCancelRequest.Visible = isOwnRequest;
+                ctmCancelRequest.Enabled = isPending;
             }
-
-            string status =
-                advance.StatusName.Trim();
-
-            return
-                status.Equals(
-                    "معلق",
-                    StringComparison.OrdinalIgnoreCase)
-                ||
-                status.Equals(
-                    "قيد الانتظار",
-                    StringComparison.OrdinalIgnoreCase)
-                ||
-                status.Equals(
-                    "Pending",
-                    StringComparison.OrdinalIgnoreCase);
         }
 
-        #endregion
-
-
-        #region Approve
-
-        private void ctmApprove_Click(
-            object sender,
-            EventArgs e)
+        private void ctmApprove_Click(object sender, EventArgs e)
         {
-            if (_isProcessing)
-                return;
-
-            Advance advance = _selectedAdvance;
-
-            if (!CanProcessAdvance(advance))
+            if (_selectedAdvance == null)
                 return;
 
             if (!clsAppSession.IsManager)
+                return;
+
+            if (!_advanceBusiness.IsPending(_selectedAdvance))
             {
                 ShowError(
-                    "ليس لديك صلاحية الموافقة على السلف.");
+                    "لا يمكن الموافقة على هذه السلفة.\n\n" +
+                    "حالة السلفة الحالية لا تسمح بالموافقة.");
 
                 return;
             }
 
-
-            // ==========================================
-            // منع المدير من الموافقة على سلفته الشخصية
-            // ==========================================
-
-            if (IsCurrentUserAdvance(advance))
+            using (var frm = new frmSelectPaymentMethod())
             {
-                ShowError(
-                    "لا يمكنك الموافقة على سلفتك الشخصية.");
-
-                return;
-            }
-
-
-            try
-            {
-                using (var frm =
-                       new frmSelectPaymentMethod())
+                if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    if (frm.ShowDialog() != DialogResult.OK)
-                        return;
+                    int selectedPaymentMethodId = frm.SelectedPaymentMethodId;
 
-                    int paymentMethodID =
-                        frm.SelectedPaymentMethodId;
+                    var result = _advanceBusiness.ApproveAndPay(
+                        _selectedAdvance.AdvanceID,
+                        selectedPaymentMethodId);
 
-                    if (paymentMethodID <= 0)
+                    if (result.Success)
                     {
-                        ShowError(
-                            "يرجى اختيار طريقة دفع صحيحة.");
+                        MessageBox.Show(
+                            $"تمت الموافقة وصرف السلفة رقم {_selectedAdvance.AdvanceID} بنجاح.",
+                            "تمت العملية",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
 
-                        return;
+                        LoadAdvances();
                     }
-
-                    _isProcessing = true;
-
-                    var result =
-                        _advanceBusiness.ApproveAndPay(
-                            advance.AdvanceID,
-                            paymentMethodID);
-
-                    if (!result.Success)
+                    else
                     {
-                        ShowOperationError(
-                            result.Message);
-
-                        return;
+                        MessageBox.Show(
+                            result.Message,
+                            "فشل",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
                     }
-
-                    ShowSuccess(
-                        $"تمت الموافقة وصرف السلفة رقم " +
-                        $"{advance.AdvanceID} بنجاح.");
-
-                    LoadAdvances();
                 }
             }
-            catch (Exception ex)
-            {
-                ShowUnexpectedError(ex);
-            }
-            finally
-            {
-                _isProcessing = false;
-                ClearSelectedAdvance();
-            }
         }
-
-        #endregion
-
-
-        #region Reject
 
         private void ctmReject_Click(
             object sender,
             EventArgs e)
         {
-            if (_isProcessing)
-                return;
-
-            Advance advance = _selectedAdvance;
-
-            if (!CanProcessAdvance(advance))
+            if (_selectedAdvance == null)
                 return;
 
             if (!clsAppSession.IsManager)
+                return;
+
+            if (!_advanceBusiness.IsPending(_selectedAdvance))
             {
                 ShowError(
-                    "ليس لديك صلاحية رفض السلف.");
+                    "لا يمكن رفض هذه السلفة.\n\n" +
+                    "حالة السلفة الحالية لا تسمح بالرفض.");
 
                 return;
             }
 
+            var result = _advanceBusiness.Reject(
+                _selectedAdvance.AdvanceID);
 
-            // منع المدير من رفض سلفته الشخصية
-            if (IsCurrentUserAdvance(advance))
+            if (result.Success)
             {
-                ShowError(
-                    "لا يمكنك رفض سلفتك الشخصية.");
-
-                return;
-            }
-
-
-            DialogResult confirmation =
                 MessageBox.Show(
-                    $"هل أنت متأكد من رفض السلفة رقم " +
-                    $"{advance.AdvanceID}؟",
-                    "تأكيد رفض السلفة",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-            if (confirmation != DialogResult.Yes)
-                return;
-
-
-            try
-            {
-                _isProcessing = true;
-
-                var result =
-                    _advanceBusiness.Reject(
-                        advance.AdvanceID);
-
-                if (!result.Success)
-                {
-                    ShowOperationError(
-                        result.Message);
-
-                    return;
-                }
-
-                ShowSuccess(
-                    $"تم رفض السلفة رقم " +
-                    $"{advance.AdvanceID} بنجاح.");
+                     $"تم رفض طلب السلفة رقم {_selectedAdvance.AdvanceID} بنجاح.",
+                     "تم الرفض",
+                     MessageBoxButtons.OK,
+                     MessageBoxIcon.Warning);
 
                 LoadAdvances();
             }
-            catch (Exception ex)
+            else
             {
-                ShowUnexpectedError(ex);
-            }
-            finally
-            {
-                _isProcessing = false;
-                ClearSelectedAdvance();
+                MessageBox.Show(
+                     result.Message,
+                     "فشل",
+                     MessageBoxButtons.OK,
+                     MessageBoxIcon.Error);
             }
         }
-
-        #endregion
-
-
-        #region Cancel Request
 
         private void ctmCancelRequest_Click(
             object sender,
             EventArgs e)
         {
-            if (_isProcessing)
+            if (_selectedAdvance == null)
                 return;
 
-            Advance advance = _selectedAdvance;
-
-            if (!CanProcessAdvance(advance))
+            if (clsAppSession.CurrentEmployee == null)
                 return;
 
-
-            // ==========================================
-            // أهم نقطة:
-            // الموظف لا يستطيع إلغاء سلفة غيره
-            // ==========================================
-
-            if (!IsCurrentUserAdvance(advance))
+            if (!_advanceBusiness.IsPending(_selectedAdvance))
             {
                 ShowError(
-                    "لا يمكنك إلغاء طلب سلفة خاص بموظف آخر.");
+                    "لا يمكن إلغاء هذه السلفة.\n\n" +
+                    "حالة السلفة الحالية لا تسمح بالإلغاء.");
 
                 return;
             }
 
+            DialogResult confirm = MessageBox.Show(
+                $"هل أنت متأكد من إلغاء السلفة رقم " +
+                $"{_selectedAdvance.AdvanceID}؟",
+                "تأكيد إلغاء الطلب",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
 
-            DialogResult confirmation =
-                MessageBox.Show(
-                    $"هل أنت متأكد من إلغاء السلفة رقم " +
-                    $"{advance.AdvanceID}؟",
-                    "تأكيد إلغاء الطلب",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-            if (confirmation != DialogResult.Yes)
+            if (confirm != DialogResult.Yes)
                 return;
 
+            var cancelResult = _advanceBusiness.CancelAdvance(
+                _selectedAdvance.AdvanceID,
+                clsAppSession.CurrentEmployee.EmployeeID);
 
-            try
+            if (cancelResult.Success)
             {
-                _isProcessing = true;
-
-                var result =
-                    _advanceBusiness.CancelAdvance(
-                        advance.AdvanceID);
-
-                if (!result.Success)
-                {
-                    ShowOperationError(
-                        result.Message);
-
-                    return;
-                }
-
-                ShowSuccess(
-                    $"تم إلغاء السلفة رقم " +
-                    $"{advance.AdvanceID} بنجاح.");
+                MessageBox.Show(
+                    $"تم إلغاء طلب السلفة رقم {_selectedAdvance.AdvanceID} بنجاح.",
+                    "تم الإلغاء",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
 
                 LoadAdvances();
             }
-            catch (Exception ex)
+            else
             {
-                ShowUnexpectedError(ex);
-            }
-            finally
-            {
-                _isProcessing = false;
-                ClearSelectedAdvance();
+                MessageBox.Show(
+                    cancelResult.Message,
+                    "فشل",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
         #endregion
-
-
-        #region Validation
-
-        private bool CanProcessAdvance(
-            Advance advance)
-        {
-            if (advance == null)
-            {
-                ShowError(
-                    "لم يتم تحديد سلفة.");
-
-                return false;
-            }
-
-
-            if (!IsPendingAdvance(advance))
-            {
-                ShowError(
-                    "لا يمكن تنفيذ هذه العملية.\n\n" +
-                    "حالة السلفة الحالية لا تسمح بذلك.");
-
-                return false;
-            }
-
-
-            return true;
-        }
-
-        #endregion
-
-
-        #region Messages
-
-        private void ShowError(string message)
-        {
-            MessageBox.Show(
-                string.IsNullOrWhiteSpace(message)
-                    ? "حدث خطأ أثناء تنفيذ العملية."
-                    : message,
-                "تنبيه",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
-        }
-
-
-        private void ShowOperationError(
-            string message)
-        {
-            MessageBox.Show(
-                string.IsNullOrWhiteSpace(message)
-                    ? "فشلت العملية."
-                    : message,
-                "فشل العملية",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
-        }
-
-
-        private void ShowSuccess(string message)
-        {
-            MessageBox.Show(
-                message,
-                "تمت العملية",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
-        }
-
-
-        private void ShowUnexpectedError(Exception ex)
-        {
-            MessageBox.Show(
-                "حدث خطأ غير متوقع.\n\n" +
-                ex.Message,
-                "خطأ",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
-        }
-
-        #endregion
-
     }
 }

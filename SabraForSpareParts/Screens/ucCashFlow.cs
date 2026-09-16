@@ -1,7 +1,10 @@
 ﻿using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.WinForms;
 using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.SkiaSharpView.WinForms;
+using Sabra.DataLayer.DataAccess;
+using Sabra.DataLayer.Models;
+using Sabra.LogicLayer;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -11,34 +14,28 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace SabraForSpareParts.Screens { 
+namespace SabraForSpareParts.Screens
+{
     public partial class ucCashFlow : SabraUserControl
     {
-        #region Models
-
-        private class CashFlowData
-        {
-            public decimal Inflows { get; set; }
-            public decimal Outflows { get; set; }
-            public decimal CurrentBalance { get; set; }
-
-            public List<decimal> DailyInflows { get; set; } = new();
-            public List<decimal> DailyOutflows { get; set; } = new();
-
-            public List<(string Name, decimal Amount)> OutflowBreakdown { get; set; }
-                = new();
-        }
-
-        #endregion
-
         #region Fields
 
-        private CashFlowData _currentData;
+        private readonly clsReportsBusiness _reports =
+            new clsReportsBusiness();
 
         private readonly CultureInfo _arabicCulture =
             new CultureInfo("ar-EG");
 
+        private List<DailyCashFlowView> _cashFlowData =
+            new List<DailyCashFlowView>();
+
+        private DateTime? _currentFrom;
+        private DateTime? _currentTo;
+
         #endregion
+
+
+        #region Constructor
 
         public ucCashFlow()
         {
@@ -46,10 +43,13 @@ namespace SabraForSpareParts.Screens {
 
             ConfigurePeriodComboBox();
 
-            LoadMockData();
+            LoadSelectedPeriod();
 
             UpdateReport();
         }
+
+        #endregion
+
 
         #region Initialization
 
@@ -66,60 +66,119 @@ namespace SabraForSpareParts.Screens {
                 cmbPeriod.SelectedIndex = 0;
         }
 
-        private void LoadMockData()
+        #endregion
+
+
+        #region Data Loading
+
+        private void LoadSelectedPeriod()
         {
-            _currentData = new CashFlowData
+            try
             {
-                Inflows = 184750m,
-                Outflows = 97320m,
-                CurrentBalance = 428500m,
+                GetSelectedPeriod(
+                    out DateTime from,
+                    out DateTime to);
 
-                DailyInflows = new List<decimal>
-                {
-                    12500,
-                    18200,
-                    9800,
-                    15400,
-                    22100,
-                    17600,
-                    24500
-                },
+                _currentFrom = from;
+                _currentTo = to;
 
-                DailyOutflows = new List<decimal>
-                {
-                    5200,
-                    7300,
-                    4100,
-                    8500,
-                    6200,
-                    9100,
-                    7400
-                },
+                var result = _reports.GetDailyCashFlow(from, to);
 
-                OutflowBreakdown = new List<(string Name, decimal Amount)>
-                {
-                    ("شراء بضاعة", 42500),
-                    ("رواتب الموظفين", 21800),
-                    ("مصاريف تشغيلية", 12500),
-                    ("نقل وشحن", 8200),
-                    ("كهرباء ومياه", 5320),
-                    ("مصروفات أخرى", 7000)
+                if (result.Success)
+                    _cashFlowData = result.Data;
+                else {
+                    _cashFlowData?.Clear();
+
+                    MessageBox.Show(
+                        $"حدث خطأ أثناء تحميل تقرير التدفقات النقدية:\n\n{result.Message}",
+                        "خطأ",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                 }
-            };
+            }
+            catch (Exception ex)
+            {
+                _cashFlowData.Clear();
+
+                MessageBox.Show(
+                    $"حدث خطأ أثناء تحميل تقرير التدفقات النقدية:\n\n{ex.Message}",
+                    "خطأ",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void GetSelectedPeriod(
+            out DateTime from,
+            out DateTime to)
+        {
+            DateTime today = DateTime.Today;
+
+            switch (cmbPeriod.SelectedIndex)
+            {
+                // هذا الشهر
+                case 0:
+
+                    from = new DateTime(
+                        today.Year,
+                        today.Month,
+                        1);
+
+                    to = today;
+
+                    break;
+
+
+                // الشهر الماضي
+                case 1:
+
+                    DateTime previousMonth =
+                        today.AddMonths(-1);
+
+                    from = new DateTime(
+                        previousMonth.Year,
+                        previousMonth.Month,
+                        1);
+
+                    to = from
+                        .AddMonths(1)
+                        .AddDays(-1);
+
+                    break;
+
+
+                // هذا العام
+                case 2:
+
+                    from = new DateTime(
+                        today.Year,
+                        1,
+                        1);
+
+                    to = today;
+
+                    break;
+
+
+                default:
+
+                    from = today;
+                    to = today;
+
+                    break;
+            }
         }
 
         #endregion
+
 
         #region Main Update
 
         private void UpdateReport()
         {
-            if (_currentData == null)
-                return;
-
             UpdateCards();
 
-            UpdateMonthLabel();
+            UpdatePeriodLabel();
 
             LoadCashFlowChart();
 
@@ -128,34 +187,52 @@ namespace SabraForSpareParts.Screens {
 
         #endregion
 
+
         #region Cards
 
         private void UpdateCards()
         {
+            decimal totalInflows =
+                _cashFlowData.Sum(x => x.TotalIn);
+
+            decimal totalOutflows =
+                _cashFlowData.Sum(x => x.TotalOut);
+
             decimal netFlow =
-                _currentData.Inflows -
-                _currentData.Outflows;
+                totalInflows - totalOutflows;
+
+            decimal currentBalance = 0m;
+
+            if (_cashFlowData.Count > 0)
+            {
+                currentBalance =
+                    _cashFlowData
+                        .OrderBy(x => x.FlowDate)
+                        .Last()
+                        .ClosingBalance;
+            }
 
             lblTotalInflows.Text =
-                $"{_currentData.Inflows:N0}";
+                $"{totalInflows:N0}";
 
             lblTotalOutflows.Text =
-                $"{_currentData.Outflows:N0}";
+                $"{totalOutflows:N0}";
 
             lblMonthlyNet.Text =
                 $"{netFlow:N0}";
 
             lblCurrentBalance.Text =
-                $"{_currentData.CurrentBalance:N0}";
+                $"{currentBalance:N0}";
 
-            // لون صافي التدفق
-            if (netFlow >= 0)
-                lblMonthlyNet.ForeColor = Color.Green;
-            else
-                lblMonthlyNet.ForeColor = Color.Red;
+
+            lblMonthlyNet.ForeColor =
+                netFlow >= 0
+                    ? Color.Green
+                    : Color.Red;
         }
 
         #endregion
+
 
         #region Period
 
@@ -163,182 +240,59 @@ namespace SabraForSpareParts.Screens {
             object sender,
             EventArgs e)
         {
-            switch (cmbPeriod.SelectedIndex)
-            {
-                case 0:
-                    LoadCurrentMonthMockData();
-                    break;
-
-                case 1:
-                    LoadPreviousMonthMockData();
-                    break;
-
-                case 2:
-                    LoadYearMockData();
-                    break;
-            }
+            LoadSelectedPeriod();
 
             UpdateReport();
         }
 
-        private void LoadCurrentMonthMockData()
+        private void UpdatePeriodLabel()
         {
-            _currentData = new CashFlowData
-            {
-                Inflows = 184750m,
-                Outflows = 97320m,
-                CurrentBalance = 428500m,
-
-                DailyInflows = new List<decimal>
-                {
-                    12500,
-                    18200,
-                    9800,
-                    15400,
-                    22100,
-                    17600,
-                    24500
-                },
-
-                DailyOutflows = new List<decimal>
-                {
-                    5200,
-                    7300,
-                    4100,
-                    8500,
-                    6200,
-                    9100,
-                    7400
-                },
-
-                OutflowBreakdown = new List<(string, decimal)>
-                {
-                    ("شراء بضاعة", 42500),
-                    ("رواتب الموظفين", 21800),
-                    ("مصاريف تشغيلية", 12500),
-                    ("نقل وشحن", 8200),
-                    ("كهرباء ومياه", 5320),
-                    ("مصروفات أخرى", 7000)
-                }
-            };
-        }
-
-        private void LoadPreviousMonthMockData()
-        {
-            _currentData = new CashFlowData
-            {
-                Inflows = 162400m,
-                Outflows = 104800m,
-                CurrentBalance = 341070m,
-
-                DailyInflows = new List<decimal>
-                {
-                    9800,
-                    14200,
-                    11700,
-                    18500,
-                    16200,
-                    20100,
-                    17800
-                },
-
-                DailyOutflows = new List<decimal>
-                {
-                    6200,
-                    8100,
-                    7500,
-                    9200,
-                    11300,
-                    8700,
-                    12600
-                },
-
-                OutflowBreakdown = new List<(string, decimal)>
-                {
-                    ("شراء بضاعة", 49200),
-                    ("رواتب الموظفين", 24000),
-                    ("مصاريف تشغيلية", 11800),
-                    ("نقل وشحن", 7600),
-                    ("كهرباء ومياه", 5200),
-                    ("مصروفات أخرى", 7000)
-                }
-            };
-        }
-
-        private void LoadYearMockData()
-        {
-            _currentData = new CashFlowData
-            {
-                Inflows = 2184750m,
-                Outflows = 1278320m,
-                CurrentBalance = 428500m,
-
-                DailyInflows = new List<decimal>
-                {
-                    32500,
-                    38200,
-                    29800,
-                    35400,
-                    42100,
-                    37600,
-                    44500
-                },
-
-                DailyOutflows = new List<decimal>
-                {
-                    15200,
-                    17300,
-                    14100,
-                    18500,
-                    16200,
-                    19100,
-                    17400
-                },
-
-                OutflowBreakdown = new List<(string, decimal)>
-                {
-                    ("شراء بضاعة", 625000),
-                    ("رواتب الموظفين", 285000),
-                    ("مصاريف تشغيلية", 142000),
-                    ("نقل وشحن", 98000),
-                    ("كهرباء ومياه", 56320),
-                    ("مصروفات أخرى", 72000)
-                }
-            };
-        }
-
-        private void UpdateMonthLabel()
-        {
-            DateTime date;
-
             switch (cmbPeriod.SelectedIndex)
             {
-                case 1:
-                    date = DateTime.Today.AddMonths(-1);
+                case 0:
 
                     lblMonthAndYear.Text =
-                        date.ToString(
+                        DateTime.Today.ToString(
                             "MMMM yyyy",
                             _arabicCulture);
+
                     break;
+
+
+                case 1:
+
+                    DateTime previousMonth =
+                        DateTime.Today.AddMonths(-1);
+
+                    lblMonthAndYear.Text =
+                        previousMonth.ToString(
+                            "MMMM yyyy",
+                            _arabicCulture);
+
+                    break;
+
 
                 case 2:
+
                     lblMonthAndYear.Text =
                         $"عام {DateTime.Today.Year}";
+
                     break;
 
+
                 default:
-                    date = DateTime.Today;
 
                     lblMonthAndYear.Text =
-                        date.ToString(
+                        DateTime.Today.ToString(
                             "MMMM yyyy",
                             _arabicCulture);
+
                     break;
             }
         }
 
         #endregion
+
 
         #region Cash Flow Chart
 
@@ -347,80 +301,219 @@ namespace SabraForSpareParts.Screens {
             if (cartesianChart1 == null)
                 return;
 
-            string[] labels;
+
+            if (_cashFlowData == null ||
+                _cashFlowData.Count == 0)
+            {
+                cartesianChart1.Series =
+                    Array.Empty<ISeries>();
+
+                cartesianChart1.XAxes =
+                    Array.Empty<Axis>();
+
+                cartesianChart1.YAxes =
+                    Array.Empty<Axis>();
+
+                return;
+            }
+
 
             if (cmbPeriod.SelectedIndex == 2)
             {
-                labels = new[]
+                LoadYearCashFlowChart();
+                return;
+            }
+
+
+            LoadDailyCashFlowChart();
+        }
+
+
+        private void LoadDailyCashFlowChart()
+        {
+            var data =
+                _cashFlowData
+                    .OrderBy(x => x.FlowDate)
+                    .ToList();
+
+
+            string[] labels =
+                data
+                    .Select(x =>
+                        x.FlowDate.ToString(
+                            "dd",
+                            _arabicCulture))
+                    .ToArray();
+
+
+            var inflows =
+                data
+                    .Select(x => x.TotalIn)
+                    .ToArray();
+
+
+            var outflows =
+                data
+                    .Select(x => x.TotalOut)
+                    .ToArray();
+
+
+            cartesianChart1.Series =
+                new ISeries[]
                 {
-                    "يناير",
-                    "فبراير",
-                    "مارس",
-                    "أبريل",
-                    "مايو",
-                    "يونيو",
-                    "يوليو"
+                    new ColumnSeries<decimal>
+                    {
+                        Name = "التدفقات الداخلة",
+
+                        Values = inflows,
+
+                        Fill = new SolidColorPaint(
+                            SKColors.ForestGreen)
+                    },
+
+                    new ColumnSeries<decimal>
+                    {
+                        Name = "التدفقات الخارجة",
+
+                        Values = outflows,
+
+                        Fill = new SolidColorPaint(
+                            SKColors.IndianRed)
+                    }
                 };
-            }
-            else
-            {
-                labels = GetLastSevenDaysLabels();
-            }
 
-            cartesianChart1.Series = new ISeries[]
-            {
-                new ColumnSeries<decimal>
+
+            cartesianChart1.XAxes =
+                new Axis[]
                 {
-                    Name = "التدفقات الداخلة",
-                    Values = _currentData.DailyInflows,
-                    Fill = new SolidColorPaint(
-                        SKColors.ForestGreen)
-                },
+                    new Axis
+                    {
+                        Labels = labels,
 
-                new ColumnSeries<decimal>
+                        LabelsRotation = 0
+                    }
+                };
+
+
+            cartesianChart1.YAxes =
+                new Axis[]
                 {
-                    Name = "التدفقات الخارجة",
-                    Values = _currentData.DailyOutflows,
-                    Fill = new SolidColorPaint(
-                        SKColors.IndianRed)
-                }
-            };
+                    new Axis
+                    {
+                        Labeler = value =>
+                            $"{value:N0} ج"
+                    }
+                };
 
-            cartesianChart1.XAxes = new Axis[]
-            {
-                new Axis
-                {
-                    Labels = labels,
-
-                    LabelsRotation = 0
-                }
-            };
-
-            cartesianChart1.YAxes = new Axis[]
-            {
-                new Axis
-                {
-                    Labeler = value =>
-                        $"{value:N0} ج"
-                }
-            };
 
             cartesianChart1.LegendPosition =
                 LiveChartsCore.Measure.LegendPosition.Bottom;
         }
 
-        private string[] GetLastSevenDaysLabels()
+
+        private void LoadYearCashFlowChart()
         {
-            return Enumerable
-                .Range(6, 7)
-                .Select(i =>
-                    DateTime.Today
-                        .AddDays(-i)
-                        .ToString("ddd", _arabicCulture))
-                .ToArray();
+            var monthlyData =
+                _cashFlowData
+                    .GroupBy(x =>
+                        new
+                        {
+                            x.FlowDate.Year,
+                            x.FlowDate.Month
+                        })
+                    .OrderBy(g => g.Key.Year)
+                    .ThenBy(g => g.Key.Month)
+                    .Select(g => new
+                    {
+                        Month = new DateTime(
+                            g.Key.Year,
+                            g.Key.Month,
+                            1),
+
+                        TotalIn =
+                            g.Sum(x => x.TotalIn),
+
+                        TotalOut =
+                            g.Sum(x => x.TotalOut)
+                    })
+                    .ToList();
+
+
+            string[] labels =
+                monthlyData
+                    .Select(x =>
+                        x.Month.ToString(
+                            "MMM",
+                            _arabicCulture))
+                    .ToArray();
+
+
+            decimal[] inflows =
+                monthlyData
+                    .Select(x => x.TotalIn)
+                    .ToArray();
+
+
+            decimal[] outflows =
+                monthlyData
+                    .Select(x => x.TotalOut)
+                    .ToArray();
+
+
+            cartesianChart1.Series =
+                new ISeries[]
+                {
+                    new ColumnSeries<decimal>
+                    {
+                        Name = "التدفقات الداخلة",
+
+                        Values = inflows,
+
+                        Fill = new SolidColorPaint(
+                            SKColors.ForestGreen)
+                    },
+
+                    new ColumnSeries<decimal>
+                    {
+                        Name = "التدفقات الخارجة",
+
+                        Values = outflows,
+
+                        Fill = new SolidColorPaint(
+                            SKColors.IndianRed)
+                    }
+                };
+
+
+            cartesianChart1.XAxes =
+                new Axis[]
+                {
+                    new Axis
+                    {
+                        Labels = labels,
+
+                        LabelsRotation = 0
+                    }
+                };
+
+
+            cartesianChart1.YAxes =
+                new Axis[]
+                {
+                    new Axis
+                    {
+                        Labeler = value =>
+                            $"{value:N0} ج"
+                    }
+                };
+
+
+            cartesianChart1.LegendPosition =
+                LiveChartsCore.Measure.LegendPosition.Bottom;
         }
 
         #endregion
+
 
         #region Outflow Breakdown
 
@@ -429,50 +522,96 @@ namespace SabraForSpareParts.Screens {
             if (FlowLayoutPanelOutflowBreakdown == null)
                 return;
 
-            FlowLayoutPanelOutflowBreakdown.Controls.Clear();
 
-            FlowLayoutPanelOutflowBreakdown.WrapContents = false;
-            FlowLayoutPanelOutflowBreakdown.FlowDirection =
-                FlowDirection.TopDown;
+            FlowLayoutPanelOutflowBreakdown.SuspendLayout();
 
-            FlowLayoutPanelOutflowBreakdown.AutoScroll = true;
-
-            decimal total =
-                _currentData.OutflowBreakdown.Sum(x => x.Amount);
-
-            foreach (var item in _currentData.OutflowBreakdown)
+            try
             {
-                var row = new Screens.ucItemsRow();
+                FlowLayoutPanelOutflowBreakdown.Controls.Clear();
 
-                row.Width =
-                    Math.Max(
-                        FlowLayoutPanelOutflowBreakdown.ClientSize.Width - 5,
-                        250);
+                FlowLayoutPanelOutflowBreakdown.WrapContents = false;
 
-                row.Height = 45;
+                FlowLayoutPanelOutflowBreakdown.FlowDirection =
+                    FlowDirection.TopDown;
 
-                row.SetData(
-                    item.Name,
-                    $"{item.Amount:N0} ج");
+                FlowLayoutPanelOutflowBreakdown.AutoScroll = true;
 
-                row.RowClicked += OutflowRowClicked;
 
-                FlowLayoutPanelOutflowBreakdown.Controls.Add(row);
+                if (_cashFlowData == null ||
+                    _cashFlowData.Count == 0)
+                {
+                    return;
+                }
+
+
+                var breakdown =
+                    new List<(string Name, decimal Amount)>
+                    {
+                        (
+                            "شراء بضاعة",
+                            _cashFlowData.Sum(
+                                x => x.PurchasesOut)
+                        ),
+
+                        (
+                            "رواتب الموظفين",
+                            _cashFlowData.Sum(
+                                x => x.PayrollOut)
+                        ),
+
+                        (
+                            "مصاريف تشغيلية",
+                            _cashFlowData.Sum(
+                                x => x.ExpensesOut)
+                        ),
+
+                        (
+                            "سلف الموظفين",
+                            _cashFlowData.Sum(
+                                x => x.AdvancesOut)
+                        )
+                    };
+
+
+                // نخفي العناصر التي قيمتها صفر
+                breakdown =
+                    breakdown
+                        .Where(x => x.Amount != 0)
+                        .OrderByDescending(x => x.Amount)
+                        .ToList();
+
+
+                foreach (var item in breakdown)
+                {
+                    var row =
+                        new Screens.ucItemsRow();
+
+                    row.Width =
+                        Math.Max(
+                            FlowLayoutPanelOutflowBreakdown.ClientSize.Width - 5,
+                            250);
+
+                    row.Height = 45;
+
+
+                    row.SetData(
+                        item.Name,
+                        $"{item.Amount:N0} ج");
+
+
+                    FlowLayoutPanelOutflowBreakdown.Controls.Add(
+                        row);
+                }
+            }
+            finally
+            {
+                FlowLayoutPanelOutflowBreakdown.ResumeLayout();
             }
         }
 
-        private void OutflowRowClicked(
-            object sender,
-            EventArgs e)
-        {
-            if (sender is Screens.ucItemsRow row)
-            {
-                // هنا لاحقًا ممكن تفتح تفاصيل المصروف
-                // حسب نوع المصروف
-            }
-        }
 
         #endregion
+
 
         #region Print
 
@@ -482,7 +621,8 @@ namespace SabraForSpareParts.Screens {
         {
             try
             {
-                using var dgv = CreatePrintDataGridView();
+                using var dgv =
+                    CreatePrintDataGridView();
 
                 clsGlobalClass.PrintDataGridView(
                     dgv,
@@ -491,63 +631,97 @@ namespace SabraForSpareParts.Screens {
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"حدث خطأ أثناء الطباعة:\n{ex.Message}",
+                    $"حدث خطأ أثناء الطباعة:\n\n{ex.Message}",
                     "خطأ",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
         }
 
+
         private DataGridView CreatePrintDataGridView()
         {
-            var dgv = new DataGridView();
+            var dgv =
+                new DataGridView();
 
-            dgv.Columns.Add(
-                "Type",
-                "نوع العملية");
-
-            dgv.Columns.Add(
-                "Amount",
-                "المبلغ");
-
-            dgv.Columns.Add(
-                "Description",
-                "البيان");
 
             dgv.Columns.Add(
                 "Date",
                 "التاريخ");
 
-            dgv.Rows.Add(
-                "تدفق داخل",
-                $"{_currentData.Inflows:N0} ج",
-                "إجمالي التدفقات الداخلة",
-                DateTime.Today.ToString("dd/MM/yyyy"));
+            dgv.Columns.Add(
+                "TotalIn",
+                "التدفقات الداخلة");
 
-            dgv.Rows.Add(
-                "تدفق خارج",
-                $"{_currentData.Outflows:N0} ج",
-                "إجمالي التدفقات الخارجة",
-                DateTime.Today.ToString("dd/MM/yyyy"));
+            dgv.Columns.Add(
+                "SalesIn",
+                "المبيعات");
 
-            dgv.Rows.Add(
-                "صافي",
-                $"{(_currentData.Inflows - _currentData.Outflows):N0} ج",
-                "صافي التدفق",
-                DateTime.Today.ToString("dd/MM/yyyy"));
+            dgv.Columns.Add(
+                "TotalOut",
+                "التدفقات الخارجة");
 
-            dgv.Rows.Add(
-                "الرصيد",
-                $"{_currentData.CurrentBalance:N0} ج",
-                "الرصيد الحالي",
-                DateTime.Today.ToString("dd/MM/yyyy"));
+            dgv.Columns.Add(
+                "PurchasesOut",
+                "المشتريات");
 
-            dgv.RightToLeft = RightToLeft.Yes;
+            dgv.Columns.Add(
+                "PayrollOut",
+                "الرواتب");
+
+            dgv.Columns.Add(
+                "ExpensesOut",
+                "المصروفات");
+
+            dgv.Columns.Add(
+                "AdvancesOut",
+                "السلف");
+
+            dgv.Columns.Add(
+                "NetFlow",
+                "صافي التدفق");
+
+            dgv.Columns.Add(
+                "ClosingBalance",
+                "الرصيد");
+
+
+            foreach (var item in _cashFlowData
+                .OrderBy(x => x.FlowDate))
+            {
+                dgv.Rows.Add(
+                    item.FlowDate.ToString(
+                        "dd/MM/yyyy"),
+
+                    $"{item.TotalIn:N0} ج",
+
+                    $"{item.SalesIn:N0} ج",
+
+                    $"{item.TotalOut:N0} ج",
+
+                    $"{item.PurchasesOut:N0} ج",
+
+                    $"{item.PayrollOut:N0} ج",
+
+                    $"{item.ExpensesOut:N0} ج",
+
+                    $"{item.AdvancesOut:N0} ج",
+
+                    $"{item.NetFlow:N0} ج",
+
+                    $"{item.ClosingBalance:N0} ج");
+            }
+
+
+            dgv.RightToLeft =
+                RightToLeft.Yes;
+
 
             return dgv;
         }
 
         #endregion
+
 
         #region Excel
 
@@ -557,7 +731,8 @@ namespace SabraForSpareParts.Screens {
         {
             try
             {
-                using var dgv = CreatePrintDataGridView();
+                using var dgv =
+                    CreatePrintDataGridView();
 
                 clsGlobalClass.ExportDataGridViewToExcel(
                     dgv,
@@ -567,7 +742,7 @@ namespace SabraForSpareParts.Screens {
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"حدث خطأ أثناء تصدير البيانات:\n{ex.Message}",
+                    $"حدث خطأ أثناء تصدير البيانات:\n\n{ex.Message}",
                     "خطأ",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -576,47 +751,81 @@ namespace SabraForSpareParts.Screens {
 
         #endregion
 
+
         #region Card Events
 
         private void lblTotalInflows_Click(
             object sender,
             EventArgs e)
         {
+            decimal amount =
+                _cashFlowData.Sum(
+                    x => x.TotalIn);
+
             ShowCardMessage(
                 "إجمالي التدفقات الداخلة",
-                _currentData.Inflows);
+                amount);
         }
+
 
         private void lblTotalOutflows_Click(
             object sender,
             EventArgs e)
         {
+            decimal amount =
+                _cashFlowData.Sum(
+                    x => x.TotalOut);
+
             ShowCardMessage(
                 "إجمالي التدفقات الخارجة",
-                _currentData.Outflows);
+                amount);
         }
+
 
         private void lblMonthlyNet_Click(
             object sender,
             EventArgs e)
         {
+            decimal inflows =
+                _cashFlowData.Sum(
+                    x => x.TotalIn);
+
+            decimal outflows =
+                _cashFlowData.Sum(
+                    x => x.TotalOut);
+
             decimal net =
-                _currentData.Inflows -
-                _currentData.Outflows;
+                inflows - outflows;
+
 
             ShowCardMessage(
                 "صافي التدفق",
                 net);
         }
 
+
         private void lblCurrentBalance_Click(
             object sender,
             EventArgs e)
         {
+            decimal balance = 0m;
+
+
+            if (_cashFlowData.Count > 0)
+            {
+                balance =
+                    _cashFlowData
+                        .OrderBy(x => x.FlowDate)
+                        .Last()
+                        .ClosingBalance;
+            }
+
+
             ShowCardMessage(
                 "الرصيد الحالي",
-                _currentData.CurrentBalance);
+                balance);
         }
+
 
         private void ShowCardMessage(
             string title,
@@ -631,43 +840,5 @@ namespace SabraForSpareParts.Screens {
 
         #endregion
 
-        #region Events
-
-        private void lblMonthAndYear_Click(
-            object sender,
-            EventArgs e)
-        {
-            // لا يوجد إجراء حاليًا
-        }
-
-        private void pnlNetProfit_Paint(
-            object sender,
-            PaintEventArgs e)
-        {
-            // الرسم يتم من SabraPanel
-        }
-
-        private void cartesianChart1_Load(
-            object sender,
-            EventArgs e)
-        {
-            LoadCashFlowChart();
-        }
-
-        private void FlowLayoutPanelOutflowBreakdown_Paint(
-            object sender,
-            PaintEventArgs e)
-        {
-            // يتم إنشاء الـ rows في LoadOutflowBreakdown
-        }
-
-        private void sabraLabel5_Click(
-            object sender,
-            EventArgs e)
-        {
-            // عنوان القسم
-        }
-
-        #endregion
     }
 }

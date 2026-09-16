@@ -521,7 +521,6 @@
             // 
             lblReleaseFees.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblReleaseFees.BackColor = Color.Transparent;
-            lblReleaseFees.BorderSize = 1;
             lblReleaseFees.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblReleaseFees.ForeColor = SystemColors.GrayText;
             lblReleaseFees.IsTitle = true;

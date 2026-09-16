@@ -95,7 +95,7 @@
             // 
             // sbtnSearch
             // 
-            sbtnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            sbtnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             sbtnSearch.BackColor = Color.RoyalBlue;
             sbtnSearch.BorderColor = Color.DodgerBlue;
             sbtnSearch.BorderRadius = 10;
@@ -122,7 +122,7 @@
             // 
             // stbxSearchForCustomer
             // 
-            stbxSearchForCustomer.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            stbxSearchForCustomer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             stbxSearchForCustomer.AutoSize = true;
             stbxSearchForCustomer.BackColor = Color.White;
             stbxSearchForCustomer.Font = new Font("Cairo", 15F);
@@ -130,7 +130,7 @@
             stbxSearchForCustomer.Location = new Point(624, 23);
             stbxSearchForCustomer.Name = "stbxSearchForCustomer";
             stbxSearchForCustomer.Padding = new Padding(10, 7, 25, 7);
-            stbxSearchForCustomer.PlaceholderText = "بحث عن المرود ";
+            stbxSearchForCustomer.PlaceholderText = "بحث عن عميل..";
             stbxSearchForCustomer.Required = true;
             stbxSearchForCustomer.RightToLeft = RightToLeft.Yes;
             stbxSearchForCustomer.SelectedText = "";
@@ -138,8 +138,7 @@
             stbxSearchForCustomer.SelectionStart = 0;
             stbxSearchForCustomer.Size = new Size(444, 62);
             stbxSearchForCustomer.TabIndex = 7;
-            stbxSearchForCustomer.Texts = "بحث عن عميل..";
-            stbxSearchForCustomer.Load += stbxSearchForSupplier_Load;
+            stbxSearchForCustomer.Texts = "";
             // 
             // sbtnAddNewInvoice
             // 
@@ -259,14 +258,13 @@
             lblCustomerName.BackColor = Color.Transparent;
             lblCustomerName.Font = new Font("Cairo", 12F);
             lblCustomerName.ForeColor = SystemColors.WindowFrame;
-            lblCustomerName.Location = new Point(1168, 48);
+            lblCustomerName.Location = new Point(1074, 48);
             lblCustomerName.Name = "lblCustomerName";
             lblCustomerName.RightToLeft = RightToLeft.Yes;
-            lblCustomerName.Size = new Size(233, 37);
+            lblCustomerName.Size = new Size(327, 50);
             lblCustomerName.TabIndex = 16;
             lblCustomerName.Text = "ورشة النيل";
             lblCustomerName.TextAlign = ContentAlignment.MiddleRight;
-            lblCustomerName.Click += lblCustomerName_Click;
             // 
             // tableLayoutPanel1
             // 
@@ -343,7 +341,6 @@
             lblTotalPurchases.TabIndex = 2;
             lblTotalPurchases.Text = "1";
             lblTotalPurchases.TextAlign = ContentAlignment.MiddleRight;
-            lblTotalPurchases.Click += lblTotalPurchases_Click;
             // 
             // sabraPanel2
             // 
@@ -387,7 +384,6 @@
             // 
             lblNumberOfInvoices.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblNumberOfInvoices.BackColor = Color.Transparent;
-            lblNumberOfInvoices.BorderSize = 1;
             lblNumberOfInvoices.Font = new Font("Cairo", 12F, FontStyle.Bold);
             lblNumberOfInvoices.ForeColor = Color.Black;
             lblNumberOfInvoices.IsTitle = true;
@@ -399,7 +395,6 @@
             lblNumberOfInvoices.TabIndex = 2;
             lblNumberOfInvoices.Text = "22";
             lblNumberOfInvoices.TextAlign = ContentAlignment.MiddleRight;
-            lblNumberOfInvoices.Click += lblNumberOfInvoices_Click;
             // 
             // pnlLowStock
             // 
@@ -454,7 +449,6 @@
             lblTotalPaid.TabIndex = 2;
             lblTotalPaid.Text = "22";
             lblTotalPaid.TextAlign = ContentAlignment.MiddleRight;
-            lblTotalPaid.Click += lblTotalPaid_Click;
             // 
             // pnlNetProfit
             // 
@@ -509,7 +503,6 @@
             lblDebitBalance.TabIndex = 4;
             lblDebitBalance.Text = "22";
             lblDebitBalance.TextAlign = ContentAlignment.MiddleRight;
-            lblDebitBalance.Click += lblDebitBalance_Click;
             // 
             // dgvCustomerStatement
             // 

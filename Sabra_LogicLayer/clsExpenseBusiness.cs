@@ -4,84 +4,500 @@ using Sabra.DataLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sabra.LogicLayer
 {
     public class clsExpenseBusiness
     {
-        private readonly clsExpenseDAL _expDAL = new clsExpenseDAL();
-        private readonly clsTreasuryLogDAL _treasuryDAL = new clsTreasuryLogDAL();
-        private readonly clsLookupDAL _lookupDAL = new clsLookupDAL();
+        private readonly clsExpenseDAL _expenseDAL;
+        private readonly clsTreasuryLogDAL _treasuryDAL;
+        private readonly clsLookupDAL _lookupDAL;
 
-        private const string OutTransactionType = "صادر";
+       private const string OutTransactionType = "صادر";
 
-        public OperationResult<List<Expense>> GetAll(DateTime? from = null, DateTime? to = null, int? categoryID = null)
-            => OperationResult<List<Expense>>.Ok(_expDAL.GetAll(from, to, categoryID));
-
-        public OperationResult<List<ExpenseCategory>> GetCategories()
-            => OperationResult<List<ExpenseCategory>>.Ok(_lookupDAL.GetAllExpenseCategories());
-
-        public OperationResult Add(Expense exp, int paymentMethodID)
+        public clsExpenseBusiness()
         {
-            if (exp.CategoryID <= 0)
-                return OperationResult.Fail("يجب اختيار تصنيف المصروف.");
-            if (exp.Amount <= 0)
-                return OperationResult.Fail("المبلغ يجب أن يكون أكبر من صفر.");
-            if (paymentMethodID <= 0)
-                return OperationResult.Fail("يجب اختيار طريقة الدفع.");
+            _expenseDAL = new clsExpenseDAL();
+            _treasuryDAL = new clsTreasuryLogDAL();
+            _lookupDAL = new clsLookupDAL();
+        }
 
-            var category = _lookupDAL.GetAllExpenseCategories().FirstOrDefault(c => c.CategoryID == exp.CategoryID);
-            if (category == null)
-                return OperationResult.Fail("تصنيف المصروف غير موجود.");
 
-            if (exp.ExpenseDate == default) exp.ExpenseDate = DateTime.Today;
+        // =========================================================
+        // Get All Expenses
+        // =========================================================
 
-            int expID = _expDAL.Add(exp);
-
-            var txTypes = _lookupDAL.GetAllTransactionTypes();
-            var outType = txTypes.FirstOrDefault(t => t.TypeName == OutTransactionType);
-            if (outType == null)
-                return OperationResult.Fail($"نوع الحركة ({OutTransactionType}) غير معرّف في النظام. تم تسجيل المصروف بدون خصمه من الخزنة.");
-
-            decimal bal = _treasuryDAL.GetCurrentBalance();
-            _treasuryDAL.Add(new TreasuryLog
+        public OperationResult<List<Expense>> GetAll(
+            DateTime? from = null,
+            DateTime? to = null,
+            int? categoryID = null)
+        {
+            if (from.HasValue &&
+                to.HasValue &&
+                from.Value.Date > to.Value.Date)
             {
-                TransactionTypeID = outType.TransactionTypeID,
-                PaymentMethodID = paymentMethodID,
-                Amount = exp.Amount,
-                ExpenseID = expID,
-                ActionDate = DateTime.Now,
-                BalanceAfter = bal - exp.Amount,
-                Notes = exp.Notes ?? $"مصروف: {category.CategoryName}"
-            });
+                return OperationResult<List<Expense>>
+                    .Fail("تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية.");
+            }
 
-            return OperationResult.Ok("تم تسجيل المصروف بنجاح.", expID);
+            var expenses = _expenseDAL.GetAll(
+                from,
+                to,
+                categoryID);
+
+            return OperationResult<List<Expense>>
+                .Ok(expenses);
         }
 
-        public OperationResult Update(Expense exp)
-        {
-            if (exp.CategoryID <= 0)
-                return OperationResult.Fail("يجب اختيار تصنيف المصروف.");
-            if (exp.Amount <= 0)
-                return OperationResult.Fail("المبلغ يجب أن يكون أكبر من صفر.");
 
-            _expDAL.Update(exp);
-            return OperationResult.Ok("تم تحديث المصروف.");
+        // =========================================================
+        // Get Expense By ID
+        // =========================================================
+
+        public OperationResult<Expense> GetByID(
+            int expenseID)
+        {
+            if (expenseID <= 0)
+            {
+                return OperationResult<Expense>
+                    .Fail("رقم المصروف غير صحيح.");
+            }
+
+            // clsExpenseDAL الحالي لا يحتوي GetByID.
+            // لذلك لا نحاول اختراع method غير موجودة.
+            //
+            // في حالة احتياج الشاشة لـ GetByID:
+            // نضيفها لاحقاً في DAL + Stored Procedure.
+
+            return OperationResult<Expense>
+                .Fail("GetByID غير متوفر حالياً في clsExpenseDAL.");
         }
 
-        public OperationResult Delete(int expenseID)
+
+        // =========================================================
+        // Get Categories
+        // =========================================================
+
+        public OperationResult<List<ExpenseCategory>>
+            GetCategories()
         {
-            _expDAL.Delete(expenseID);
-            return OperationResult.Ok("تم حذف المصروف.");
+            var categories =
+                _lookupDAL.GetAllExpenseCategories();
+
+            return OperationResult<List<ExpenseCategory>>
+                .Ok(categories);
         }
 
-        public OperationResult AddCategory(string name)
+
+        // =========================================================
+        // Get Payment Methods
+        // =========================================================
+
+        public OperationResult<List<PaymentMethod>>
+            GetPaymentMethods()
         {
-            if (string.IsNullOrWhiteSpace(name)) return OperationResult.Fail("الاسم مطلوب.");
-            _lookupDAL.AddExpenseCategory(name.Trim());
-            return OperationResult.Ok("تمت إضافة التصنيف.");
+            var paymentMethods =
+                _lookupDAL.GetAllPaymentMethods();
+
+            return OperationResult<List<PaymentMethod>>
+                .Ok(paymentMethods);
+        }
+
+
+        // =========================================================
+        // Add Expense
+        // =========================================================
+
+        public OperationResult Add(
+            Expense expense,
+            int paymentMethodID)
+        {
+            // -----------------------------------------------------
+            // Object validation
+            // -----------------------------------------------------
+
+            if (expense == null)
+            {
+                return OperationResult.Fail(
+                    "بيانات المصروف غير صحيحة.");
+            }
+
+
+            // -----------------------------------------------------
+            // Category validation
+            // -----------------------------------------------------
+
+            if (expense.CategoryID <= 0)
+            {
+                return OperationResult.Fail(
+                    "يجب اختيار تصنيف المصروف.");
+            }
+
+
+            // -----------------------------------------------------
+            // Amount validation
+            // -----------------------------------------------------
+
+            if (expense.Amount <= 0)
+            {
+                return OperationResult.Fail(
+                    "المبلغ يجب أن يكون أكبر من صفر.");
+            }
+
+
+            // -----------------------------------------------------
+            // Payment Method validation
+            // -----------------------------------------------------
+
+            if (paymentMethodID <= 0)
+            {
+                return OperationResult.Fail(
+                    "يجب اختيار طريقة الدفع.");
+            }
+
+
+            // -----------------------------------------------------
+            // Date validation
+            // -----------------------------------------------------
+
+            if (expense.ExpenseDate == default)
+            {
+                expense.ExpenseDate = DateTime.Today;
+            }
+
+
+            if (expense.ExpenseDate.Date > DateTime.Today)
+            {
+                return OperationResult.Fail(
+                    "تاريخ المصروف لا يمكن أن يكون في المستقبل.");
+            }
+
+
+            // -----------------------------------------------------
+            // Check Category exists
+            // -----------------------------------------------------
+
+            var category =
+                _lookupDAL
+                    .GetAllExpenseCategories()
+                    .FirstOrDefault(
+                        x => x.CategoryID ==
+                             expense.CategoryID);
+
+            if (category == null)
+            {
+                return OperationResult.Fail(
+                    "تصنيف المصروف غير موجود.");
+            }
+
+
+            // -----------------------------------------------------
+            // Check Payment Method exists
+            // -----------------------------------------------------
+
+            var paymentMethod =
+                _lookupDAL
+                    .GetAllPaymentMethods()
+                    .FirstOrDefault(
+                        x => x.PaymentMethodID ==
+                             paymentMethodID);
+
+            if (paymentMethod == null)
+            {
+                return OperationResult.Fail(
+                    "طريقة الدفع غير موجودة.");
+            }
+
+
+            // -----------------------------------------------------
+            // Find "صادر" transaction type
+            // -----------------------------------------------------
+
+            var transactionTypes =
+                _lookupDAL
+                    .GetAllTransactionTypes();
+
+            var outType =
+                transactionTypes.FirstOrDefault(
+                    x => x.TypeName ==
+                         OutTransactionType);
+
+            if (outType == null)
+            {
+                return OperationResult.Fail(
+                    $"نوع الحركة ({OutTransactionType}) غير معرف في النظام.");
+            }
+
+
+            // -----------------------------------------------------
+            // Check Treasury Balance
+            // -----------------------------------------------------
+
+            decimal currentBalance =
+                _treasuryDAL.GetCurrentBalance();
+
+            if (currentBalance < expense.Amount)
+            {
+                return OperationResult.Fail(
+                    "الرصيد الحالي في الخزنة لا يكفي لتسجيل المصروف.");
+            }
+
+
+            // -----------------------------------------------------
+            // Add Expense
+            // -----------------------------------------------------
+
+            int expenseID =
+                _expenseDAL.Add(expense);
+
+            if (expenseID <= 0)
+            {
+                return OperationResult.Fail(
+                    "فشل تسجيل المصروف.");
+            }
+
+
+            // -----------------------------------------------------
+            // Add Treasury Log
+            // -----------------------------------------------------
+
+            decimal balanceAfter =
+                currentBalance -
+                expense.Amount;
+
+            var treasuryLog =
+                new TreasuryLog
+                {
+                    TransactionTypeID =
+                        outType.TransactionTypeID,
+
+                    PaymentMethodID =
+                        paymentMethodID,
+
+                    Amount =
+                        expense.Amount,
+
+                    ExpenseID =
+                        expenseID,
+
+                    ActionDate =
+                        DateTime.Now,
+
+                    BalanceAfter =
+                        balanceAfter,
+
+                    Notes =
+                        string.IsNullOrWhiteSpace(expense.Notes)
+                            ? $"مصروف: {category.CategoryName}"
+                            : expense.Notes
+                };
+
+
+            _treasuryDAL.Add(treasuryLog);
+
+
+            return OperationResult.Ok(
+                "تم تسجيل المصروف بنجاح.",
+                expenseID);
+        }
+
+
+        // =========================================================
+        // Update Expense
+        // =========================================================
+
+        public OperationResult Update(
+            Expense expense)
+        {
+            if (expense == null)
+            {
+                return OperationResult.Fail(
+                    "بيانات المصروف غير صحيحة.");
+            }
+
+
+            if (expense.ExpenseID <= 0)
+            {
+                return OperationResult.Fail(
+                    "رقم المصروف غير صحيح.");
+            }
+
+
+            if (expense.CategoryID <= 0)
+            {
+                return OperationResult.Fail(
+                    "يجب اختيار تصنيف المصروف.");
+            }
+
+
+            if (expense.Amount <= 0)
+            {
+                return OperationResult.Fail(
+                    "المبلغ يجب أن يكون أكبر من صفر.");
+            }
+
+
+            if (expense.ExpenseDate == default)
+            {
+                return OperationResult.Fail(
+                    "تاريخ المصروف مطلوب.");
+            }
+
+
+            if (expense.ExpenseDate.Date > DateTime.Today)
+            {
+                return OperationResult.Fail(
+                    "تاريخ المصروف لا يمكن أن يكون في المستقبل.");
+            }
+
+
+            // -----------------------------------------------------
+            // Check Category
+            // -----------------------------------------------------
+
+            var category =
+                _lookupDAL
+                    .GetAllExpenseCategories()
+                    .FirstOrDefault(
+                        x => x.CategoryID ==
+                             expense.CategoryID);
+
+            if (category == null)
+            {
+                return OperationResult.Fail(
+                    "تصنيف المصروف غير موجود.");
+            }
+
+
+            // -----------------------------------------------------
+            // Update Expense
+            // -----------------------------------------------------
+
+            bool updated =
+                _expenseDAL.Update(expense);
+
+            if (!updated)
+            {
+                return OperationResult.Fail(
+                    "لم يتم تحديث المصروف.");
+            }
+
+
+            /*
+             * ملاحظة:
+             *
+             * clsExpenseDAL الحالي لا يعطينا:
+             *
+             * - الـ PaymentMethodID القديم
+             * - الـ TreasuryLog المرتبط بالمصروف
+             * - method لتعديل TreasuryLog
+             *
+             * لذلك لا نعدل الخزنة من هنا بشكل افتراضي.
+             *
+             * بمجرد إرسال clsTreasuryLogDAL نربط:
+             *
+             * Old Amount
+             *      ↓
+             * New Amount
+             *      ↓
+             * Treasury Balance
+             *
+             * بطريقة صحيحة.
+             */
+
+
+            return OperationResult.Ok(
+                "تم تحديث المصروف بنجاح.");
+        }
+
+
+        // =========================================================
+        // Delete Expense
+        // =========================================================
+
+        public OperationResult Delete(
+            int expenseID)
+        {
+            if (expenseID <= 0)
+            {
+                return OperationResult.Fail(
+                    "رقم المصروف غير صحيح.");
+            }
+
+
+            /*
+             * لا يوجد GetByID في clsExpenseDAL الحالي،
+             * لذلك لا نحاول قراءة المصروف قبل الحذف.
+             *
+             * كذلك لا يوجد في clsTreasuryLogDAL هنا
+             * method واضحة لعكس حركة المصروف.
+             *
+             * لذلك عملية الحذف الحالية تعتمد على
+             * Stored Procedure sp_Expense_Delete.
+             *
+             * إذا كانت الـ SP نفسها تحذف/تعالج TreasuryLog
+             * المرتبط بالمصروف، فالأمر صحيح.
+             */
+
+
+            bool deleted =
+                _expenseDAL.Delete(expenseID);
+
+            if (!deleted)
+            {
+                return OperationResult.Fail(
+                    "لم يتم حذف المصروف.");
+            }
+
+
+            return OperationResult.Ok(
+                "تم حذف المصروف بنجاح.");
+        }
+
+
+        // =========================================================
+        // Add Expense Category
+        // =========================================================
+
+        public OperationResult AddCategory(
+            string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return OperationResult.Fail(
+                    "اسم التصنيف مطلوب.");
+            }
+
+
+            name = name.Trim();
+
+
+            var categories =
+                _lookupDAL
+                    .GetAllExpenseCategories();
+
+
+            bool exists =
+                categories.Any(
+                    x => string.Equals(
+                        x.CategoryName,
+                        name,
+                        StringComparison.OrdinalIgnoreCase));
+
+
+            if (exists)
+            {
+                return OperationResult.Fail(
+                    "هذا التصنيف موجود بالفعل.");
+            }
+
+
+            _lookupDAL.AddExpenseCategory(
+                name);
+
+
+            return OperationResult.Ok(
+                "تمت إضافة التصنيف بنجاح.");
         }
     }
 
