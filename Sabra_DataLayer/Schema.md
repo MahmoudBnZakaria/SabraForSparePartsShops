@@ -1,6 +1,6 @@
 ﻿USE [master]
 GO
-/****** Object:  Database [SabraForSparePartsDatabase]    Script Date: 9/17/2026 5:11:04 PM ******/
+/****** Object:  Database [SabraForSparePartsDatabase]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE DATABASE [SabraForSparePartsDatabase]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -84,15 +84,15 @@ ALTER DATABASE [SabraForSparePartsDatabase] SET QUERY_STORE (OPERATION_MODE = RE
 GO
 USE [SabraForSparePartsDatabase]
 GO
-/****** Object:  User [JustUser]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  User [JustUser]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE USER [JustUser] FOR LOGIN [AppUser] WITH DEFAULT_SCHEMA=[dbo]
 GO
-/****** Object:  DatabaseRole [db_app_execute]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  DatabaseRole [db_app_execute]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE ROLE [db_app_execute]
 GO
 ALTER ROLE [db_app_execute] ADD MEMBER [JustUser]
 GO
-/****** Object:  UserDefinedTableType [dbo].[InvoiceDetailTableType]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  UserDefinedTableType [dbo].[InvoiceDetailTableType]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE TYPE [dbo].[InvoiceDetailTableType] AS TABLE(
 	[Part_ID] [int] NOT NULL,
 	[Quantity] [int] NOT NULL,
@@ -103,7 +103,7 @@ CREATE TYPE [dbo].[InvoiceDetailTableType] AS TABLE(
 )WITH (IGNORE_DUP_KEY = OFF)
 )
 GO
-/****** Object:  UserDefinedTableType [dbo].[PODetailTableType]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  UserDefinedTableType [dbo].[PODetailTableType]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE TYPE [dbo].[PODetailTableType] AS TABLE(
 	[Part_ID] [int] NOT NULL,
 	[Quantity] [int] NOT NULL,
@@ -114,23 +114,30 @@ CREATE TYPE [dbo].[PODetailTableType] AS TABLE(
 )WITH (IGNORE_DUP_KEY = OFF)
 )
 GO
-/****** Object:  UserDefinedFunction [dbo].[fn_Treasury_GetCurrentBalance]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  UserDefinedFunction [dbo].[fn_Treasury_GetCurrentBalance]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[fn_Treasury_GetCurrentBalance]()
+
+
+CREATE   FUNCTION [dbo].[fn_Treasury_GetCurrentBalance]()
 RETURNS DECIMAL(18,2)
 AS
 BEGIN
     DECLARE @Balance DECIMAL(18,2);
-    SELECT TOP 1 @Balance = Balance_After
+
+    SELECT TOP (1)
+        @Balance = Balance_After
     FROM dbo.TREASURY_LOG
-    ORDER BY Action_Date DESC, Transation_ID DESC;
+    ORDER BY
+        Action_Date DESC,
+        Transation_ID DESC;
+
     RETURN ISNULL(@Balance, 0);
-END
+END;
 GO
-/****** Object:  Table [dbo].[Suppliers]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Suppliers]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -149,7 +156,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Inventory]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Inventory]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -182,7 +189,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Units]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Units]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -200,7 +207,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Categories]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Categories]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -218,7 +225,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Brands]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Brands]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -237,7 +244,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Inventory_Detail]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Inventory_Detail]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -268,7 +275,7 @@ LEFT JOIN Units      u ON i.Unit_ID     = u.Unit_ID
 LEFT JOIN Suppliers  s ON i.Supplier_ID = s.Supplier_ID
 WHERE i.Is_Deleted = 0;
 GO
-/****** Object:  Table [dbo].[Payment_Status]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Payment_Status]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -286,7 +293,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Customers]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Customers]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -306,7 +313,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Sales_Invoices]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Sales_Invoices]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -317,19 +324,19 @@ CREATE TABLE [dbo].[Sales_Invoices](
 	[Employee_ID] [int] NOT NULL,
 	[Date_Time] [datetime2](7) NOT NULL,
 	[Total_Amount] [decimal](14, 2) NOT NULL,
-	[Discount] [decimal](18, 0) NOT NULL,
-	[Final_Amount]  AS ([Total_Amount]-[Discount]) PERSISTED,
+	[Discount] [decimal](14, 2) NOT NULL,
 	[Paid_Amount] [decimal](14, 2) NOT NULL,
-	[Remaining_Balance]  AS (([Total_Amount]-[Discount])-[Paid_Amount]) PERSISTED,
 	[Payment_Status_ID] [int] NOT NULL,
 	[Created_At] [datetime2](7) NOT NULL,
+	[Final_Amount]  AS ([Total_Amount]-[Discount]) PERSISTED,
+	[Remaining_Balance]  AS (([Total_Amount]-[Discount])-[Paid_Amount]) PERSISTED,
 PRIMARY KEY CLUSTERED 
 (
 	[Invoice_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Employees]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Employees]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -355,7 +362,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Sales_Summary]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Sales_Summary]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -378,7 +385,7 @@ LEFT JOIN Customers      cu ON si.Customer_ID        = cu.Customer_ID
 LEFT JOIN Employees      e  ON si.Employee_ID        = e.Employee_ID
 LEFT JOIN Payment_Status ps ON si.Payment_Status_ID  = ps.Status_ID;
 GO
-/****** Object:  View [dbo].[V_Low_Stock_Alert]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Low_Stock_Alert]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -394,7 +401,7 @@ FROM Inventory
 WHERE Is_Deleted = 0
   AND Current_Stock <= Min_Limit;
 GO
-/****** Object:  Table [dbo].[Treasury_Log]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Treasury_Log]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -413,25 +420,32 @@ CREATE TABLE [dbo].[Treasury_Log](
 	[Action_Date] [datetime2](7) NOT NULL,
 	[Balance_After] [decimal](14, 2) NOT NULL,
 	[Notes] [nvarchar](500) NULL,
+	[Reversal_Of_Transaction_ID] [int] NULL,
+	[Created_By] [int] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Transation_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Treasury_Balance]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Treasury_Balance]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[V_Treasury_Balance] AS
-SELECT TOP 1
+
+
+CREATE   VIEW [dbo].[V_Treasury_Balance]
+AS
+SELECT TOP (1)
     Balance_After AS Current_Balance,
     Action_Date   AS Last_Transaction
-FROM TREASURY_LOG
-ORDER BY Action_Date DESC;
+FROM dbo.TREASURY_LOG
+ORDER BY
+    Action_Date DESC,
+    Transation_ID DESC;
 GO
-/****** Object:  Table [dbo].[Advances]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Advances]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -444,13 +458,14 @@ CREATE TABLE [dbo].[Advances](
 	[Status_ID] [int] NOT NULL,
 	[Approved_By] [int] NULL,
 	[Created_At] [datetime2](7) NOT NULL,
+	[Treasury_ID] [int] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Advance_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Employee_Positions]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Employee_Positions]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -468,7 +483,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Advance_Status]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Advance_Status]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -486,7 +501,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Staff_Wallets]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Staff_Wallets]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -507,7 +522,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Payroll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Payroll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -533,7 +548,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Employee_Financial_Summary]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Employee_Financial_Summary]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -606,7 +621,7 @@ LEFT JOIN (
 
 WHERE e.Is_Active = 1;
 GO
-/****** Object:  Table [dbo].[Invoice_Details]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Invoice_Details]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -618,77 +633,116 @@ CREATE TABLE [dbo].[Invoice_Details](
 	[Quantity] [int] NOT NULL,
 	[Unit_Price] [decimal](12, 2) NOT NULL,
 	[Line_Total]  AS ([Quantity]*[Unit_Price]) PERSISTED,
+	[Unit_Cost] [decimal](12, 2) NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Detail_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Invoice_Profit]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Invoice_Profit]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE   VIEW [dbo].[V_Invoice_Profit] AS
+/* ============================================================================
+   3) FINANCIAL REPORTS - USE STORED HISTORICAL COST
+============================================================================ */
+
+CREATE   VIEW [dbo].[V_Invoice_Profit]
+AS
+WITH Costs AS
+(
+    SELECT
+        id.Invoice_ID,
+        SUM(id.Quantity * id.Unit_Cost) AS Total_Cost
+    FROM dbo.INVOICE_DETAILS id
+    GROUP BY id.Invoice_ID
+)
 SELECT
     si.Invoice_ID,
     si.Date_Time,
-    ISNULL(cu.Customer_Name, N'عميل نقدي')  AS Customer_Name,
-    e.Full_Name                               AS Employee_Name,
+    ISNULL(cu.Customer_Name, N'عميل نقدي') AS Customer_Name,
+    e.Full_Name AS Employee_Name,
     si.Total_Amount,
     si.Discount,
     si.Final_Amount,
     si.Paid_Amount,
     si.Remaining_Balance,
-
-    -- إجمالي تكلفة الشراء لكل القطع في الفاتورة
-    SUM(id.Quantity * inv.Purchase_Price)     AS Total_Cost,
-
-    -- صافي الربح = الإجمالي بعد الخصم - تكلفة الشراء
-    si.Final_Amount - SUM(id.Quantity * inv.Purchase_Price) AS Net_Profit,
-
-    -- نسبة الربح
+    ISNULL(c.Total_Cost, 0) AS Total_Cost,
+    si.Final_Amount - ISNULL(c.Total_Cost, 0) AS Net_Profit,
     CASE
         WHEN si.Final_Amount = 0 THEN 0
         ELSE ROUND(
-            (si.Final_Amount - SUM(id.Quantity * inv.Purchase_Price))
-            / si.Final_Amount * 100, 2)
+            (si.Final_Amount - ISNULL(c.Total_Cost, 0))
+            / si.Final_Amount * 100, 2
+        )
     END AS Profit_Percent,
-
     ps.Status_Name AS Payment_Status
-FROM SALES_INVOICES si
-LEFT JOIN CUSTOMERS      cu  ON si.Customer_ID       = cu.Customer_ID
-LEFT JOIN EMPLOYEES      e   ON si.Employee_ID       = e.Employee_ID
-LEFT JOIN PAYMENT_STATUS ps  ON si.Payment_Status_ID = ps.Status_ID
-LEFT JOIN INVOICE_DETAILS id ON si.Invoice_ID        = id.Invoice_ID
-LEFT JOIN INVENTORY       inv ON id.Part_ID          = inv.Part_ID
-GROUP BY
-    si.Invoice_ID, si.Date_Time, cu.Customer_Name,
-    e.Full_Name, si.Total_Amount, si.Discount, si.Final_Amount,
-    si.Paid_Amount, si.Remaining_Balance, ps.Status_Name;
+FROM dbo.SALES_INVOICES si
+LEFT JOIN Costs c
+    ON c.Invoice_ID = si.Invoice_ID
+LEFT JOIN dbo.CUSTOMERS cu
+    ON cu.Customer_ID = si.Customer_ID
+LEFT JOIN dbo.EMPLOYEES e
+    ON e.Employee_ID = si.Employee_ID
+LEFT JOIN dbo.PAYMENT_STATUS ps
+    ON ps.Status_ID = si.Payment_Status_ID;
 GO
-/****** Object:  View [dbo].[V_Daily_Profit]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Daily_Profit]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE   VIEW [dbo].[V_Daily_Profit] AS
+
+
+CREATE   VIEW [dbo].[V_Daily_Profit]
+AS
+WITH InvoiceCost AS
+(
+    SELECT
+        si.Invoice_ID,
+        CAST(si.Date_Time AS DATE) AS Sale_Date,
+        si.Final_Amount,
+        si.Paid_Amount,
+        si.Remaining_Balance,
+        SUM(id.Quantity * id.Unit_Cost) AS Total_Cost
+    FROM dbo.SALES_INVOICES si
+    LEFT JOIN dbo.INVOICE_DETAILS id
+        ON id.Invoice_ID = si.Invoice_ID
+    GROUP BY
+        si.Invoice_ID,
+        CAST(si.Date_Time AS DATE),
+        si.Final_Amount,
+        si.Paid_Amount,
+        si.Remaining_Balance
+)
 SELECT
-    CAST(si.Date_Time AS DATE)              AS Sale_Date,
-    COUNT(DISTINCT si.Invoice_ID)           AS Invoice_Count,
-    SUM(si.Final_Amount)                    AS Total_Revenue,
-    SUM(id.Quantity * inv.Purchase_Price)   AS Total_Cost,
-    SUM(si.Final_Amount)
-        - SUM(id.Quantity * inv.Purchase_Price) AS Net_Profit,
-    SUM(si.Paid_Amount)                     AS Total_Collected,
-    SUM(si.Remaining_Balance)               AS Total_Remaining
-FROM SALES_INVOICES si
-LEFT JOIN INVOICE_DETAILS id  ON si.Invoice_ID = id.Invoice_ID
-LEFT JOIN INVENTORY       inv ON id.Part_ID    = inv.Part_ID
-GROUP BY CAST(si.Date_Time AS DATE);
+    Sale_Date,
+    COUNT(*) AS Invoice_Count,
+    SUM(Final_Amount) AS Total_Revenue,
+    SUM(Total_Cost) AS Total_Cost,
+    SUM(Final_Amount) - SUM(Total_Cost) AS Net_Profit,
+    SUM(Paid_Amount) AS Total_Collected,
+    SUM(Remaining_Balance) AS Total_Remaining
+FROM InvoiceCost
+GROUP BY Sale_Date;
 GO
-/****** Object:  Table [dbo].[Expenses]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  UserDefinedFunction [dbo].[fn_FormatMonthYear]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[fn_FormatMonthYear] (@Date DATE)
+RETURNS CHAR(7)
+WITH SCHEMABINDING
+AS
+BEGIN
+    RETURN CONVERT(CHAR(4), YEAR(@Date)) + '-' + RIGHT('0' + CONVERT(VARCHAR(2), MONTH(@Date)), 2);
+END
+GO
+/****** Object:  Table [dbo].[Expenses]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -701,58 +755,100 @@ CREATE TABLE [dbo].[Expenses](
 	[Paid_By] [int] NULL,
 	[Notes] [nvarchar](500) NULL,
 	[Created_At] [datetime2](7) NOT NULL,
+	[Is_Voided] [bit] NOT NULL,
+	[Voided_At] [datetime2](7) NULL,
+	[Voided_By] [int] NULL,
+	[Void_Reason] [nvarchar](500) NULL,
+	[Updated_At] [datetime2](7) NOT NULL,
+	[Treasury_ID] [int] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Expense_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Monthly_Profit]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Monthly_Profit]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE   VIEW [dbo].[V_Monthly_Profit] AS
+
+
+CREATE   VIEW [dbo].[V_Monthly_Profit]
+AS
+WITH Sales AS
+(
+    SELECT
+        dbo.fn_FormatMonthYear(CAST(si.Date_Time AS DATE)) AS Month_Year,
+        SUM(si.Final_Amount) AS Revenue,
+        SUM(si.Paid_Amount) AS Collected,
+        SUM(si.Remaining_Balance) AS Remaining,
+        COUNT(*) AS Invoice_Count
+    FROM dbo.SALES_INVOICES si
+    GROUP BY dbo.fn_FormatMonthYear(CAST(si.Date_Time AS DATE))
+),
+COGS AS
+(
+    SELECT
+        dbo.fn_FormatMonthYear(CAST(si.Date_Time AS DATE)) AS Month_Year,
+        SUM(id.Quantity * id.Unit_Cost) AS Total_Cost
+    FROM dbo.SALES_INVOICES si
+    INNER JOIN dbo.INVOICE_DETAILS id
+        ON id.Invoice_ID = si.Invoice_ID
+    GROUP BY dbo.fn_FormatMonthYear(CAST(si.Date_Time AS DATE))
+),
+Expenses AS
+(
+    SELECT
+        dbo.fn_FormatMonthYear(Expense_Date) AS Month_Year,
+        SUM(Amount) AS Total_Expenses
+    FROM dbo.EXPENSES
+    WHERE Is_Voided = 0
+    GROUP BY dbo.fn_FormatMonthYear(Expense_Date)
+),
+Payroll AS
+(
+    SELECT
+        Month_Year,
+        SUM(Amount_Paid) AS Total_Payroll
+    FROM dbo.PAYROLL
+    GROUP BY Month_Year
+),
+Periods AS
+(
+    SELECT Month_Year FROM Sales
+    UNION
+    SELECT Month_Year FROM COGS
+    UNION
+    SELECT Month_Year FROM Expenses
+    UNION
+    SELECT Month_Year FROM Payroll
+)
 SELECT
-    FORMAT(si.Date_Time, 'yyyy-MM')         AS Month_Year,
-    COUNT(DISTINCT si.Invoice_ID)           AS Invoice_Count,
-    SUM(si.Final_Amount)                    AS Total_Revenue,
-    SUM(id.Quantity * inv.Purchase_Price)   AS Total_Cost,
-    SUM(si.Final_Amount)
-        - SUM(id.Quantity * inv.Purchase_Price) AS Net_Profit,
-    SUM(si.Paid_Amount)                     AS Total_Collected,
-    SUM(si.Remaining_Balance)               AS Total_Remaining,
-    -- المصروفات للشهر ده
-    ISNULL((
-        SELECT SUM(ex.Amount)
-        FROM EXPENSES ex
-        WHERE FORMAT(ex.Expense_Date, 'yyyy-MM') = FORMAT(si.Date_Time, 'yyyy-MM')
-    ), 0) AS Total_Expenses,
-    -- الرواتب للشهر ده
-    ISNULL((
-        SELECT SUM(pr.Amount_Paid)
-        FROM PAYROLL pr
-        WHERE FORMAT(pr.Payment_Date, 'yyyy-MM') = FORMAT(si.Date_Time, 'yyyy-MM')
-    ), 0) AS Total_Payroll,
-    -- صافي الربح بعد المصروفات والرواتب
-    SUM(si.Final_Amount)
-        - SUM(id.Quantity * inv.Purchase_Price)
-        - ISNULL((
-            SELECT SUM(ex.Amount)
-            FROM EXPENSES ex
-            WHERE FORMAT(ex.Expense_Date, 'yyyy-MM') = FORMAT(si.Date_Time, 'yyyy-MM')
-          ), 0)
-        - ISNULL((
-            SELECT SUM(pr.Amount_Paid)
-            FROM PAYROLL pr
-            WHERE FORMAT(pr.Payment_Date, 'yyyy-MM') = FORMAT(si.Date_Time, 'yyyy-MM')
-          ), 0) AS Net_Profit_After_Expenses
-FROM SALES_INVOICES si
-LEFT JOIN INVOICE_DETAILS id  ON si.Invoice_ID = id.Invoice_ID
-LEFT JOIN INVENTORY       inv ON id.Part_ID    = inv.Part_ID
-GROUP BY FORMAT(si.Date_Time, 'yyyy-MM');
+    p.Month_Year,
+    ISNULL(s.Invoice_Count, 0) AS Invoice_Count,
+    ISNULL(s.Revenue, 0) AS Total_Revenue,
+    ISNULL(c.Total_Cost, 0) AS Total_Cost,
+    ISNULL(s.Revenue, 0) - ISNULL(c.Total_Cost, 0) AS Gross_Profit,
+    ISNULL(s.Collected, 0) AS Total_Collected,
+    ISNULL(s.Remaining, 0) AS Total_Remaining,
+    ISNULL(x.Total_Expenses, 0) AS Total_Expenses,
+    ISNULL(py.Total_Payroll, 0) AS Total_Payroll,
+    ISNULL(s.Revenue, 0)
+      - ISNULL(c.Total_Cost, 0)
+      - ISNULL(x.Total_Expenses, 0)
+      - ISNULL(py.Total_Payroll, 0) AS Net_Profit_After_Expenses
+FROM Periods p
+LEFT JOIN Sales s
+    ON s.Month_Year = p.Month_Year
+LEFT JOIN COGS c
+    ON c.Month_Year = p.Month_Year
+LEFT JOIN Expenses x
+    ON x.Month_Year = p.Month_Year
+LEFT JOIN Payroll py
+    ON py.Month_Year = p.Month_Year;
 GO
-/****** Object:  Table [dbo].[Transaction_Types]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Transaction_Types]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -770,79 +866,139 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Daily_Cash_Flow]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Daily_Cash_Flow]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE   VIEW [dbo].[V_Daily_Cash_Flow] AS
+
+/* ============================================================================
+   6) TREASURY DAILY CASH FLOW
+   Because Amount is signed, outgoing values must be converted to ABS() for
+   display/reporting. Closing balance must be the LAST transaction of the day,
+   not MAX(Balance_After).
+============================================================================ */
+
+CREATE   VIEW [dbo].[V_Daily_Cash_Flow]
+AS
+WITH RankedTransactions AS
+(
+    SELECT
+        tl.*,
+        tt.Type_Name,
+        ROW_NUMBER() OVER
+        (
+            PARTITION BY CAST(tl.Action_Date AS DATE)
+            ORDER BY
+                tl.Action_Date DESC,
+                tl.Transation_ID DESC
+        ) AS rn
+    FROM dbo.TREASURY_LOG tl
+    LEFT JOIN dbo.TRANSACTION_TYPES tt
+        ON tl.Transaction_Type_ID = tt.Transaction_Type_ID
+)
 SELECT
-    CAST(tl.Action_Date AS DATE) AS Flow_Date,
+    CAST(Action_Date AS DATE) AS Flow_Date,
 
-    -- إجمالي الداخل
-    SUM(CASE WHEN tt.Type_Name = N'وارد' THEN tl.Amount ELSE 0 END) AS Total_In,
+    SUM
+    (
+        CASE
+            WHEN Type_Name = N'وارد'
+            THEN ABS(Amount)
+            ELSE 0
+        END
+    ) AS Total_In,
 
-    -- إجمالي الخارج
-    SUM(CASE WHEN tt.Type_Name = N'صادر' THEN tl.Amount ELSE 0 END) AS Total_Out,
+    SUM
+    (
+        CASE
+            WHEN Type_Name = N'صادر'
+            THEN ABS(Amount)
+            ELSE 0
+        END
+    ) AS Total_Out,
 
-    -- صافي الحركة
-    SUM(CASE WHEN tt.Type_Name = N'وارد' THEN tl.Amount ELSE 0 END)
-    - SUM(CASE WHEN tt.Type_Name = N'صادر' THEN tl.Amount ELSE 0 END) AS Net_Flow,
+    SUM
+    (
+        CASE
+            WHEN Type_Name = N'وارد'
+            THEN ABS(Amount)
+            WHEN Type_Name = N'صادر'
+            THEN -ABS(Amount)
+            ELSE 0
+        END
+    ) AS Net_Flow,
 
-    -- تفاصيل الداخل
-    SUM(CASE WHEN tl.Invoice_ID IS NOT NULL AND tt.Type_Name = N'وارد'
-        THEN tl.Amount ELSE 0 END) AS Sales_In,
+    SUM
+    (
+        CASE
+            WHEN Invoice_ID IS NOT NULL
+             AND Type_Name = N'وارد'
+            THEN ABS(Amount)
+            ELSE 0
+        END
+    ) AS Sales_In,
 
-    -- تفاصيل الخارج
-    SUM(CASE WHEN tl.Expense_ID IS NOT NULL
-        THEN tl.Amount ELSE 0 END) AS Expenses_Out,
-    SUM(CASE WHEN tl.Payroll_ID IS NOT NULL
-        THEN tl.Amount ELSE 0 END) AS Payroll_Out,
-    SUM(CASE WHEN tl.PO_ID IS NOT NULL
-        THEN tl.Amount ELSE 0 END) AS Purchases_Out,
-    SUM(CASE WHEN tl.Advance_ID IS NOT NULL
-        THEN tl.Amount ELSE 0 END) AS Advances_Out,
+    SUM
+    (
+        CASE
+            WHEN Expense_ID IS NOT NULL
+            THEN ABS(Amount)
+            ELSE 0
+        END
+    ) AS Expenses_Out,
 
-    -- رصيد الخزنة في نهاية اليوم
-    MAX(tl.Balance_After) AS Closing_Balance
-FROM TREASURY_LOG tl
-LEFT JOIN TRANSACTION_TYPES tt ON tl.Transaction_Type_ID = tt.Transaction_Type_ID
-GROUP BY CAST(tl.Action_Date AS DATE);
+    SUM
+    (
+        CASE
+            WHEN Payroll_ID IS NOT NULL
+            THEN ABS(Amount)
+            ELSE 0
+        END
+    ) AS Payroll_Out,
+
+    SUM
+    (
+        CASE
+            WHEN PO_ID IS NOT NULL
+            THEN ABS(Amount)
+            ELSE 0
+        END
+    ) AS Purchases_Out,
+
+    SUM
+    (
+        CASE
+            WHEN Advance_ID IS NOT NULL
+            THEN ABS(Amount)
+            ELSE 0
+        END
+    ) AS Advances_Out,
+
+    MAX
+    (
+        CASE
+            WHEN rn = 1 THEN Balance_After
+            ELSE NULL
+        END
+    ) AS Closing_Balance
+
+FROM RankedTransactions
+GROUP BY CAST(Action_Date AS DATE);
 GO
-/****** Object:  View [dbo].[V_Profit_Loss_Summary]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Profit_Loss_Summary]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE   VIEW [dbo].[V_Profit_Loss_Summary] AS
-SELECT
-    FORMAT(si.Date_Time, 'yyyy-MM')                             AS Period,
-    SUM(si.Final_Amount)                                        AS Revenue,
-    SUM(id.Quantity * inv.Purchase_Price)                       AS COGS,
-    SUM(si.Final_Amount) - SUM(id.Quantity * inv.Purchase_Price) AS Gross_Profit,
-    ISNULL((
-        SELECT SUM(Amount) FROM EXPENSES ex
-        WHERE FORMAT(ex.Expense_Date,'yyyy-MM') = FORMAT(si.Date_Time,'yyyy-MM')
-    ), 0) AS Operating_Expenses,
-    ISNULL((
-        SELECT SUM(Amount_Paid) FROM PAYROLL pr
-        WHERE FORMAT(pr.Payment_Date,'yyyy-MM') = FORMAT(si.Date_Time,'yyyy-MM')
-    ), 0) AS Payroll_Cost,
-    SUM(si.Final_Amount) - SUM(id.Quantity * inv.Purchase_Price)
-        - ISNULL((
-            SELECT SUM(Amount) FROM EXPENSES ex
-            WHERE FORMAT(ex.Expense_Date,'yyyy-MM') = FORMAT(si.Date_Time,'yyyy-MM')
-          ), 0)
-        - ISNULL((
-            SELECT SUM(Amount_Paid) FROM PAYROLL pr
-            WHERE FORMAT(pr.Payment_Date,'yyyy-MM') = FORMAT(si.Date_Time,'yyyy-MM')
-          ), 0) AS Net_Profit
-FROM SALES_INVOICES si
-LEFT JOIN INVOICE_DETAILS id  ON si.Invoice_ID = id.Invoice_ID
-LEFT JOIN INVENTORY       inv ON id.Part_ID    = inv.Part_ID
-GROUP BY FORMAT(si.Date_Time, 'yyyy-MM');
+SELECT Month_Year AS Period,Total_Revenue AS Revenue,Total_Cost AS COGS,
+       Gross_Profit,Total_Expenses AS Operating_Expenses,Total_Payroll AS Payroll_Cost,Net_Profit_After_Expenses AS Net_Profit
+FROM dbo.V_Monthly_Profit;
+
 GO
-/****** Object:  View [dbo].[V_Dead_Stock]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Dead_Stock]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -890,38 +1046,48 @@ HAVING
     MAX(si.Date_Time) IS NULL
     OR DATEDIFF(DAY, MAX(si.Date_Time), GETDATE()) > 90;
 GO
-/****** Object:  View [dbo].[V_Top_Selling_Parts]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Top_Selling_Parts]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE   VIEW [dbo].[V_Top_Selling_Parts] AS
+
+CREATE   VIEW [dbo].[V_Top_Selling_Parts]
+AS
 SELECT
     inv.Part_ID,
     inv.Barcode,
     inv.Part_Name,
     c.Category_Name,
     b.Brand_Name,
-    SUM(id.Quantity)                                    AS Total_Qty_Sold,
-    SUM(id.Line_Total)                                  AS Total_Revenue,
-    SUM(id.Quantity * inv.Purchase_Price)               AS Total_Cost,
-    SUM(id.Line_Total) - SUM(id.Quantity * inv.Purchase_Price) AS Total_Profit,
-    COUNT(DISTINCT id.Invoice_ID)                       AS Invoice_Count,
+    SUM(id.Quantity) AS Total_Qty_Sold,
+    SUM(id.Line_Total) AS Total_Revenue,
+    SUM(id.Quantity * id.Unit_Cost) AS Total_Cost,
+    SUM(id.Line_Total) - SUM(id.Quantity * id.Unit_Cost) AS Total_Profit,
+    COUNT(DISTINCT id.Invoice_ID) AS Invoice_Count,
     inv.Current_Stock,
     inv.Selling_Price,
-    -- آخر مرة اتباع
-    MAX(si.Date_Time)                                   AS Last_Sale_Date
-FROM INVENTORY inv
-LEFT JOIN CATEGORIES      c  ON inv.Category_ID  = c.Category_ID
-LEFT JOIN BRANDS          b  ON inv.Brand_ID     = b.Brand_ID
-LEFT JOIN INVOICE_DETAILS id ON inv.Part_ID      = id.Part_ID
-LEFT JOIN SALES_INVOICES  si ON id.Invoice_ID    = si.Invoice_ID
+    MAX(si.Date_Time) AS Last_Sale_Date
+FROM dbo.INVENTORY inv
+LEFT JOIN dbo.CATEGORIES c
+    ON inv.Category_ID = c.Category_ID
+LEFT JOIN dbo.BRANDS b
+    ON inv.Brand_ID = b.Brand_ID
+LEFT JOIN dbo.INVOICE_DETAILS id
+    ON inv.Part_ID = id.Part_ID
+LEFT JOIN dbo.SALES_INVOICES si
+    ON id.Invoice_ID = si.Invoice_ID
 WHERE inv.Is_Deleted = 0
 GROUP BY
-    inv.Part_ID, inv.Barcode, inv.Part_Name,
-    c.Category_Name, b.Brand_Name, inv.Current_Stock, inv.Selling_Price;
+    inv.Part_ID,
+    inv.Barcode,
+    inv.Part_Name,
+    c.Category_Name,
+    b.Brand_Name,
+    inv.Current_Stock,
+    inv.Selling_Price;
 GO
-/****** Object:  View [dbo].[V_Fast_Moving_Stock]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Fast_Moving_Stock]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -978,7 +1144,7 @@ GROUP BY
     inv.Part_ID, inv.Part_Name, c.Category_Name,
     b.Brand_Name, inv.Current_Stock, inv.Min_Limit;
 GO
-/****** Object:  View [dbo].[V_Inventory_Valuation]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Inventory_Valuation]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1014,7 +1180,7 @@ LEFT JOIN BRANDS     b ON inv.Brand_ID    = b.Brand_ID
 LEFT JOIN SUPPLIERS  s ON inv.Supplier_ID = s.Supplier_ID
 WHERE inv.Is_Deleted = 0;
 GO
-/****** Object:  View [dbo].[V_Reorder_Suggestion]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Reorder_Suggestion]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1069,7 +1235,7 @@ LEFT JOIN SUPPLIERS  s ON inv.Supplier_ID = s.Supplier_ID
 WHERE inv.Is_Deleted = 0
   AND inv.Current_Stock <= inv.Min_Limit;
 GO
-/****** Object:  Table [dbo].[Customer_Types]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Customer_Types]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1087,7 +1253,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Customer_Statement]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Customer_Statement]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1122,7 +1288,7 @@ LEFT JOIN CUSTOMER_TYPES ct ON cu.Customer_Type_ID  = ct.Customer_Type_ID
 LEFT JOIN SALES_INVOICES si ON cu.Customer_ID       = si.Customer_ID
 LEFT JOIN PAYMENT_STATUS ps ON si.Payment_Status_ID = ps.Status_ID;
 GO
-/****** Object:  View [dbo].[V_Top_Customers]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Top_Customers]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1148,7 +1314,7 @@ GROUP BY
     cu.Customer_ID, cu.Customer_Name, cu.Phone_Number,
     ct.Type_Name, cu.Credit_Limit;
 GO
-/****** Object:  View [dbo].[V_Customers_With_Debt]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Customers_With_Debt]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1188,7 +1354,7 @@ GROUP BY
     ct.Type_Name, cu.Total_Balance, cu.Credit_Limit,
     cu.Last_Payment_Date;
 GO
-/****** Object:  Table [dbo].[Purchase_Orders]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Purchase_Orders]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1204,13 +1370,14 @@ CREATE TABLE [dbo].[Purchase_Orders](
 	[Status_ID] [int] NOT NULL,
 	[Notes] [nvarchar](500) NULL,
 	[Created_At] [datetime2](7) NOT NULL,
+	[Received_At] [datetime2](7) NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[PO_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Purchase_Order_Status]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Purchase_Order_Status]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1228,7 +1395,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Supplier_Statement]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Supplier_Statement]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1259,7 +1426,7 @@ FROM SUPPLIERS sup
 LEFT JOIN PURCHASE_ORDERS          po   ON sup.Supplier_ID = po.Supplier_ID
 LEFT JOIN PURCHASE_ORDER_STATUS    pos2 ON po.Status_ID    = pos2.Status_ID;
 GO
-/****** Object:  Table [dbo].[Purchase_Order_Details]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Purchase_Order_Details]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1271,13 +1438,14 @@ CREATE TABLE [dbo].[Purchase_Order_Details](
 	[Quantity] [int] NOT NULL,
 	[Unit_Price] [decimal](12, 2) NOT NULL,
 	[Line_Total]  AS ([Quantity]*[Unit_Price]) PERSISTED,
+	[Received_Quantity] [int] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Detail_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Supplier_Performance]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Supplier_Performance]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1325,31 +1493,33 @@ GROUP BY
     sup.Supplier_ID, sup.Supplier_Name,
     sup.Phone_Number, sup.Supplier_Balance;
 GO
-/****** Object:  View [dbo].[V_Daily_Sales_Dashboard]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Daily_Sales_Dashboard]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE   VIEW [dbo].[V_Daily_Sales_Dashboard] AS
-SELECT
-    CAST(si.Date_Time AS DATE)              AS Sale_Date,
-    COUNT(DISTINCT si.Invoice_ID)           AS Invoice_Count,
-    COUNT(DISTINCT si.Customer_ID)          AS Customer_Count,
-    SUM(id.Quantity)                        AS Total_Parts_Sold,
-    COUNT(DISTINCT id.Part_ID)              AS Distinct_Parts_Sold,
-    SUM(si.Total_Amount)                    AS Gross_Sales,
-    SUM(si.Discount)                        AS Total_Discounts,
-    SUM(si.Final_Amount)                    AS Net_Sales,
-    SUM(si.Paid_Amount)                     AS Cash_Collected,
-    SUM(si.Remaining_Balance)               AS On_Credit,
-    AVG(si.Final_Amount)                    AS Avg_Invoice_Value,
-    MAX(si.Final_Amount)                    AS Highest_Invoice,
-    MIN(si.Final_Amount)                    AS Lowest_Invoice
-FROM SALES_INVOICES si
-LEFT JOIN INVOICE_DETAILS id ON si.Invoice_ID = id.Invoice_ID
-GROUP BY CAST(si.Date_Time AS DATE);
+WITH InvoiceTotals AS
+(
+    SELECT si.Invoice_ID,CAST(si.Date_Time AS DATE) Sale_Date,si.Customer_ID,si.Total_Amount,si.Discount,si.Final_Amount,si.Paid_Amount,si.Remaining_Balance
+    FROM dbo.SALES_INVOICES si
+)
+, DetailTotals AS
+(
+    SELECT Invoice_ID,SUM(Quantity) Total_Qty,COUNT(DISTINCT Part_ID) Distinct_Parts
+    FROM dbo.INVOICE_DETAILS GROUP BY Invoice_ID
+)
+SELECT i.Sale_Date,COUNT(*) Invoice_Count,COUNT(DISTINCT i.Customer_ID) Customer_Count,
+       SUM(ISNULL(d.Total_Qty,0)) Total_Parts_Sold,SUM(ISNULL(d.Distinct_Parts,0)) Distinct_Parts_Sold,
+       SUM(i.Total_Amount) Gross_Sales,SUM(i.Discount) Total_Discounts,SUM(i.Final_Amount) Net_Sales,
+       SUM(i.Paid_Amount) Cash_Collected,SUM(i.Remaining_Balance) On_Credit,AVG(i.Final_Amount) Avg_Invoice_Value,
+       MAX(i.Final_Amount) Highest_Invoice,MIN(i.Final_Amount) Lowest_Invoice
+FROM InvoiceTotals i LEFT JOIN DetailTotals d ON d.Invoice_ID=i.Invoice_ID
+GROUP BY i.Sale_Date;
+
 GO
-/****** Object:  View [dbo].[V_Employee_Performance]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Employee_Performance]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1395,7 +1565,7 @@ WHERE e.Is_Active = 1
 GROUP BY
     e.Employee_ID, e.Full_Name, ep.Position_Name, e.Basic_Salary;
 GO
-/****** Object:  Table [dbo].[Expense_Categories]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Expense_Categories]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1413,7 +1583,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Payment_Methods]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Payment_Methods]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1431,7 +1601,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Treasury_Flow]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Treasury_Flow]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1488,7 +1658,7 @@ LEFT JOIN EMPLOYEES          e   ON ISNULL(pr.Employee_ID, adv.Employee_ID) = e.
 LEFT JOIN EXPENSES           ex  ON tl.Expense_ID          = ex.Expense_ID
 LEFT JOIN EXPENSE_CATEGORIES ec  ON ex.Category_ID         = ec.Category_ID;
 GO
-/****** Object:  View [dbo].[V_Net_Cash_Position]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Net_Cash_Position]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1528,7 +1698,7 @@ FROM TREASURY_LOG tl
 LEFT JOIN TRANSACTION_TYPES tt ON tl.Transaction_Type_ID = tt.Transaction_Type_ID
 GROUP BY FORMAT(tl.Action_Date, 'yyyy-MM');
 GO
-/****** Object:  View [dbo].[V_Current_Treasury_Balance]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Current_Treasury_Balance]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1545,7 +1715,7 @@ LEFT JOIN TRANSACTION_TYPES tt ON tl.Transaction_Type_ID = tt.Transaction_Type_I
 LEFT JOIN PAYMENT_METHODS   pm ON tl.Payment_Method_ID   = pm.Payment_Method_ID
 ORDER BY tl.Action_Date DESC;
 GO
-/****** Object:  Table [dbo].[Item_Status]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Item_Status]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1563,7 +1733,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Returns]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Returns]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1583,7 +1753,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[V_Returns_Analysis]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Returns_Analysis]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1612,7 +1782,7 @@ LEFT JOIN ITEM_STATUS     its ON r.Status_ID    = its.Status_ID
 LEFT JOIN INVOICE_DETAILS id  ON r.Invoice_ID   = id.Invoice_ID
                               AND r.Part_ID     = id.Part_ID;
 GO
-/****** Object:  View [dbo].[V_Purchase_vs_Sales]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Purchase_vs_Sales]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1668,80 +1838,7 @@ LEFT JOIN Purchase_Summary ps ON ap.Period = ps.Period
 LEFT JOIN Expense_Summary  es ON ap.Period = es.Period
 LEFT JOIN Payroll_Summary  py ON ap.Period = py.Period;
 GO
-/****** Object:  UserDefinedFunction [dbo].[fn_CalculateSellingPrice]    Script Date: 9/17/2026 5:11:05 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE FUNCTION [dbo].[fn_CalculateSellingPrice]
-(
-    @PurchasePrice DECIMAL(18,2),
-    @MarkupPercent DECIMAL(5,2)
-)
-RETURNS DECIMAL(18,2)
-WITH SCHEMABINDING
-AS
-BEGIN
-    RETURN @PurchasePrice + (@PurchasePrice * @MarkupPercent / 100.0);
-END
-GO
-/****** Object:  UserDefinedFunction [dbo].[fn_FormatMonthYear]    Script Date: 9/17/2026 5:11:05 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE FUNCTION [dbo].[fn_FormatMonthYear] (@Date DATE)
-RETURNS CHAR(7)
-WITH SCHEMABINDING
-AS
-BEGIN
-    RETURN CONVERT(CHAR(4), YEAR(@Date)) + '-' + RIGHT('0' + CONVERT(VARCHAR(2), MONTH(@Date)), 2);
-END
-GO
-/****** Object:  Table [dbo].[Audit_Log]    Script Date: 9/17/2026 5:11:05 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Audit_Log](
-	[Log_ID] [int] IDENTITY(1,1) NOT NULL,
-	[Part_ID] [int] NOT NULL,
-	[Movement_Type_ID] [int] NOT NULL,
-	[Quantity_Change] [int] NOT NULL,
-	[User_ID] [int] NOT NULL,
-	[Action_Date] [datetime2](7) NOT NULL,
-	[Remarks] [nvarchar](300) NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[Log_ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Car_Compatibility]    Script Date: 9/17/2026 5:11:05 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Car_Compatibility](
-	[Compatibility_ID] [int] IDENTITY(1,1) NOT NULL,
-	[Part_ID] [int] NOT NULL,
-	[Car_Make] [nvarchar](100) NOT NULL,
-	[Car_Model] [nvarchar](100) NOT NULL,
-	[Year_Range] [nvarchar](20) NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[Compatibility_ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [UQ_Compat] UNIQUE NONCLUSTERED 
-(
-	[Part_ID] ASC,
-	[Car_Make] ASC,
-	[Car_Model] ASC,
-	[Year_Range] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[FINANCIAL_AUDIT_LOG]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[FINANCIAL_AUDIT_LOG]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1754,48 +1851,22 @@ CREATE TABLE [dbo].[FINANCIAL_AUDIT_LOG](
 	[User_ID] [int] NOT NULL,
 	[Action_Date] [datetime2](7) NOT NULL,
 	[Remarks] [nvarchar](500) NULL,
+	[Old_Data] [nvarchar](max) NULL,
+	[New_Data] [nvarchar](max) NULL,
+	[Amount] [decimal](18, 2) NULL,
+	[Transaction_ID] [int] NULL,
+	[Host_Name] [nvarchar](128) NULL,
+	[Application_Name] [nvarchar](128) NULL,
+	[Session_Login] [nvarchar](128) NULL,
+	[Old_Value] [nvarchar](500) NULL,
+	[New_Value] [nvarchar](500) NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Log_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Movement_Types]    Script Date: 9/17/2026 5:11:05 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Movement_Types](
-	[Movement_Type_ID] [int] IDENTITY(1,1) NOT NULL,
-	[Type_Name] [nvarchar](50) NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[Movement_Type_ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
-UNIQUE NONCLUSTERED 
-(
-	[Type_Name] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Price_History]    Script Date: 9/17/2026 5:11:05 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Price_History](
-	[Price_ID] [int] IDENTITY(1,1) NOT NULL,
-	[Part_ID] [int] NOT NULL,
-	[Price] [decimal](12, 2) NOT NULL,
-	[Start_Date] [date] NOT NULL,
-	[End_Date] [date] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[Price_ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Users]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1822,13 +1893,137 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_AuditLog_Date]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  View [dbo].[V_Financial_Audit]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/* Do NOT grant INSERT/UPDATE/DELETE on financial tables to the app role.
+   Application code should call stored procedures only. */
+
+/* ================================================================
+   17) AUDIT VIEW
+   ================================================================ */
+CREATE   VIEW [dbo].[V_Financial_Audit] AS
+SELECT fal.Log_ID,fal.Action_Date,fal.Entity_Type,fal.Entity_ID,fal.Action_Type,
+       fal.User_ID,u.Username,e.Full_Name AS User_Name,fal.Amount,fal.Transaction_ID,
+       fal.Remarks,fal.Old_Data,fal.New_Data,fal.Host_Name,fal.Application_Name,fal.Session_Login
+FROM dbo.FINANCIAL_AUDIT_LOG fal
+LEFT JOIN dbo.USERS u ON u.User_ID=fal.User_ID
+LEFT JOIN dbo.EMPLOYEES e ON e.Employee_ID=u.Employee_ID;
+
+GO
+/****** Object:  UserDefinedFunction [dbo].[fn_CalculateSellingPrice]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[fn_CalculateSellingPrice]
+(
+    @PurchasePrice DECIMAL(18,2),
+    @MarkupPercent DECIMAL(5,2)
+)
+RETURNS DECIMAL(18,2)
+WITH SCHEMABINDING
+AS
+BEGIN
+    RETURN @PurchasePrice + (@PurchasePrice * @MarkupPercent / 100.0);
+END
+GO
+/****** Object:  Table [dbo].[Audit_Log]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Audit_Log](
+	[Log_ID] [int] IDENTITY(1,1) NOT NULL,
+	[Part_ID] [int] NOT NULL,
+	[Movement_Type_ID] [int] NOT NULL,
+	[Quantity_Change] [int] NOT NULL,
+	[User_ID] [int] NOT NULL,
+	[Action_Date] [datetime2](7) NOT NULL,
+	[Remarks] [nvarchar](300) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Log_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Car_Compatibility]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Car_Compatibility](
+	[Compatibility_ID] [int] IDENTITY(1,1) NOT NULL,
+	[Part_ID] [int] NOT NULL,
+	[Car_Make] [nvarchar](100) NOT NULL,
+	[Car_Model] [nvarchar](100) NOT NULL,
+	[Year_Range] [nvarchar](20) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Compatibility_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_Compat] UNIQUE NONCLUSTERED 
+(
+	[Part_ID] ASC,
+	[Car_Make] ASC,
+	[Car_Model] ASC,
+	[Year_Range] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Movement_Types]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Movement_Types](
+	[Movement_Type_ID] [int] IDENTITY(1,1) NOT NULL,
+	[Type_Name] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Movement_Type_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Type_Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Price_History]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Price_History](
+	[Price_ID] [int] IDENTITY(1,1) NOT NULL,
+	[Part_ID] [int] NOT NULL,
+	[Price] [decimal](12, 2) NOT NULL,
+	[Start_Date] [date] NOT NULL,
+	[End_Date] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Price_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Index [UX_Advances_Treasury_ID]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Advances_Treasury_ID] ON [dbo].[Advances]
+(
+	[Treasury_ID] ASC
+)
+WHERE ([Treasury_ID] IS NOT NULL)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_AuditLog_Date]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_AuditLog_Date] ON [dbo].[Audit_Log]
 (
 	[Action_Date] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_AuditLog_Part]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_AuditLog_Part]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_AuditLog_Part] ON [dbo].[Audit_Log]
 (
 	[Part_ID] ASC
@@ -1836,40 +2031,88 @@ CREATE NONCLUSTERED INDEX [IX_AuditLog_Part] ON [dbo].[Audit_Log]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_CarCompat_Make_Model]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_CarCompat_Make_Model]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_CarCompat_Make_Model] ON [dbo].[Car_Compatibility]
 (
 	[Car_Make] ASC,
 	[Car_Model] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Customers_Balance]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_Customers_Balance]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Customers_Balance] ON [dbo].[Customers]
 (
 	[Total_Balance] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Customers_Type]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_Customers_Type]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Customers_Type] ON [dbo].[Customers]
 (
 	[Customer_Type_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Employees_IsActive]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_Employees_IsActive]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Employees_IsActive] ON [dbo].[Employees]
 (
 	[Is_Active] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Employees_Position]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_Employees_Position]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Employees_Position] ON [dbo].[Employees]
 (
 	[Position_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
+/****** Object:  Index [IX_Expenses_ExpenseDate]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_Expenses_ExpenseDate] ON [dbo].[Expenses]
+(
+	[Expense_Date] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [UX_Expenses_Treasury_ID]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Expenses_Treasury_ID] ON [dbo].[Expenses]
+(
+	[Treasury_ID] ASC
+)
+WHERE ([Treasury_ID] IS NOT NULL)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_FinancialAudit_Date]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_FinancialAudit_Date] ON [dbo].[FINANCIAL_AUDIT_LOG]
+(
+	[Action_Date] DESC,
+	[Log_ID] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_Inventory_Barcode]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_FinancialAudit_Entity]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_FinancialAudit_Entity] ON [dbo].[FINANCIAL_AUDIT_LOG]
+(
+	[Entity_Type] ASC,
+	[Entity_ID] ASC,
+	[Action_Date] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_FinancialAudit_User]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_FinancialAudit_User] ON [dbo].[FINANCIAL_AUDIT_LOG]
+(
+	[User_ID] ASC,
+	[Action_Date] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_FinancialAuditLog_Entity]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_FinancialAuditLog_Entity] ON [dbo].[FINANCIAL_AUDIT_LOG]
+(
+	[Entity_Type] ASC,
+	[Entity_ID] ASC,
+	[Action_Date] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [IX_Inventory_Barcode]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Inventory_Barcode] ON [dbo].[Inventory]
 (
 	[Barcode] ASC
@@ -1877,98 +2120,151 @@ CREATE NONCLUSTERED INDEX [IX_Inventory_Barcode] ON [dbo].[Inventory]
 WHERE ([Barcode] IS NOT NULL)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Inventory_Category]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_Inventory_Category]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Inventory_Category] ON [dbo].[Inventory]
 (
 	[Category_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Inventory_IsDeleted]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_Inventory_IsDeleted]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Inventory_IsDeleted] ON [dbo].[Inventory]
 (
 	[Is_Deleted] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Inventory_LowStock]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_Inventory_LowStock]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Inventory_LowStock] ON [dbo].[Inventory]
 (
 	[Current_Stock] ASC,
 	[Min_Limit] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Inventory_Supplier]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_Inventory_Supplier]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Inventory_Supplier] ON [dbo].[Inventory]
 (
 	[Supplier_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_InvDetails_Invoice]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_InvDetails_Invoice]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_InvDetails_Invoice] ON [dbo].[Invoice_Details]
 (
 	[Invoice_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_InvDetails_Part]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_InvDetails_Part]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_InvDetails_Part] ON [dbo].[Invoice_Details]
 (
 	[Part_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_PODetails_Part]    Script Date: 9/17/2026 5:11:05 PM ******/
+SET ANSI_PADDING ON
+GO
+/****** Object:  Index [UX_Payroll_Employee_Month]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Payroll_Employee_Month] ON [dbo].[Payroll]
+(
+	[Employee_ID] ASC,
+	[Month_Year] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_PODetails_Part]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_PODetails_Part] ON [dbo].[Purchase_Order_Details]
 (
 	[Part_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_PODetails_PO]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_PODetails_PO]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_PODetails_PO] ON [dbo].[Purchase_Order_Details]
 (
 	[PO_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_PO_Date]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_PO_Date]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_PO_Date] ON [dbo].[Purchase_Orders]
 (
 	[Order_Date] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_PO_Supplier]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_PO_Supplier]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_PO_Supplier] ON [dbo].[Purchase_Orders]
 (
 	[Supplier_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_SalesInv_Customer]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_PurchaseOrders_OrderDate]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_PurchaseOrders_OrderDate] ON [dbo].[Purchase_Orders]
+(
+	[Order_Date] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_SalesInv_Customer]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_SalesInv_Customer] ON [dbo].[Sales_Invoices]
 (
 	[Customer_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_SalesInv_DateTime]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_SalesInv_DateTime]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_SalesInv_DateTime] ON [dbo].[Sales_Invoices]
 (
 	[Date_Time] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_SalesInv_Employee]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_SalesInv_Employee]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_SalesInv_Employee] ON [dbo].[Sales_Invoices]
 (
 	[Employee_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_SalesInv_Status]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_SalesInv_Status]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_SalesInv_Status] ON [dbo].[Sales_Invoices]
 (
 	[Payment_Status_ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Treasury_Date]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_SalesInvoices_DateTime]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_SalesInvoices_DateTime] ON [dbo].[Sales_Invoices]
+(
+	[Date_Time] DESC
+)
+INCLUDE([Customer_ID],[Final_Amount],[Paid_Amount]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_Treasury_ActionDate]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_Treasury_ActionDate] ON [dbo].[Treasury_Log]
+(
+	[Action_Date] DESC
+)
+INCLUDE([Amount],[Balance_After]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_Treasury_ActionDate_ID]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_Treasury_ActionDate_ID] ON [dbo].[Treasury_Log]
+(
+	[Action_Date] DESC,
+	[Transation_ID] DESC
+)
+INCLUDE([Balance_After]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_Treasury_Advance]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_Treasury_Advance] ON [dbo].[Treasury_Log]
+(
+	[Advance_ID] ASC
+)
+WHERE ([Advance_ID] IS NOT NULL)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_Treasury_Date]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Treasury_Date] ON [dbo].[Treasury_Log]
 (
 	[Action_Date] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Treasury_Invoice]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_Treasury_Expense]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_Treasury_Expense] ON [dbo].[Treasury_Log]
+(
+	[Expense_ID] ASC
+)
+WHERE ([Expense_ID] IS NOT NULL)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_Treasury_Invoice]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Treasury_Invoice] ON [dbo].[Treasury_Log]
 (
 	[Invoice_ID] ASC
@@ -1976,12 +2272,20 @@ CREATE NONCLUSTERED INDEX [IX_Treasury_Invoice] ON [dbo].[Treasury_Log]
 WHERE ([Invoice_ID] IS NOT NULL)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Treasury_PO]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  Index [IX_Treasury_PO]    Script Date: 9/17/2026 7:01:36 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Treasury_PO] ON [dbo].[Treasury_Log]
 (
 	[PO_ID] ASC
 )
 WHERE ([PO_ID] IS NOT NULL)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_Treasury_Reversal]    Script Date: 9/17/2026 7:01:36 PM ******/
+CREATE NONCLUSTERED INDEX [IX_Treasury_Reversal] ON [dbo].[Treasury_Log]
+(
+	[Reversal_Of_Transaction_ID] ASC
+)
+WHERE ([Reversal_Of_Transaction_ID] IS NOT NULL)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Advances] ADD  DEFAULT (CONVERT([date],getdate())) FOR [Advance_Date]
@@ -2007,6 +2311,10 @@ GO
 ALTER TABLE [dbo].[Expenses] ADD  DEFAULT (CONVERT([date],getdate())) FOR [Expense_Date]
 GO
 ALTER TABLE [dbo].[Expenses] ADD  DEFAULT (getdate()) FOR [Created_At]
+GO
+ALTER TABLE [dbo].[Expenses] ADD  CONSTRAINT [DF_Expenses_IsVoided]  DEFAULT ((0)) FOR [Is_Voided]
+GO
+ALTER TABLE [dbo].[Expenses] ADD  CONSTRAINT [DF_Expenses_UpdatedAt]  DEFAULT (getdate()) FOR [Updated_At]
 GO
 ALTER TABLE [dbo].[FINANCIAL_AUDIT_LOG] ADD  CONSTRAINT [DF_FINANCIAL_AUDIT_LOG_Action_Date]  DEFAULT (getdate()) FOR [Action_Date]
 GO
@@ -2035,6 +2343,8 @@ GO
 ALTER TABLE [dbo].[Payroll] ADD  DEFAULT (getdate()) FOR [Created_At]
 GO
 ALTER TABLE [dbo].[Price_History] ADD  DEFAULT (CONVERT([date],getdate())) FOR [Start_Date]
+GO
+ALTER TABLE [dbo].[Purchase_Order_Details] ADD  CONSTRAINT [DF_PODetails_Received]  DEFAULT ((0)) FOR [Received_Quantity]
 GO
 ALTER TABLE [dbo].[Purchase_Orders] ADD  DEFAULT (CONVERT([date],getdate())) FOR [Order_Date]
 GO
@@ -2087,6 +2397,11 @@ REFERENCES [dbo].[Advance_Status] ([Status_ID])
 GO
 ALTER TABLE [dbo].[Advances] CHECK CONSTRAINT [FK_Advances_Status]
 GO
+ALTER TABLE [dbo].[Advances]  WITH CHECK ADD  CONSTRAINT [FK_Advances_Treasury] FOREIGN KEY([Treasury_ID])
+REFERENCES [dbo].[Treasury_Log] ([Transation_ID])
+GO
+ALTER TABLE [dbo].[Advances] CHECK CONSTRAINT [FK_Advances_Treasury]
+GO
 ALTER TABLE [dbo].[Audit_Log]  WITH CHECK ADD  CONSTRAINT [FK_AuditLog_MovType] FOREIGN KEY([Movement_Type_ID])
 REFERENCES [dbo].[Movement_Types] ([Movement_Type_ID])
 GO
@@ -2126,6 +2441,11 @@ ALTER TABLE [dbo].[Expenses]  WITH CHECK ADD  CONSTRAINT [FK_Expenses_PaidBy] FO
 REFERENCES [dbo].[Employees] ([Employee_ID])
 GO
 ALTER TABLE [dbo].[Expenses] CHECK CONSTRAINT [FK_Expenses_PaidBy]
+GO
+ALTER TABLE [dbo].[Expenses]  WITH CHECK ADD  CONSTRAINT [FK_Expenses_Treasury] FOREIGN KEY([Treasury_ID])
+REFERENCES [dbo].[Treasury_Log] ([Transation_ID])
+GO
+ALTER TABLE [dbo].[Expenses] CHECK CONSTRAINT [FK_Expenses_Treasury]
 GO
 ALTER TABLE [dbo].[Inventory]  WITH CHECK ADD  CONSTRAINT [FK_Inventory_Brand] FOREIGN KEY([Brand_ID])
 REFERENCES [dbo].[Brands] ([Brand_ID])
@@ -2237,6 +2557,11 @@ REFERENCES [dbo].[Advances] ([Advance_ID])
 GO
 ALTER TABLE [dbo].[Treasury_Log] CHECK CONSTRAINT [FK_Treasury_Advance]
 GO
+ALTER TABLE [dbo].[Treasury_Log]  WITH CHECK ADD  CONSTRAINT [FK_Treasury_CreatedBy] FOREIGN KEY([Created_By])
+REFERENCES [dbo].[Users] ([User_ID])
+GO
+ALTER TABLE [dbo].[Treasury_Log] CHECK CONSTRAINT [FK_Treasury_CreatedBy]
+GO
 ALTER TABLE [dbo].[Treasury_Log]  WITH CHECK ADD  CONSTRAINT [FK_Treasury_Employee] FOREIGN KEY([Employee_ID])
 REFERENCES [dbo].[Employees] ([Employee_ID])
 GO
@@ -2281,6 +2606,10 @@ ALTER TABLE [dbo].[Advances]  WITH CHECK ADD  CONSTRAINT [CK_Advances_Amount] CH
 GO
 ALTER TABLE [dbo].[Advances] CHECK CONSTRAINT [CK_Advances_Amount]
 GO
+ALTER TABLE [dbo].[Customers]  WITH CHECK ADD  CONSTRAINT [CK_Customers_Balance] CHECK  (([Total_Balance]>=(0)))
+GO
+ALTER TABLE [dbo].[Customers] CHECK CONSTRAINT [CK_Customers_Balance]
+GO
 ALTER TABLE [dbo].[Customers]  WITH CHECK ADD  CONSTRAINT [CK_Customers_CreditLimit] CHECK  (([Credit_Limit]>=(0)))
 GO
 ALTER TABLE [dbo].[Customers] CHECK CONSTRAINT [CK_Customers_CreditLimit]
@@ -2309,6 +2638,10 @@ ALTER TABLE [dbo].[Invoice_Details]  WITH CHECK ADD  CONSTRAINT [CK_invDetails_P
 GO
 ALTER TABLE [dbo].[Invoice_Details] CHECK CONSTRAINT [CK_invDetails_Price]
 GO
+ALTER TABLE [dbo].[Invoice_Details]  WITH CHECK ADD  CONSTRAINT [CK_InvoiceDetails_Prices] CHECK  (([Unit_Price]>=(0) AND [Unit_Cost]>=(0)))
+GO
+ALTER TABLE [dbo].[Invoice_Details] CHECK CONSTRAINT [CK_InvoiceDetails_Prices]
+GO
 ALTER TABLE [dbo].[Payroll]  WITH CHECK ADD  CONSTRAINT [CK_Payroll_Amounts] CHECK  (([Amount_Paid]>=(0) AND [Deductions]>=(0) AND [Bonuses]>=(0)))
 GO
 ALTER TABLE [dbo].[Payroll] CHECK CONSTRAINT [CK_Payroll_Amounts]
@@ -2321,6 +2654,14 @@ ALTER TABLE [dbo].[Purchase_Order_Details]  WITH CHECK ADD  CONSTRAINT [CK_PODet
 GO
 ALTER TABLE [dbo].[Purchase_Order_Details] CHECK CONSTRAINT [CK_PODetails_Qty]
 GO
+ALTER TABLE [dbo].[Purchase_Order_Details]  WITH CHECK ADD  CONSTRAINT [CK_PurchaseOrderDetails_ReceivedQty] CHECK  (([Received_Quantity]>=(0) AND [Received_Quantity]<=[Quantity]))
+GO
+ALTER TABLE [dbo].[Purchase_Order_Details] CHECK CONSTRAINT [CK_PurchaseOrderDetails_ReceivedQty]
+GO
+ALTER TABLE [dbo].[Purchase_Orders]  WITH CHECK ADD  CONSTRAINT [CK_PO_Amounts] CHECK  (([Total_Amount]>=(0) AND [Paid_Amount]>=(0) AND [Paid_Amount]<=[Total_Amount]))
+GO
+ALTER TABLE [dbo].[Purchase_Orders] CHECK CONSTRAINT [CK_PO_Amounts]
+GO
 ALTER TABLE [dbo].[Returns]  WITH CHECK ADD  CONSTRAINT [CK_Return_Qty] CHECK  (([Quantity]>(0)))
 GO
 ALTER TABLE [dbo].[Returns] CHECK CONSTRAINT [CK_Return_Qty]
@@ -2329,30 +2670,69 @@ ALTER TABLE [dbo].[Sales_Invoices]  WITH CHECK ADD  CONSTRAINT [CK_Invoices_Amou
 GO
 ALTER TABLE [dbo].[Sales_Invoices] CHECK CONSTRAINT [CK_Invoices_Amounts]
 GO
-ALTER TABLE [dbo].[Treasury_Log]  WITH CHECK ADD  CONSTRAINT [CK_Treasury_Amount] CHECK  (([Amount]>(0)))
+ALTER TABLE [dbo].[Sales_Invoices]  WITH CHECK ADD  CONSTRAINT [CK_Invoices_Discount_NotOverFinal] CHECK  (([Discount]<=[Total_Amount]))
 GO
-ALTER TABLE [dbo].[Treasury_Log] CHECK CONSTRAINT [CK_Treasury_Amount]
+ALTER TABLE [dbo].[Sales_Invoices] CHECK CONSTRAINT [CK_Invoices_Discount_NotOverFinal]
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Advance_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+ALTER TABLE [dbo].[Sales_Invoices]  WITH CHECK ADD  CONSTRAINT [CK_Invoices_Paid_NotOverFinal] CHECK  (([Paid_Amount]<=([Total_Amount]-[Discount])))
+GO
+ALTER TABLE [dbo].[Sales_Invoices] CHECK CONSTRAINT [CK_Invoices_Paid_NotOverFinal]
+GO
+ALTER TABLE [dbo].[Suppliers]  WITH CHECK ADD  CONSTRAINT [CK_Suppliers_Balance] CHECK  (([Supplier_Balance]>=(0)))
+GO
+ALTER TABLE [dbo].[Suppliers] CHECK CONSTRAINT [CK_Suppliers_Balance]
+GO
+ALTER TABLE [dbo].[Treasury_Log]  WITH CHECK ADD  CONSTRAINT [CK_Treasury_AmountNotZero] CHECK  (([Amount]<>(0)))
+GO
+ALTER TABLE [dbo].[Treasury_Log] CHECK CONSTRAINT [CK_Treasury_AmountNotZero]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_Advance_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Advance_Add]
+
+-------------------------------------------------------------------------------------
+-- 2.10 sp_Advance_Add : تسجيل تدقيق فقط عند الطلب (لسه معتمدة). التحقق من صحة المبلغ.
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_Advance_Add]
     @EmployeeID   INT,
     @Amount       DECIMAL(18,2),
     @AdvanceDate  DATETIME2,
     @StatusID     INT,
+    @UserID       INT,
     @NewAdvanceID INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
-    INSERT INTO dbo.ADVANCES (Employee_ID, Amount, Advance_Date, Status_ID, Created_At)
-    VALUES (@EmployeeID, @Amount, @AdvanceDate, @StatusID, GETDATE());
-    SET @NewAdvanceID = CAST(SCOPE_IDENTITY() AS INT);
+    SET XACT_ABORT ON;
+
+    IF @Amount <= 0
+    BEGIN
+        RAISERROR(N'قيمة السلفة يجب أن تكون أكبر من صفر.', 16, 1);
+        RETURN;
+    END
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        INSERT INTO dbo.ADVANCES (Employee_ID, Amount, Advance_Date, Status_ID, Created_At)
+        VALUES (@EmployeeID, @Amount, @AdvanceDate, @StatusID, GETDATE());
+
+        SET @NewAdvanceID = CAST(SCOPE_IDENTITY() AS INT);
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks, New_Value)
+        VALUES (N'Advance', @NewAdvanceID, N'Request', @UserID, GETDATE(), N'طلب سلفة جديدة', CAST(@Amount AS NVARCHAR(50)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Advance_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Advance_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2374,28 +2754,132 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Advance_UpdateStatus]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Advance_Pay]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Advance_UpdateStatus]
+
+CREATE   PROCEDURE [dbo].[sp_Advance_Pay]
     @AdvanceID INT,
-    @NewStatusID INT,
-    @ApprovedBy INT = NULL
+    @PaymentMethodID INT,
+    @UserID INT,
+    @NewTransactionID INT OUTPUT
 AS
 BEGIN
-    -- تأكد من عدم وجود SET NOCOUNT ON هنا
-    -- أو اجعلها هكذا:
-    SET NOCOUNT OFF; 
+    SET NOCOUNT OFF;
+    SET XACT_ABORT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        DECLARE @EmployeeID INT,@Amount DECIMAL(18,2),@OldData NVARCHAR(MAX),@Balance DECIMAL(18,2);
+        SELECT @EmployeeID=Employee_ID,@Amount=Amount,
+               @OldData=(SELECT Advance_ID,Employee_ID,Amount,Advance_Date,Status_ID,Approved_By FROM dbo.ADVANCES WHERE Advance_ID=@AdvanceID FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+        FROM dbo.ADVANCES WITH(UPDLOCK,HOLDLOCK) WHERE Advance_ID=@AdvanceID;
+        IF @OldData IS NULL THROW 50110,N'Advance does not exist.',1;
+        IF EXISTS(SELECT 1 FROM dbo.TREASURY_LOG WHERE Advance_ID=@AdvanceID AND Reversal_Of_Transaction_ID IS NULL)
+            THROW 50111,N'Advance has already been paid.',1;
 
-    UPDATE Advances
-    SET Status_ID = @NewStatusID,
-        Approved_By = @ApprovedBy
-    WHERE Advance_ID = @AdvanceID;
+        DECLARE @OutTypeID INT=(SELECT TOP 1 Transaction_Type_ID FROM dbo.TRANSACTION_TYPES WHERE Type_Name=N'صادر');
+        EXEC dbo.sp_Treasury_Add @TransactionTypeID=@OutTypeID,@PaymentMethodID=@PaymentMethodID,@Amount=@Amount,@AdvanceID=@AdvanceID,@EmployeeID=@EmployeeID,
+            @Notes=N'صرف سلفة موظف',@UserID=@UserID,@NewTransactionID=@NewTransactionID OUTPUT,@NewBalance=@Balance OUTPUT;
+
+        INSERT dbo.FINANCIAL_AUDIT_LOG
+        (Entity_Type,Entity_ID,Action_Type,User_ID,Action_Date,Amount,Transaction_ID,Old_Data,New_Data,Remarks,Host_Name,Application_Name,Session_Login)
+        VALUES(N'Advance',@AdvanceID,N'PAYMENT',@UserID,GETDATE(),@Amount,@NewTransactionID,@OldData,@OldData,N'Advance paid',HOST_NAME(),APP_NAME(),SUSER_SNAME());
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE()<>0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[sp_Advance_UpdateStatus]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-------------------------------------------------------------------------------------
+-- 2.11 sp_Advance_UpdateStatus : تحديث حالة السلفة وتسجيل حركة الصرف في الخزينة
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_Advance_UpdateStatus]
+    @AdvanceID                     INT,
+    @NewStatusID                   INT,
+    @ApprovedBy                    INT = NULL,
+    @UserID                        INT,
+    @IsDisbursement                BIT = 0,          -- 1 = الحالة دي معناها صرف فلوس فعلي
+    @PaymentMethodID               INT = NULL,
+    @DisbursementTransactionTypeID INT = NULL     -- الـ ID بتاع "صرف سلفة" في TRANSACTION_TYPES
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        DECLARE @EmployeeID INT, @Amount DECIMAL(18,2), @AlreadyDisbursed BIT;
+
+        SELECT @EmployeeID = Employee_ID, 
+               @Amount = Amount, 
+               @AlreadyDisbursed = CASE WHEN Treasury_ID IS NULL THEN 0 ELSE 1 END
+        FROM dbo.ADVANCES WITH (UPDLOCK, ROWLOCK)
+        WHERE Advance_ID = @AdvanceID;
+
+        IF @@ROWCOUNT = 0
+        BEGIN
+            RAISERROR(N'السلفة غير موجودة.', 16, 1);
+        END
+
+        UPDATE dbo.ADVANCES
+        SET Status_ID = @NewStatusID, 
+            Approved_By = ISNULL(@ApprovedBy, Approved_By)
+        WHERE Advance_ID = @AdvanceID;
+
+        IF @IsDisbursement = 1
+        BEGIN
+            IF @AlreadyDisbursed = 1
+            BEGIN
+                RAISERROR(N'تم صرف هذه السلفة بالفعل.', 16, 1);
+            END
+
+            IF @PaymentMethodID IS NULL OR @DisbursementTransactionTypeID IS NULL
+            BEGIN
+                RAISERROR(N'يجب تحديد طريقة الدفع ونوع المعاملة عند صرف السلفة.', 16, 1);
+            END
+
+            -- تجهيز المتغيرات قبل استدعاء EXEC لتفادي خطأ بناء الجملة (Incorrect syntax near)
+            DECLARE @SignedAmount DECIMAL(18,2) = -@Amount;
+            DECLARE @Notes NVARCHAR(200) = N'صرف سلفة رقم ' + CAST(@AdvanceID AS NVARCHAR(20));
+            DECLARE @NewTxnID INT, @NewBalance DECIMAL(18,2);
+
+            EXEC dbo.sp_Treasury_Add
+                 @TransactionTypeID = @DisbursementTransactionTypeID,
+                 @PaymentMethodID   = @PaymentMethodID,
+                 @SignedAmount      = @SignedAmount,
+                 @AdvanceID         = @AdvanceID,
+                 @EmployeeID        = @EmployeeID,
+                 @CreatedBy         = @UserID,
+                 @Notes             = @Notes,
+                 @NewTransactionID  = @NewTxnID OUTPUT,
+                 @NewBalance        = @NewBalance OUTPUT;
+
+            UPDATE dbo.ADVANCES SET Treasury_ID = @NewTxnID WHERE Advance_ID = @AdvanceID;
+        END
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks)
+        VALUES (N'Advance', @AdvanceID, N'StatusUpdate', @UserID, GETDATE(), N'تغيير حالة السلفة');
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_AuditLog_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_AuditLog_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2415,7 +2899,7 @@ BEGIN
     SET @NewLogID = CAST(SCOPE_IDENTITY() AS INT);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_AuditLog_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_AuditLog_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2443,7 +2927,7 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_CarCompatibility_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_CarCompatibility_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2460,7 +2944,7 @@ BEGIN
     VALUES (@PartID, @CarMake, @CarModel, @YearRange);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_CarCompatibility_Delete]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_CarCompatibility_Delete]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2473,7 +2957,7 @@ BEGIN
     DELETE FROM dbo.CAR_COMPATIBILITY WHERE Compatibility_ID = @CompatibilityID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_CarCompatibility_GetByPart]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_CarCompatibility_GetByPart]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2490,7 +2974,7 @@ BEGIN
     ORDER BY cc.Car_Make, cc.Car_Model;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_CarCompatibility_SearchByCar]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_CarCompatibility_SearchByCar]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2512,7 +2996,7 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Customer_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Customer_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2531,52 +3015,66 @@ BEGIN
     SET @NewCustomerID = CAST(SCOPE_IDENTITY() AS INT);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Customer_AdjustBalance]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Customer_AdjustBalance]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Customer_AdjustBalance]
-    @CustomerID      INT,
-    @Delta           DECIMAL(18,2),     -- موجب = دين جديد، سالب = تحصيل
-    @IsPayment       BIT = 0,           -- 1 لو العملية سداد (لتحديث Last_Payment_Date)
-    @EnforceCreditLimit BIT = 1
+
+-------------------------------------------------------------------------------------
+-- 2.13 sp_Customer_AdjustBalance : تسجيل كل تعديل يدوي في سجل التدقيق (أهم حاجة
+--      يراجعها أي مراجع حسابات - أي تعديل يدوي على رصيد عميل لازم يتسجل مين عمله وليه)
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_Customer_AdjustBalance]
+    @CustomerID         INT,
+    @Delta              DECIMAL(18,2),
+    @IsPayment          BIT = 0,
+    @EnforceCreditLimit BIT = 1,
+    @UserID             INT,
+    @Reason             NVARCHAR(500) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-    BEGIN TRANSACTION;
 
-    DECLARE @CurrentBalance DECIMAL(18,2), @CreditLimit DECIMAL(18,2);
+    BEGIN TRY
+        BEGIN TRANSACTION;
 
-    SELECT @CurrentBalance = Total_Balance, @CreditLimit = Credit_Limit
-    FROM dbo.CUSTOMERS WITH (ROWLOCK, UPDLOCK)
-    WHERE Customer_ID = @CustomerID;
+        DECLARE @CurrentBalance DECIMAL(18,2), @CreditLimit DECIMAL(18,2);
 
-    IF @@ROWCOUNT = 0
-    BEGIN
-        ROLLBACK TRANSACTION;
-        RAISERROR(N'The Customer Is Not Exists', 16, 1);
-        RETURN;
-    END
+        SELECT @CurrentBalance = Total_Balance, @CreditLimit = Credit_Limit
+        FROM dbo.CUSTOMERS WITH (ROWLOCK, UPDLOCK)
+        WHERE Customer_ID = @CustomerID;
 
-    IF @EnforceCreditLimit = 1 AND @Delta > 0 AND @CreditLimit > 0
-       AND (@CurrentBalance + @Delta) > @CreditLimit
-    BEGIN
-        ROLLBACK TRANSACTION;
-        RAISERROR(N'The transaction exceeds the customer''s allowed credit limit.', 16, 1);
-        RETURN;
-    END
+        IF @@ROWCOUNT = 0
+        BEGIN
+            RAISERROR(N'The Customer Is Not Exists', 16, 1);
+        END
 
-    UPDATE dbo.CUSTOMERS
-    SET Total_Balance     = Total_Balance + @Delta,
-        Last_Payment_Date = CASE WHEN @IsPayment = 1 THEN GETDATE() ELSE Last_Payment_Date END
-    WHERE Customer_ID = @CustomerID;
+        IF @EnforceCreditLimit = 1 AND @Delta > 0 AND @CreditLimit > 0
+           AND (@CurrentBalance + @Delta) > @CreditLimit
+        BEGIN
+            RAISERROR(N'The transaction exceeds the customer''s allowed credit limit.', 16, 1);
+        END
 
-    COMMIT TRANSACTION;
+        UPDATE dbo.CUSTOMERS
+        SET Total_Balance     = Total_Balance + @Delta,
+            Last_Payment_Date = CASE WHEN @IsPayment = 1 THEN GETDATE() ELSE Last_Payment_Date END
+        WHERE Customer_ID = @CustomerID;
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks, Old_Value, New_Value)
+        VALUES (N'Customer', @CustomerID, N'ManualBalanceAdjust', @UserID, GETDATE(), @Reason,
+                CAST(@CurrentBalance AS NVARCHAR(50)), CAST(@CurrentBalance + @Delta AS NVARCHAR(50)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Customer_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Customer_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2591,7 +3089,7 @@ BEGIN
     ORDER BY cu.Customer_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Customer_GetByID]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Customer_GetByID]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2607,7 +3105,7 @@ BEGIN
     WHERE cu.Customer_ID = @CustomerID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Customer_Search]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Customer_Search]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2634,7 +3132,7 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Customer_Update]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Customer_Update]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2656,7 +3154,7 @@ BEGIN
     WHERE Customer_ID = @CustomerID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Employee_Activate]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Employee_Activate]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2671,7 +3169,7 @@ BEGIN
     UPDATE dbo.EMPLOYEES SET Is_Active = 1, Updated_At = GETDATE() WHERE Employee_ID = @EmployeeID;  
 END  
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Employee_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Employee_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2700,7 +3198,7 @@ BEGIN
     SET @NewEmployeeID = CAST(SCOPE_IDENTITY() AS INT);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Employee_Deactivate]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Employee_Deactivate]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2713,7 +3211,7 @@ BEGIN
     UPDATE dbo.EMPLOYEES SET Is_Active = 0, Updated_At = GETDATE() WHERE Employee_ID = @EmployeeID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Employee_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Employee_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2730,7 +3228,7 @@ BEGIN
     ORDER BY e.Full_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Employee_GetByID]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Employee_GetByID]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2746,7 +3244,7 @@ BEGIN
     WHERE e.Employee_ID = @EmployeeID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Employee_Search]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Employee_Search]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2765,7 +3263,7 @@ BEGIN
     ORDER BY e.Full_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Employee_Update]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Employee_Update]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2794,27 +3292,73 @@ BEGIN
     WHERE Employee_ID = @EmployeeID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Expense_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Expense_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Expense_Add]
-    @CategoryID   INT,
-    @Amount       DECIMAL(18,2),
-    @ExpenseDate  DATETIME2,
-    @PaidBy       INT           = NULL,
-    @Notes        NVARCHAR(500) = NULL,
-    @NewExpenseID INT OUTPUT
+-------------------------------------------------------------------------------------
+-- 2.7  sp_Expense_Add : تسجيل تلقائي في الخزينة (خصم فوري) + تدقيق
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_Expense_Add]
+    @CategoryID               INT,
+    @Amount                   DECIMAL(18,2),
+    @ExpenseDate              DATETIME2,
+    @PaidBy                   INT           = NULL,
+    @PaymentMethodID          INT,
+    @ExpenseTransactionTypeID INT,   -- الـ ID بتاع "مصروف" في TRANSACTION_TYPES
+    @UserID                   INT,
+    @Notes                    NVARCHAR(500) = NULL,
+    @NewExpenseID             INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
-    INSERT INTO dbo.EXPENSES (Category_ID, Amount, Expense_Date, Paid_By, Notes, Created_At)
-    VALUES (@CategoryID, @Amount, @ExpenseDate, @PaidBy, @Notes, GETDATE());
-    SET @NewExpenseID = CAST(SCOPE_IDENTITY() AS INT);
+    SET XACT_ABORT ON;
+
+    IF @Amount <= 0
+    BEGIN
+        RAISERROR(N'قيمة المصروف يجب أن تكون أكبر من صفر.', 16, 1);
+        RETURN;
+    END
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        INSERT INTO dbo.EXPENSES (Category_ID, Amount, Expense_Date, Paid_By, Notes, Created_At)
+        VALUES (@CategoryID, @Amount, @ExpenseDate, @PaidBy, @Notes, GETDATE());
+
+        SET @NewExpenseID = CAST(SCOPE_IDENTITY() AS INT);
+
+        -- تجهيز المتغيرات قبل استدعاء إجراء الخزينة لتفادي خطأ بناء الجملة (Syntax Error)
+        DECLARE @SignedAmount DECIMAL(18,2) = -@Amount;
+        DECLARE @TreasuryNotes NVARCHAR(500) = ISNULL(@Notes, N'') + N' - مصروف رقم ' + CAST(@NewExpenseID AS NVARCHAR(20));
+        DECLARE @NewTxnID INT, @NewBalance DECIMAL(18,2);
+
+        EXEC dbo.sp_Treasury_Add
+             @TransactionTypeID = @ExpenseTransactionTypeID,
+             @PaymentMethodID   = @PaymentMethodID,
+             @SignedAmount      = @SignedAmount,
+             @ExpenseID         = @NewExpenseID,
+             @EmployeeID        = @PaidBy,
+             @CreatedBy         = @UserID,
+             @Notes             = @TreasuryNotes,
+             @NewTransactionID  = @NewTxnID OUTPUT,
+             @NewBalance        = @NewBalance OUTPUT;
+
+        UPDATE dbo.EXPENSES SET Treasury_ID = @NewTxnID WHERE Expense_ID = @NewExpenseID;
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks, New_Value)
+        VALUES (N'Expense', @NewExpenseID, N'Create', @UserID, GETDATE(), N'إنشاء مصروف جديد', CAST(@Amount AS NVARCHAR(50)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Expense_Delete]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Expense_Delete]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2849,7 +3393,7 @@ BEGIN
     END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Expense_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Expense_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2872,31 +3416,177 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Expense_Update]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Expense_Reverse]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Expense_Update]  
-    @ExpenseID   INT,  
-    @CategoryID  INT,  
-    @Amount      DECIMAL(18,2),  
-    @ExpenseDate DATETIME2,  
-    @PaidBy      INT           = NULL,  
-    @Notes       NVARCHAR(500) = NULL  
-AS  
-BEGIN  
-    SET NOCOUNT OFF;  
-    UPDATE dbo.EXPENSES SET  
-        Category_ID  = @CategoryID,  
-        Amount       = @Amount,  
-        Expense_Date = @ExpenseDate,  
-        Paid_By      = @PaidBy,  
-        Notes        = @Notes  
-    WHERE Expense_ID = @ExpenseID;  
-END;  
+-------------------------------------------------------------------------------------
+-- 2.9  sp_Expense_Reverse : عكس مصروف بتسجيل حركة عكسية في الخزينة + تدقيق
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_Expense_Reverse]
+    @ExpenseID                 INT,
+    @ReversalTransactionTypeID INT,  -- الـ ID بتاع "عكس مصروف" في TRANSACTION_TYPES
+    @UserID                    INT,
+    @Reason                    NVARCHAR(500) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        DECLARE @Amount DECIMAL(18,2), @PaymentMethodID INT;
+
+        -- جلب بيانات المصروف مع قفل السجل لمنع التعديل المتزامن (Concurrency Control)
+        SELECT @Amount = ex.Amount, 
+               @PaymentMethodID = tl.Payment_Method_ID
+        FROM dbo.EXPENSES ex WITH (UPDLOCK, ROWLOCK)
+        LEFT JOIN dbo.TREASURY_LOG tl ON tl.Transation_ID = ex.Treasury_ID
+        WHERE ex.Expense_ID = @ExpenseID;
+
+        IF @Amount IS NULL
+        BEGIN
+            RAISERROR(N'المصروف غير موجود.', 16, 1);
+        END
+
+        -- تجهيز نص الملاحظات في متغير منفصل قبل استدعاء EXEC لتفادي خطأ (Syntax Error)
+        DECLARE @Notes NVARCHAR(500) = N'عكس مصروف رقم ' + CAST(@ExpenseID AS NVARCHAR(20)) + N' - ' + ISNULL(@Reason, N'');
+        DECLARE @NewTxnID INT, @NewBalance DECIMAL(18,2);
+
+        EXEC dbo.sp_Treasury_Add
+             @TransactionTypeID = @ReversalTransactionTypeID,
+             @PaymentMethodID   = @PaymentMethodID,
+             @SignedAmount      = @Amount,   -- إرجاع المبلغ للخزينة (قيمة موجبة)
+             @ExpenseID         = @ExpenseID,
+             @CreatedBy         = @UserID,
+             @Notes             = @Notes,
+             @NewTransactionID  = @NewTxnID OUTPUT,
+             @NewBalance        = @NewBalance OUTPUT;
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks, Old_Value)
+        VALUES (N'Expense', @ExpenseID, N'Reverse', @UserID, GETDATE(), ISNULL(@Reason, N'عكس مصروف'), CAST(@Amount AS NVARCHAR(50)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_FinancialAuditLog_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Expense_Update]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-------------------------------------------------------------------------------------
+-- 2.8  sp_Expense_Update : ممنوع تغيير المبلغ بعد ما يترحّل في الخزينة (لأن
+--      Balance_After في كل الصفوف اللي بعده هيبقى غلط لو غيرنا مبلغ قديم).
+--      المسموح: تعديل البيانات الوصفية بس (الفئة / التاريخ / الملاحظات / مين دفع).
+--      لو محتاج تصحيح مبلغ مصروف مترحّل: اعمل "عكس" (Reversal) عن طريق مصروف
+--      تصحيحي جديد بعلامة سالبة أو موجبة بدل تعديل السجل القديم.
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_Expense_Update]
+    @ExpenseID   INT,
+    @CategoryID  INT,
+    @ExpenseDate DATETIME2,
+    @PaidBy      INT           = NULL,
+    @UserID      INT,
+    @Notes       NVARCHAR(500) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        IF NOT EXISTS (SELECT 1 FROM dbo.EXPENSES WHERE Expense_ID = @ExpenseID)
+        BEGIN
+            RAISERROR(N'المصروف غير موجود.', 16, 1);
+        END
+
+        UPDATE dbo.EXPENSES SET
+            Category_ID  = @CategoryID,
+            Expense_Date = @ExpenseDate,
+            Paid_By      = @PaidBy,
+            Notes        = @Notes
+        WHERE Expense_ID = @ExpenseID;
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks)
+        VALUES (N'Expense', @ExpenseID, N'Update', @UserID, GETDATE(), N'تعديل بيانات مصروف (بدون تغيير المبلغ)');
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_Expense_Void]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE   PROCEDURE [dbo].[sp_Expense_Void]
+    @ExpenseID INT,
+    @UserID INT,
+    @Reason NVARCHAR(500) = NULL
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    SET XACT_ABORT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        DECLARE @Amount DECIMAL(18,2), @OldData NVARCHAR(MAX), @OriginalTransactionID INT,
+                @PaymentMethodID INT, @InTypeID INT, @NewTransactionID INT, @NewBalance DECIMAL(18,2);
+        SELECT @Amount=Amount,
+               @OldData=(SELECT Expense_ID,Category_ID,Amount,Expense_Date,Paid_By,Notes,Is_Voided FROM dbo.EXPENSES WHERE Expense_ID=@ExpenseID FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+        FROM dbo.EXPENSES WITH (UPDLOCK,HOLDLOCK)
+        WHERE Expense_ID=@ExpenseID AND Is_Voided=0;
+        IF @OldData IS NULL THROW 50020, N'Expense does not exist or is already voided.', 1;
+
+        SELECT TOP 1 @OriginalTransactionID=Transation_ID,@PaymentMethodID=Payment_Method_ID
+        FROM dbo.TREASURY_LOG
+        WHERE Expense_ID=@ExpenseID AND Reversal_Of_Transaction_ID IS NULL
+        ORDER BY Transation_ID DESC;
+
+        IF @OriginalTransactionID IS NOT NULL
+        BEGIN
+            SET @InTypeID=(SELECT TOP 1 Transaction_Type_ID FROM dbo.TRANSACTION_TYPES WHERE Type_Name=N'وارد');
+            IF @InTypeID IS NULL THROW 50021, N'Transaction type وارد is missing.', 1;
+            DECLARE @ReversalNotes NVARCHAR(500)=COALESCE(@Reason,N'Reversal of expense');
+            EXEC dbo.sp_Treasury_Add
+                @TransactionTypeID=@InTypeID,@PaymentMethodID=@PaymentMethodID,@Amount=@Amount,
+                @ExpenseID=@ExpenseID,@Notes=@ReversalNotes,@UserID=@UserID,
+                @ReversalOfTransactionID=@OriginalTransactionID,
+                @NewTransactionID=@NewTransactionID OUTPUT,@NewBalance=@NewBalance OUTPUT;
+        END
+
+        UPDATE dbo.EXPENSES
+        SET Is_Voided=1, Voided_At=GETDATE(), Voided_By=@UserID, Void_Reason=@Reason, Updated_At=GETDATE()
+        WHERE Expense_ID=@ExpenseID;
+
+        INSERT dbo.FINANCIAL_AUDIT_LOG
+        (Entity_Type,Entity_ID,Action_Type,User_ID,Action_Date,Amount,Transaction_ID,Old_Data,New_Data,Remarks,Host_Name,Application_Name,Session_Login)
+        SELECT N'Expense',@ExpenseID,N'VOID',@UserID,GETDATE(),@Amount,@NewTransactionID,@OldData,
+               (SELECT Expense_ID,Category_ID,Amount,Expense_Date,Paid_By,Notes,Is_Voided,Voided_At,Voided_By,Void_Reason FROM dbo.EXPENSES WHERE Expense_ID=@ExpenseID FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
+               COALESCE(@Reason,N'Expense voided'),HOST_NAME(),APP_NAME(),SUSER_SNAME();
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE()<>0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[sp_FinancialAuditLog_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2935,18 +3625,22 @@ BEGIN
     SET @NewLogID = CAST(SCOPE_IDENTITY() AS INT);
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[sp_FinancialAuditLog_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_FinancialAuditLog_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_FinancialAuditLog_GetAll]
+
+/* ================================================================
+   5) COMMON READ REPORT: complete audit trail
+   ================================================================ */
+CREATE   PROCEDURE [dbo].[sp_FinancialAuditLog_GetAll]
     @EntityType NVARCHAR(50) = NULL,
-    @EntityID   INT = NULL,
+    @EntityID INT = NULL,
     @ActionType NVARCHAR(50) = NULL,
-    @UserID     INT = NULL,
-    @From       DATETIME2 = NULL,
-    @To         DATETIME2 = NULL
+    @UserID INT = NULL,
+    @From DATETIME2 = NULL,
+    @To DATETIME2 = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -2958,30 +3652,38 @@ BEGIN
         fal.Action_Type,
         fal.User_ID,
         u.Username,
+        e.Full_Name AS User_Full_Name,
         fal.Action_Date,
-        fal.Remarks
+        fal.Amount,
+        fal.Transaction_ID,
+        fal.Old_Data,
+        fal.New_Data,
+        fal.Remarks,
+        fal.Host_Name,
+        fal.Application_Name,
+        fal.Session_Login
     FROM dbo.FINANCIAL_AUDIT_LOG fal
-    INNER JOIN dbo.USERS u
-        ON fal.User_ID = u.User_ID
-    WHERE
-        (@EntityType IS NULL OR fal.Entity_Type = @EntityType)
-        AND (@EntityID IS NULL OR fal.Entity_ID = @EntityID)
-        AND (@ActionType IS NULL OR fal.Action_Type = @ActionType)
-        AND (@UserID IS NULL OR fal.User_ID = @UserID)
-        AND (@From IS NULL OR fal.Action_Date >= @From)
-        AND (@To IS NULL OR fal.Action_Date <= @To)
-    ORDER BY fal.Action_Date DESC;
+    INNER JOIN dbo.USERS u ON fal.User_ID = u.User_ID
+    LEFT JOIN dbo.EMPLOYEES e ON u.Employee_ID = e.Employee_ID
+    WHERE (@EntityType IS NULL OR fal.Entity_Type = @EntityType)
+      AND (@EntityID IS NULL OR fal.Entity_ID = @EntityID)
+      AND (@ActionType IS NULL OR fal.Action_Type = @ActionType)
+      AND (@UserID IS NULL OR fal.User_ID = @UserID)
+      AND (@From IS NULL OR fal.Action_Date >= @From)
+      AND (@To IS NULL OR fal.Action_Date < DATEADD(DAY, 1, CAST(@To AS DATE)))
+    ORDER BY fal.Action_Date DESC, fal.Log_ID DESC;
 END;
+
 GO
-/****** Object:  StoredProcedure [dbo].[sp_FinancialAuditLog_GetByEntity]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_FinancialAuditLog_GetByEntity]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[sp_FinancialAuditLog_GetByEntity]
+CREATE   PROCEDURE [dbo].[sp_FinancialAuditLog_GetByEntity]
     @EntityType NVARCHAR(50),
-    @EntityID   INT
+    @EntityID INT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -2993,18 +3695,26 @@ BEGIN
         fal.Action_Type,
         fal.User_ID,
         u.Username,
+        e.Full_Name AS User_Full_Name,
         fal.Action_Date,
-        fal.Remarks
+        fal.Amount,
+        fal.Transaction_ID,
+        fal.Old_Data,
+        fal.New_Data,
+        fal.Remarks,
+        fal.Host_Name,
+        fal.Application_Name,
+        fal.Session_Login
     FROM dbo.FINANCIAL_AUDIT_LOG fal
-    INNER JOIN dbo.USERS u
-        ON fal.User_ID = u.User_ID
-    WHERE
-        fal.Entity_Type = @EntityType
-        AND fal.Entity_ID = @EntityID
-    ORDER BY fal.Action_Date ASC;
+    INNER JOIN dbo.USERS u ON fal.User_ID = u.User_ID
+    LEFT JOIN dbo.EMPLOYEES e ON u.Employee_ID = e.Employee_ID
+    WHERE fal.Entity_Type = @EntityType
+      AND fal.Entity_ID = @EntityID
+    ORDER BY fal.Action_Date ASC, fal.Log_ID ASC;
 END;
+
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Inventory_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Inventory_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3049,44 +3759,50 @@ BEGIN
     VALUES (@NewPartID, @SellingPrice, GETDATE());
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Inventory_AdjustStock]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Inventory_AdjustStock]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Inventory_AdjustStock]
-    @PartID         INT,
-    @Delta          INT,          -- موجب = إضافة للمخزون، سالب = صرف منه
+
+/* ================================================================
+   13) INVENTORY financial/audit movements
+   ================================================================ */
+CREATE   PROCEDURE [dbo].[sp_Inventory_AdjustStock]
+    @PartID INT,
+    @Delta INT,
     @MovementTypeID INT,
-    @UserID         INT,
-    @Remarks        NVARCHAR(200) = NULL
+    @UserID INT,
+    @Remarks NVARCHAR(200)=NULL
 AS
 BEGIN
-    SET NOCOUNT ON;
+    SET NOCOUNT OFF;
     SET XACT_ABORT ON;
-
     BEGIN TRANSACTION;
+    BEGIN TRY
+        DECLARE @OldStock INT,@OldData NVARCHAR(MAX);
+        SELECT @OldStock=Current_Stock,@OldData=(SELECT Part_ID,Part_Name,Purchase_Price,Selling_Price,Current_Stock FROM dbo.INVENTORY WHERE Part_ID=@PartID AND Is_Deleted=0 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+        FROM dbo.INVENTORY WITH(UPDLOCK,HOLDLOCK) WHERE Part_ID=@PartID AND Is_Deleted=0;
+        IF @OldData IS NULL THROW 50140,N'Part does not exist.',1;
+        IF @OldStock+@Delta<0 THROW 50141,N'Stock cannot become negative.',1;
 
-    UPDATE dbo.INVENTORY WITH (ROWLOCK, UPDLOCK)
-    SET Current_Stock = Current_Stock + @Delta,
-        Updated_At     = GETDATE()
-    WHERE Part_ID = @PartID
-      AND Current_Stock + @Delta >= 0;
+        UPDATE dbo.INVENTORY SET Current_Stock=Current_Stock+@Delta,Updated_At=GETDATE() WHERE Part_ID=@PartID;
+        INSERT dbo.AUDIT_LOG(Part_ID,Movement_Type_ID,Quantity_Change,User_ID,Action_Date,Remarks) VALUES(@PartID,@MovementTypeID,@Delta,@UserID,GETDATE(),@Remarks);
+        INSERT dbo.FINANCIAL_AUDIT_LOG
+        (Entity_Type,Entity_ID,Action_Type,User_ID,Action_Date,Amount,Old_Data,New_Data,Remarks,Host_Name,Application_Name,Session_Login)
+        VALUES(N'Inventory',@PartID,N'STOCK_ADJUSTMENT',@UserID,GETDATE(),ABS(@Delta),@OldData,
+               (SELECT Part_ID,Part_Name,Purchase_Price,Selling_Price,Current_Stock FROM dbo.INVENTORY WHERE Part_ID=@PartID FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
+               COALESCE(@Remarks,N'Stock adjustment'),HOST_NAME(),APP_NAME(),SUSER_SNAME());
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE()<>0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
 
-    IF @@ROWCOUNT = 0
-    BEGIN
-        ROLLBACK TRANSACTION;
-        RAISERROR(N'Failed to adjust inventory: Either the part does not exist or the requested quantity exceeds the available stock.', 16, 1);
-        RETURN;
-    END
-
-    INSERT INTO dbo.AUDIT_LOG (Part_ID, Movement_Type_ID, Quantity_Change, User_ID, Action_Date, Remarks)
-    VALUES (@PartID, @MovementTypeID, @Delta, @UserID, GETDATE(), @Remarks);
-
-    COMMIT TRANSACTION;
-END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Inventory_BarcodeExists]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Inventory_BarcodeExists]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3105,7 +3821,7 @@ BEGIN
     ) THEN 1 ELSE 0 END;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Inventory_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Inventory_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3124,7 +3840,7 @@ BEGIN
     ORDER BY i.Part_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Inventory_GetByBarcode]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Inventory_GetByBarcode]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3143,7 +3859,7 @@ BEGIN
     WHERE i.Is_Deleted = 0 AND i.Barcode = @Barcode;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Inventory_GetByID]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Inventory_GetByID]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3162,7 +3878,7 @@ BEGIN
     WHERE i.Is_Deleted = 0 AND i.Part_ID = @PartID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Inventory_Search]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Inventory_Search]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3196,7 +3912,7 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Inventory_SoftDelete]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Inventory_SoftDelete]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3209,7 +3925,7 @@ BEGIN
     UPDATE dbo.INVENTORY SET Is_Deleted = 1, Updated_At = GETDATE() WHERE Part_ID = @PartID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Inventory_Update]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Inventory_Update]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3254,36 +3970,47 @@ BEGIN
     WHERE Part_ID = @PartID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Inventory_UpdatePrice]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Inventory_UpdatePrice]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Inventory_UpdatePrice]
-    @PartID          INT,
-    @NewSellingPrice DECIMAL(18,2)
+
+CREATE   PROCEDURE [dbo].[sp_Inventory_UpdatePrice]
+    @PartID INT,
+    @NewSellingPrice DECIMAL(18,2),
+    @UserID INT
 AS
 BEGIN
-    SET NOCOUNT ON;
+    SET NOCOUNT OFF;
     SET XACT_ABORT ON;
-
     BEGIN TRANSACTION;
+    BEGIN TRY
+        IF @NewSellingPrice<0 THROW 50150,N'Selling price cannot be negative.',1;
+        DECLARE @OldData NVARCHAR(MAX);
+        SELECT @OldData=(SELECT Part_ID,Purchase_Price,Selling_Price,Markup_Percent FROM dbo.INVENTORY WHERE Part_ID=@PartID AND Is_Deleted=0 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+        FROM dbo.INVENTORY WITH(UPDLOCK,HOLDLOCK) WHERE Part_ID=@PartID AND Is_Deleted=0;
+        IF @OldData IS NULL THROW 50151,N'Part does not exist.',1;
 
-    UPDATE dbo.PRICE_HISTORY
-    SET End_Date = GETDATE()
-    WHERE Part_ID = @PartID AND End_Date IS NULL;
+        UPDATE dbo.PRICE_HISTORY SET End_Date=CAST(GETDATE() AS DATE) WHERE Part_ID=@PartID AND End_Date IS NULL;
+        INSERT dbo.PRICE_HISTORY(Part_ID,Price,Start_Date) VALUES(@PartID,@NewSellingPrice,CAST(GETDATE() AS DATE));
+        UPDATE dbo.INVENTORY SET Selling_Price=@NewSellingPrice,Updated_At=GETDATE() WHERE Part_ID=@PartID;
 
-    INSERT INTO dbo.PRICE_HISTORY (Part_ID, Price, Start_Date)
-    VALUES (@PartID, @NewSellingPrice, GETDATE());
+        INSERT dbo.FINANCIAL_AUDIT_LOG
+        (Entity_Type,Entity_ID,Action_Type,User_ID,Action_Date,Amount,Old_Data,New_Data,Remarks,Host_Name,Application_Name,Session_Login)
+        VALUES(N'Inventory',@PartID,N'PRICE_CHANGE',@UserID,GETDATE(),@NewSellingPrice,@OldData,
+               (SELECT Part_ID,Purchase_Price,Selling_Price,Markup_Percent FROM dbo.INVENTORY WHERE Part_ID=@PartID FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
+               N'Selling price changed',HOST_NAME(),APP_NAME(),SUSER_SNAME());
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE()<>0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
 
-    UPDATE dbo.INVENTORY
-    SET Selling_Price = @NewSellingPrice, Updated_At = GETDATE()
-    WHERE Part_ID = @PartID;
-
-    COMMIT TRANSACTION;
-END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_AddBrand]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_AddBrand]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3303,7 +4030,7 @@ BEGIN
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS NewID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_AddCategory]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_AddCategory]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3322,7 +4049,7 @@ BEGIN
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS NewID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_AddExpenseCategory]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_AddExpenseCategory]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3341,7 +4068,7 @@ BEGIN
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS NewID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_AddPosition]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_AddPosition]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3360,7 +4087,7 @@ BEGIN
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS NewID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_AddUnit]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_AddUnit]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3379,7 +4106,7 @@ BEGIN
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS NewID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllAdvanceStatuses]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllAdvanceStatuses]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3391,7 +4118,7 @@ BEGIN
     SELECT Status_ID, Status_Name FROM dbo.ADVANCE_STATUS ORDER BY Status_ID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllBrands]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllBrands]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3403,7 +4130,7 @@ BEGIN
     SELECT Brand_ID, Brand_Name, Country FROM dbo.BRANDS ORDER BY Brand_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllCategories]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllCategories]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3415,7 +4142,7 @@ BEGIN
     SELECT Category_ID, Category_Name FROM dbo.CATEGORIES ORDER BY Category_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllCustomerTypes]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllCustomerTypes]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3427,7 +4154,7 @@ BEGIN
     SELECT Customer_Type_ID, Type_Name FROM dbo.CUSTOMER_TYPES ORDER BY Type_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllExpenseCategories]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllExpenseCategories]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3439,7 +4166,7 @@ BEGIN
     SELECT Category_ID, Category_Name FROM dbo.EXPENSE_CATEGORIES ORDER BY Category_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllItemStatuses]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllItemStatuses]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3451,7 +4178,7 @@ BEGIN
     SELECT Status_ID, Status_Name FROM dbo.ITEM_STATUS ORDER BY Status_ID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllMovementTypes]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllMovementTypes]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3463,7 +4190,7 @@ BEGIN
     SELECT Movement_Type_ID, Type_Name FROM dbo.MOVEMENT_TYPES ORDER BY Movement_Type_ID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllPaymentMethods]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllPaymentMethods]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3477,7 +4204,7 @@ BEGIN
     ORDER BY Method_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllPaymentStatuses]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllPaymentStatuses]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3489,7 +4216,7 @@ BEGIN
     SELECT Status_ID, Status_Name FROM dbo.PAYMENT_STATUS ORDER BY Status_ID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllPositions]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllPositions]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3504,7 +4231,7 @@ BEGIN
     ORDER BY Position_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllPOStatuses]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllPOStatuses]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3516,7 +4243,7 @@ BEGIN
     SELECT Status_ID, Status_Name FROM dbo.PURCHASE_ORDER_STATUS ORDER BY Status_ID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllTransactionTypes]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllTransactionTypes]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3528,7 +4255,7 @@ BEGIN
     SELECT Transaction_Type_ID, Type_Name FROM dbo.TRANSACTION_TYPES;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllUnits]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Lookup_GetAllUnits]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3540,45 +4267,86 @@ BEGIN
     SELECT Unit_ID, Unit_Name FROM dbo.UNITS ORDER BY Unit_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Payroll_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Payroll_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Payroll_Add]
-    @EmployeeID   INT,
-    @AmountPaid   DECIMAL(18,2),
-    @Deductions   DECIMAL(18,2) = 0,
-    @Bonuses      DECIMAL(18,2) = 0,
-    @PaymentDate  DATETIME2,
-    @MonthYear    NVARCHAR(7),
-    @Notes        NVARCHAR(500) = NULL,
-    @NewPayrollID INT OUTPUT
+-------------------------------------------------------------------------------------
+-- 2.12 sp_Payroll_Add : تسجيل صرف المرتب في الخزينة تلقائيًا + تدقيق
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_Payroll_Add]
+    @EmployeeID               INT,
+    @AmountPaid               DECIMAL(18,2),
+    @Deductions               DECIMAL(18,2) = 0,
+    @Bonuses                  DECIMAL(18,2) = 0,
+    @PaymentDate              DATETIME2,
+    @MonthYear                NVARCHAR(7),
+    @PaymentMethodID          INT,
+    @PayrollTransactionTypeID INT,   -- الـ ID بتاع "صرف مرتبات" في TRANSACTION_TYPES
+    @UserID                   INT,
+    @Notes                    NVARCHAR(500) = NULL,
+    @NewPayrollID             INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-    BEGIN TRANSACTION;
 
-    IF EXISTS (
-        SELECT 1 FROM dbo.PAYROLL WITH (UPDLOCK, HOLDLOCK)
-        WHERE Employee_ID = @EmployeeID AND Month_Year = @MonthYear
-    )
+    IF @AmountPaid < 0 OR @Deductions < 0 OR @Bonuses < 0
     BEGIN
-        ROLLBACK TRANSACTION;
-        RAISERROR(N'تم صرف مرتب هذا الشهر لهذا الموظف من قبل.', 16, 1);
+        RAISERROR(N'قيم المرتب لا يمكن أن تكون سالبة.', 16, 1);
         RETURN;
     END
 
-    INSERT INTO dbo.PAYROLL (Employee_ID, Amount_Paid, Deductions, Bonuses, Payment_Date, Month_Year, Notes, Created_At)
-    VALUES (@EmployeeID, @AmountPaid, @Deductions, @Bonuses, @PaymentDate, @MonthYear, @Notes, GETDATE());
+    BEGIN TRY
+        BEGIN TRANSACTION;
 
-    SET @NewPayrollID = CAST(SCOPE_IDENTITY() AS INT);
+        IF EXISTS (
+            SELECT 1 FROM dbo.PAYROLL WITH (UPDLOCK, HOLDLOCK)
+            WHERE Employee_ID = @EmployeeID AND Month_Year = @MonthYear
+        )
+        BEGIN
+            RAISERROR(N'تم صرف مرتب هذا الشهر لهذا الموظف من قبل.', 16, 1);
+        END
 
-    COMMIT TRANSACTION;
+        INSERT INTO dbo.PAYROLL (Employee_ID, Amount_Paid, Deductions, Bonuses, Payment_Date, Month_Year, Notes, Created_At)
+        VALUES (@EmployeeID, @AmountPaid, @Deductions, @Bonuses, @PaymentDate, @MonthYear, @Notes, GETDATE());
+
+        SET @NewPayrollID = CAST(SCOPE_IDENTITY() AS INT);
+
+        DECLARE @NetPaid DECIMAL(18,2) = @AmountPaid - @Deductions + @Bonuses;
+        DECLARE @NewTxnID INT, @NewBalance DECIMAL(18,2);
+
+        IF @NetPaid <> 0
+        BEGIN
+            -- تجهيز القيم الحسابية والنصية في متغيرات قبل استدعاء EXEC
+            DECLARE @SignedAmount DECIMAL(18,2) = -@NetPaid;
+            DECLARE @TreasuryNotes NVARCHAR(500) = N'صرف مرتب ' + ISNULL(@MonthYear, N'') + N' للموظف رقم ' + CAST(@EmployeeID AS NVARCHAR(20));
+
+            EXEC dbo.sp_Treasury_Add
+                 @TransactionTypeID = @PayrollTransactionTypeID,
+                 @PaymentMethodID   = @PaymentMethodID,
+                 @SignedAmount      = @SignedAmount,
+                 @PayrollID         = @NewPayrollID,
+                 @EmployeeID        = @EmployeeID,
+                 @CreatedBy         = @UserID,
+                 @Notes             = @TreasuryNotes,
+                 @NewTransactionID  = @NewTxnID OUTPUT,
+                 @NewBalance        = @NewBalance OUTPUT;
+        END
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks, New_Value)
+        VALUES (N'Payroll', @NewPayrollID, N'Create', @UserID, GETDATE(), N'صرف مرتب', CAST(@NetPaid AS NVARCHAR(50)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Payroll_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Payroll_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3598,7 +4366,7 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Payroll_MonthYearExists]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Payroll_MonthYearExists]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3615,7 +4383,7 @@ BEGIN
     ) THEN 1 ELSE 0 END;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_PriceHistory_AddRecord]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_PriceHistory_AddRecord]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3630,7 +4398,7 @@ BEGIN
     INSERT INTO dbo.PRICE_HISTORY (Part_ID, Price, Start_Date) VALUES (@PartID, @Price, @StartDate);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_PriceHistory_CloseCurrent]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_PriceHistory_CloseCurrent]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3644,7 +4412,7 @@ BEGIN
     UPDATE dbo.PRICE_HISTORY SET End_Date = @EndDate WHERE Part_ID = @PartID AND End_Date IS NULL;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_PriceHistory_GetByPart]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_PriceHistory_GetByPart]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3661,17 +4429,22 @@ BEGIN
     ORDER BY ph.Start_Date DESC;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_PurchaseOrder_Add]
+
+-------------------------------------------------------------------------------------
+-- 2.4  sp_PurchaseOrder_Add : تحقق أقوى + تسجيل تدقيق
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_PurchaseOrder_Add]
     @SupplierID INT,
     @EmployeeID INT,
     @OrderDate  DATETIME2,
     @PaidAmount DECIMAL(18,2) = 0,
     @StatusID   INT,
+    @UserID     INT,
     @Notes      NVARCHAR(500) = NULL,
     @Details    dbo.PODetailTableType READONLY,
     @NewPOID    INT OUTPUT
@@ -3686,31 +4459,49 @@ BEGIN
         RETURN;
     END
 
-    BEGIN TRANSACTION;
-
-    DECLARE @TotalAmount DECIMAL(18,2);
-    SELECT @TotalAmount = SUM(Quantity * Unit_Price) FROM @Details;
-
-    INSERT INTO dbo.PURCHASE_ORDERS (Supplier_ID, Employee_ID, Order_Date, Total_Amount, Paid_Amount, Status_ID, Notes, Created_At)
-    VALUES (@SupplierID, @EmployeeID, @OrderDate, @TotalAmount, @PaidAmount, @StatusID, @Notes, GETDATE());
-
-    SET @NewPOID = CAST(SCOPE_IDENTITY() AS INT);
-
-    INSERT INTO dbo.PURCHASE_ORDER_DETAILS (PO_ID, Part_ID, Quantity, Unit_Price)
-    SELECT @NewPOID, Part_ID, Quantity, Unit_Price FROM @Details;
-
-    -- تحديث رصيد المورد بقيمة أمر الشراء ناقص المدفوع فورًا
-    IF (@TotalAmount - @PaidAmount) <> 0
+    IF @PaidAmount < 0
     BEGIN
-        UPDATE dbo.SUPPLIERS WITH (ROWLOCK, UPDLOCK)
-        SET Supplier_Balance = Supplier_Balance + (@TotalAmount - @PaidAmount)
-        WHERE Supplier_ID = @SupplierID;
+        RAISERROR(N'المبلغ المدفوع لا يمكن أن يكون سالبًا.', 16, 1);
+        RETURN;
     END
 
-    COMMIT TRANSACTION;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        DECLARE @TotalAmount DECIMAL(18,2);
+        SELECT @TotalAmount = SUM(Quantity * Unit_Price) FROM @Details;
+
+        IF @PaidAmount > @TotalAmount
+            RAISERROR(N'المبلغ المدفوع أكبر من إجمالي أمر الشراء.', 16, 1);
+
+        INSERT INTO dbo.PURCHASE_ORDERS (Supplier_ID, Employee_ID, Order_Date, Total_Amount, Paid_Amount, Status_ID, Notes, Created_At)
+        VALUES (@SupplierID, @EmployeeID, @OrderDate, @TotalAmount, @PaidAmount, @StatusID, @Notes, GETDATE());
+
+        SET @NewPOID = CAST(SCOPE_IDENTITY() AS INT);
+
+        INSERT INTO dbo.PURCHASE_ORDER_DETAILS (PO_ID, Part_ID, Quantity, Unit_Price)
+        SELECT @NewPOID, Part_ID, Quantity, Unit_Price FROM @Details;
+
+        IF (@TotalAmount - @PaidAmount) <> 0
+        BEGIN
+            UPDATE dbo.SUPPLIERS WITH (ROWLOCK, UPDLOCK)
+            SET Supplier_Balance = Supplier_Balance + (@TotalAmount - @PaidAmount)
+            WHERE Supplier_ID = @SupplierID;
+        END
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks, New_Value)
+        VALUES (N'PurchaseOrder', @NewPOID, N'Create', @UserID, GETDATE(),
+                N'إنشاء أمر شراء جديد', CAST(@TotalAmount AS NVARCHAR(50)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3732,7 +4523,7 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_GetByID]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_GetByID]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3755,67 +4546,151 @@ BEGIN
     WHERE pod.PO_ID = @POID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_Receive]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_Receive]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_PurchaseOrder_Receive]
-    @POID                  INT,
-    @ReceivedStatusID      INT,
+
+-------------------------------------------------------------------------------------
+-- 2.5  sp_PurchaseOrder_Receive : منع الاستلام المزدوج + دعم استلام جزئي + تسجيل تدقيق
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_PurchaseOrder_Receive]
+    @POID                   INT,
+    @ReceivedStatusID       INT,
     @PurchaseMovementTypeID INT,
-    @UserID                INT
+    @UserID                 INT
 AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-    BEGIN TRANSACTION;
 
-    UPDATE i
-    SET i.Current_Stock = i.Current_Stock + pod.Quantity,
-        i.Updated_At     = GETDATE()
-    FROM dbo.INVENTORY i
-    JOIN dbo.PURCHASE_ORDER_DETAILS pod ON pod.Part_ID = i.Part_ID
-    WHERE pod.PO_ID = @POID;
+    BEGIN TRY
+        BEGIN TRANSACTION;
 
-    INSERT INTO dbo.AUDIT_LOG (Part_ID, Movement_Type_ID, Quantity_Change, User_ID, Action_Date, Remarks)
-    SELECT Part_ID, @PurchaseMovementTypeID, Quantity, @UserID, GETDATE(),
-           N'استلام أمر شراء رقم ' + CAST(@POID AS NVARCHAR(20))
-    FROM dbo.PURCHASE_ORDER_DETAILS
-    WHERE PO_ID = @POID;
+        IF EXISTS (
+            SELECT 1 FROM dbo.PURCHASE_ORDERS WITH (UPDLOCK, ROWLOCK)
+            WHERE PO_ID = @POID AND Status_ID = @ReceivedStatusID
+        )
+        BEGIN
+            RAISERROR(N'أمر الشراء هذا تم استلامه بالفعل.', 16, 1);
+        END
 
-    UPDATE dbo.PURCHASE_ORDERS SET Status_ID = @ReceivedStatusID WHERE PO_ID = @POID;
+        IF NOT EXISTS (SELECT 1 FROM dbo.PURCHASE_ORDERS WHERE PO_ID = @POID)
+        BEGIN
+            RAISERROR(N'أمر الشراء غير موجود.', 16, 1);
+        END
 
-    COMMIT TRANSACTION;
+        UPDATE i
+        SET i.Current_Stock = i.Current_Stock + (pod.Quantity - pod.Received_Quantity),
+            i.Updated_At     = GETDATE()
+        FROM dbo.INVENTORY i
+        JOIN dbo.PURCHASE_ORDER_DETAILS pod ON pod.Part_ID = i.Part_ID
+        WHERE pod.PO_ID = @POID AND pod.Received_Quantity < pod.Quantity;
+
+        INSERT INTO dbo.AUDIT_LOG (Part_ID, Movement_Type_ID, Quantity_Change, User_ID, Action_Date, Remarks)
+        SELECT Part_ID, @PurchaseMovementTypeID, (Quantity - Received_Quantity), @UserID, GETDATE(),
+               N'استلام أمر شراء رقم ' + CAST(@POID AS NVARCHAR(20))
+        FROM dbo.PURCHASE_ORDER_DETAILS
+        WHERE PO_ID = @POID AND Received_Quantity < Quantity;
+
+        UPDATE dbo.PURCHASE_ORDER_DETAILS
+        SET Received_Quantity = Quantity
+        WHERE PO_ID = @POID;
+
+        UPDATE dbo.PURCHASE_ORDERS
+        SET Status_ID = @ReceivedStatusID, Received_At = GETDATE()
+        WHERE PO_ID = @POID;
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks)
+        VALUES (N'PurchaseOrder', @POID, N'Receive', @UserID, GETDATE(), N'استلام بضاعة أمر الشراء');
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_UpdatePayment]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_UpdatePayment]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_PurchaseOrder_UpdatePayment]
-    @POID           INT,
-    @AdditionalPaid DECIMAL(18,2)
+CREATE   PROCEDURE [dbo].[sp_PurchaseOrder_UpdatePayment]
+    @POID                    INT,
+    @AdditionalPaid          DECIMAL(18,2),
+    @PaymentMethodID         INT,
+    @PaymentTransactionTypeID INT,   -- الـ ID بتاع "سداد مورد" في TRANSACTION_TYPES
+    @UserID                  INT
 AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-    BEGIN TRANSACTION;
 
-    DECLARE @SupplierID INT;
-    SELECT @SupplierID = Supplier_ID FROM dbo.PURCHASE_ORDERS WHERE PO_ID = @POID;
+    IF @AdditionalPaid <= 0
+    BEGIN
+        RAISERROR(N'قيمة السداد يجب أن تكون أكبر من صفر.', 16, 1);
+        RETURN;
+    END
 
-    UPDATE dbo.PURCHASE_ORDERS SET Paid_Amount = Paid_Amount + @AdditionalPaid WHERE PO_ID = @POID;
+    BEGIN TRY
+        BEGIN TRANSACTION;
 
-    UPDATE dbo.SUPPLIERS WITH (ROWLOCK, UPDLOCK)
-    SET Supplier_Balance = Supplier_Balance - @AdditionalPaid
-    WHERE Supplier_ID = @SupplierID;
+        DECLARE @SupplierID INT, @TotalAmount DECIMAL(18,2), @CurrentPaid DECIMAL(18,2);
 
-    COMMIT TRANSACTION;
+        SELECT @SupplierID  = Supplier_ID,
+               @TotalAmount = Total_Amount,
+               @CurrentPaid = Paid_Amount
+        FROM dbo.PURCHASE_ORDERS WITH (UPDLOCK, ROWLOCK)
+        WHERE PO_ID = @POID;
+
+        IF @@ROWCOUNT = 0
+        BEGIN
+            RAISERROR(N'أمر الشراء غير موجود.', 16, 1);
+        END
+
+        IF (@CurrentPaid + @AdditionalPaid) > @TotalAmount
+        BEGIN
+            RAISERROR(N'مبلغ السداد يتجاوز المتبقي على أمر الشراء.', 16, 1);
+        END
+
+        UPDATE dbo.PURCHASE_ORDERS 
+        SET Paid_Amount = Paid_Amount + @AdditionalPaid 
+        WHERE PO_ID = @POID;
+
+        UPDATE dbo.SUPPLIERS WITH (UPDLOCK)
+        SET Supplier_Balance = Supplier_Balance - @AdditionalPaid
+        WHERE Supplier_ID = @SupplierID;
+
+        -- FIX: Pre-calculate expression variables before EXEC
+        DECLARE @Notes NVARCHAR(200) = N'سداد دفعة لأمر شراء رقم ' + CAST(@POID AS NVARCHAR(20));
+        DECLARE @SignedAmount DECIMAL(18,2) = -@AdditionalPaid;
+        DECLARE @NewTxnID INT, @NewBalance DECIMAL(18,2);
+
+        EXEC dbo.sp_Treasury_Add
+             @TransactionTypeID = @PaymentTransactionTypeID,
+             @PaymentMethodID   = @PaymentMethodID,
+             @SignedAmount      = @SignedAmount,
+             @POID              = @POID,
+             @CreatedBy         = @UserID,
+             @Notes             = @Notes,
+             @NewTransactionID  = @NewTxnID OUTPUT,
+             @NewBalance        = @NewBalance OUTPUT;
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks, New_Value)
+        VALUES (N'PurchaseOrder', @POID, N'PaymentUpdate', @UserID, GETDATE(), N'سداد دفعة للمورد', CAST(@AdditionalPaid AS NVARCHAR(50)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_UpdateStatus]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_PurchaseOrder_UpdateStatus]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3829,55 +4704,38 @@ BEGIN
     UPDATE dbo.PURCHASE_ORDERS SET Status_ID = @NewStatusID WHERE PO_ID = @POID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Report_CurrentTreasuryBalance]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Report_CurrentTreasuryBalance]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Report_CurrentTreasuryBalance]
-AS
-BEGIN
-    SET NOCOUNT ON;
-    SELECT * FROM dbo.V_Current_Treasury_Balance;
-END
+
+/* ================================================================
+   15) REPORT PROCEDURES: reads stay NOCOUNT ON
+   ================================================================ */
+CREATE   PROCEDURE [dbo].[sp_Report_CurrentTreasuryBalance]
+AS BEGIN SET NOCOUNT ON; SELECT * FROM dbo.V_Current_Treasury_Balance; END;
+
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Report_DailyCashFlow]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Report_DailyCashFlow]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Report_DailyCashFlow]
-    @From DATETIME2 = NULL,
-    @To   DATETIME2 = NULL
-AS
-BEGIN
-    SET NOCOUNT ON;
-    SELECT * FROM dbo.V_Daily_Cash_Flow
-    WHERE (@From IS NULL OR Flow_Date >= @From)
-      AND (@To   IS NULL OR Flow_Date <= @To)
-    ORDER BY Flow_Date DESC
-    OPTION (RECOMPILE);
-END
+CREATE   PROCEDURE [dbo].[sp_Report_DailyCashFlow] @From DATE=NULL,@To DATE=NULL
+AS BEGIN SET NOCOUNT ON; SELECT * FROM dbo.V_Daily_Cash_Flow WHERE (@From IS NULL OR Flow_Date>=@From) AND (@To IS NULL OR Flow_Date<=@To) ORDER BY Flow_Date DESC; END;
+
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Report_DailyProfits]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Report_DailyProfits]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Report_DailyProfits]
-    @From DATETIME2 = NULL,
-    @To   DATETIME2 = NULL
-AS
-BEGIN
-    SET NOCOUNT ON;
-    SELECT * FROM dbo.V_Daily_Profit
-    WHERE (@From IS NULL OR Sale_Date >= @From)
-      AND (@To   IS NULL OR Sale_Date <= @To)
-    ORDER BY Sale_Date DESC
-    OPTION (RECOMPILE);
-END
+CREATE   PROCEDURE [dbo].[sp_Report_DailyProfits] @From DATE=NULL,@To DATE=NULL
+AS BEGIN SET NOCOUNT ON; SELECT * FROM dbo.V_Daily_Profit WHERE (@From IS NULL OR Sale_Date>=@From) AND (@To IS NULL OR Sale_Date<=@To) ORDER BY Sale_Date DESC; END;
+
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Report_EmployeePerformance]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Report_EmployeePerformance]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3889,7 +4747,7 @@ BEGIN
     SELECT * FROM dbo.V_Employee_Performance ORDER BY Total_Sales DESC;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Report_InventoryValuation]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Report_InventoryValuation]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3901,7 +4759,7 @@ BEGIN
     SELECT * FROM dbo.V_Inventory_Valuation ORDER BY Value_At_Cost DESC;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Report_InvoiceProfits]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Report_InvoiceProfits]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3919,7 +4777,7 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Report_LowStockSuggestions]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Report_LowStockSuggestions]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3931,23 +4789,16 @@ BEGIN
     SELECT * FROM dbo.V_Reorder_Suggestion ORDER BY Shortage DESC;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Report_MonthlyProfits]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Report_MonthlyProfits]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Report_MonthlyProfits]
-    @Year INT = NULL
-AS
-BEGIN
-    SET NOCOUNT ON;
-    SELECT * FROM dbo.V_Monthly_Profit
-    WHERE (@Year IS NULL OR Month_Year LIKE CAST(@Year AS NVARCHAR(4)) + '%')
-    ORDER BY Month_Year DESC
-    OPTION (RECOMPILE);
-END
+CREATE   PROCEDURE [dbo].[sp_Report_MonthlyProfits] @Year INT=NULL
+AS BEGIN SET NOCOUNT ON; SELECT * FROM dbo.V_Monthly_Profit WHERE (@Year IS NULL OR Month_Year LIKE CONVERT(NVARCHAR(4),@Year)+'%') ORDER BY Month_Year DESC; END;
+
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Report_TopCustomers]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Report_TopCustomers]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3962,7 +4813,7 @@ BEGIN
     ORDER BY Total_Purchases DESC;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Report_TopSellingParts]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Report_TopSellingParts]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3977,50 +4828,84 @@ BEGIN
     ORDER BY Total_Qty_Sold DESC;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Returns_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Returns_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Returns_Add]
-    @InvoiceID           INT,
-    @PartID              INT,
-    @Quantity            INT,
-    @Reason              NVARCHAR(250) = NULL,
-    @StatusID            INT,
-    @ReturnDate          DATETIME2,
-    @RestockOnAccept     BIT = 0,
-    @AcceptedStatusID    INT = NULL,
+
+-------------------------------------------------------------------------------------
+-- 2.16 sp_Returns_Add : تحقق من الكمية المتاحة للإرجاع + Transaction كامل + تدقيق
+--      (كانت بترجع كمية بدون التأكد إنها فعلاً كانت في الفاتورة الأصلية)
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_Returns_Add]
+    @InvoiceID             INT,
+    @PartID                INT,
+    @Quantity              INT,
+    @Reason                NVARCHAR(250) = NULL,
+    @StatusID              INT,
+    @ReturnDate            DATETIME2,
+    @RestockOnAccept       BIT = 0,
+    @AcceptedStatusID      INT = NULL,
     @RestockMovementTypeID INT = NULL,
-    @UserID              INT = NULL,
-    @NewReturnID         INT OUTPUT
+    @UserID                INT,
+    @NewReturnID           INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-    BEGIN TRANSACTION;
 
-    INSERT INTO dbo.RETURNS (Invoice_ID, Part_ID, Quantity, Reason, Status_ID, Return_Date, Created_At)
-    VALUES (@InvoiceID, @PartID, @Quantity, @Reason, @StatusID, @ReturnDate, GETDATE());
-
-    SET @NewReturnID = CAST(SCOPE_IDENTITY() AS INT);
-
-    IF @RestockOnAccept = 1 AND @StatusID = @AcceptedStatusID
+    IF @Quantity <= 0
     BEGIN
-        UPDATE dbo.INVENTORY WITH (ROWLOCK, UPDLOCK)
-        SET Current_Stock = Current_Stock + @Quantity, Updated_At = GETDATE()
-        WHERE Part_ID = @PartID;
-
-        IF @UserID IS NOT NULL AND @RestockMovementTypeID IS NOT NULL
-            INSERT INTO dbo.AUDIT_LOG (Part_ID, Movement_Type_ID, Quantity_Change, User_ID, Action_Date, Remarks)
-            VALUES (@PartID, @RestockMovementTypeID, @Quantity, @UserID, GETDATE(),
-                    N'مرتجع مقبول - رقم ' + CAST(@NewReturnID AS NVARCHAR(20)));
+        RAISERROR(N'كمية المرتجع يجب أن تكون أكبر من صفر.', 16, 1);
+        RETURN;
     END
 
-    COMMIT TRANSACTION;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        DECLARE @SoldQty INT, @AlreadyReturnedQty INT;
+
+        SELECT @SoldQty = SUM(Quantity) FROM dbo.INVOICE_DETAILS WHERE Invoice_ID = @InvoiceID AND Part_ID = @PartID;
+
+        SELECT @AlreadyReturnedQty = ISNULL(SUM(Quantity), 0)
+        FROM dbo.RETURNS
+        WHERE Invoice_ID = @InvoiceID AND Part_ID = @PartID AND Status_ID = @AcceptedStatusID;
+
+        IF @SoldQty IS NULL OR (@AlreadyReturnedQty + @Quantity) > @SoldQty
+        BEGIN
+            RAISERROR(N'الكمية المطلوب إرجاعها أكبر من الكمية المباعة فعليًا في هذه الفاتورة.', 16, 1);
+        END
+
+        INSERT INTO dbo.RETURNS (Invoice_ID, Part_ID, Quantity, Reason, Status_ID, Return_Date, Created_At)
+        VALUES (@InvoiceID, @PartID, @Quantity, @Reason, @StatusID, @ReturnDate, GETDATE());
+
+        SET @NewReturnID = CAST(SCOPE_IDENTITY() AS INT);
+
+        IF @RestockOnAccept = 1 AND @StatusID = @AcceptedStatusID
+        BEGIN
+            UPDATE dbo.INVENTORY WITH (ROWLOCK, UPDLOCK)
+            SET Current_Stock = Current_Stock + @Quantity, Updated_At = GETDATE()
+            WHERE Part_ID = @PartID;
+
+            IF @RestockMovementTypeID IS NOT NULL
+                INSERT INTO dbo.AUDIT_LOG (Part_ID, Movement_Type_ID, Quantity_Change, User_ID, Action_Date, Remarks)
+                VALUES (@PartID, @RestockMovementTypeID, @Quantity, @UserID, GETDATE(),
+                        N'مرتجع مقبول - رقم ' + CAST(@NewReturnID AS NVARCHAR(20)));
+        END
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks)
+        VALUES (N'Return', @NewReturnID, N'Create', @UserID, GETDATE(), N'تسجيل مرتجع على فاتورة رقم ' + CAST(@InvoiceID AS NVARCHAR(20)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Returns_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Returns_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4041,21 +4926,28 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_SalesInvoice_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_SalesInvoice_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_SalesInvoice_Add]
-    @CustomerID        INT              = NULL,
-    @EmployeeID        INT,
-    @DateTime          DATETIME2,
-    @Discount          DECIMAL(18,2)    = 0,
-    @PaidAmount        DECIMAL(18,2)    = 0,
-    @PaymentStatusID   INT,
-    @SaleMovementTypeID INT,             -- الـ ID بتاع "بيع" في MOVEMENT_TYPES
-    @UserID            INT,              -- لتسجيل AUDIT_LOG
-    @Details           dbo.InvoiceDetailTableType READONLY,
+
+/* ============================================================================
+   2) FIX SALES PROCEDURE
+   Every NEW invoice detail gets Unit_Cost from Inventory while the inventory
+   row is locked inside the transaction.
+============================================================================ */
+
+CREATE   PROCEDURE [dbo].[sp_SalesInvoice_Add]
+    @CustomerID         INT              = NULL,
+    @EmployeeID         INT,
+    @DateTime           DATETIME2,
+    @Discount           DECIMAL(18,2)    = 0,
+    @PaidAmount         DECIMAL(18,2)    = 0,
+    @PaymentStatusID    INT,
+    @SaleMovementTypeID INT,
+    @UserID             INT,
+    @Details            dbo.InvoiceDetailTableType READONLY,
     @NewInvoiceID       INT OUTPUT
 AS
 BEGIN
@@ -4066,62 +4958,168 @@ BEGIN
     BEGIN
         RAISERROR(N'لا يمكن حفظ فاتورة بدون أي أصناف.', 16, 1);
         RETURN;
-    END
+    END;
 
-    BEGIN TRANSACTION;
-
-    -- تأكيد توفر الكمية المطلوبة لكل صنف مع قفل الصفوف (UPDLOCK)
-    IF EXISTS (
-        SELECT 1
-        FROM dbo.INVENTORY i WITH (ROWLOCK, UPDLOCK)
-        JOIN @Details d ON d.Part_ID = i.Part_ID
-        WHERE i.Current_Stock < d.Quantity OR i.Is_Deleted = 1
-    )
+    IF @Discount < 0 OR @PaidAmount < 0
     BEGIN
-        ROLLBACK TRANSACTION;
-        RAISERROR(N'رصيد المخزون غير كافٍ لأحد الأصناف في الفاتورة.', 16, 1);
+        RAISERROR(N'قيم الخصم أو المدفوع لا يمكن أن تكون سالبة.', 16, 1);
         RETURN;
-    END
+    END;
 
-    DECLARE @TotalAmount DECIMAL(18,2);
-    SELECT @TotalAmount = SUM(Quantity * Unit_Price) FROM @Details;
+    BEGIN TRY
+        BEGIN TRANSACTION;
 
-    INSERT INTO dbo.SALES_INVOICES
-        (Customer_ID, Employee_ID, Date_Time, Total_Amount, Discount, Paid_Amount, Payment_Status_ID, Created_At)
-    VALUES
-        (@CustomerID, @EmployeeID, @DateTime, @TotalAmount, @Discount, @PaidAmount, @PaymentStatusID, GETDATE());
+        /*
+          Lock inventory rows first.
+          This both validates stock and guarantees that Unit_Cost is captured
+          consistently for this sale.
+        */
+        IF EXISTS
+        (
+            SELECT 1
+            FROM dbo.INVENTORY i WITH (ROWLOCK, UPDLOCK)
+            INNER JOIN @Details d ON d.Part_ID = i.Part_ID
+            WHERE i.Current_Stock < d.Quantity
+               OR i.Is_Deleted = 1
+        )
+        BEGIN
+            RAISERROR(N'رصيد المخزون غير كافٍ لأحد الأصناف في الفاتورة.', 16, 1);
+        END;
 
-    SET @NewInvoiceID = CAST(SCOPE_IDENTITY() AS INT);
+        IF EXISTS
+        (
+            SELECT 1
+            FROM @Details
+            WHERE Quantity <= 0 OR Unit_Price < 0
+        )
+        BEGIN
+            RAISERROR(N'الكمية يجب أن تكون أكبر من صفر والسعر لا يمكن أن يكون سالبًا.', 16, 1);
+        END;
 
-    -- إدخال كل سطور الفاتورة دفعة واحدة (Set-Based)
-    INSERT INTO dbo.INVOICE_DETAILS (Invoice_ID, Part_ID, Quantity, Unit_Price)
-    SELECT @NewInvoiceID, Part_ID, Quantity, Unit_Price FROM @Details;
+        DECLARE @TotalAmount DECIMAL(18,2);
 
-    -- تخفيض المخزون دفعة واحدة لكل الأصناف
-    UPDATE i
-    SET i.Current_Stock = i.Current_Stock - d.Quantity,
-        i.Updated_At     = GETDATE()
-    FROM dbo.INVENTORY i
-    JOIN @Details d ON d.Part_ID = i.Part_ID;
+        SELECT @TotalAmount = SUM(Quantity * Unit_Price)
+        FROM @Details;
 
-    -- تسجيل حركة الصرف في سجل الحركات لكل صنف
-    INSERT INTO dbo.AUDIT_LOG (Part_ID, Movement_Type_ID, Quantity_Change, User_ID, Action_Date, Remarks)
-    SELECT Part_ID, @SaleMovementTypeID, -Quantity, @UserID, GETDATE(),
-           N'بيع - فاتورة رقم ' + CAST(@NewInvoiceID AS NVARCHAR(20))
-    FROM @Details;
+        IF @Discount > @TotalAmount
+            RAISERROR(N'قيمة الخصم أكبر من إجمالي الفاتورة.', 16, 1);
 
-    -- تحديث رصيد العميل (لو الفاتورة آجلة/جزئية) داخل نفس الـ Transaction
-    IF @CustomerID IS NOT NULL AND (@TotalAmount - @Discount - @PaidAmount) <> 0
-    BEGIN
-        UPDATE dbo.CUSTOMERS WITH (ROWLOCK, UPDLOCK)
-        SET Total_Balance = Total_Balance + (@TotalAmount - @Discount - @PaidAmount)
-        WHERE Customer_ID = @CustomerID;
-    END
+        IF @PaidAmount > (@TotalAmount - @Discount)
+            RAISERROR(N'المبلغ المدفوع أكبر من صافي الفاتورة.', 16, 1);
 
-    COMMIT TRANSACTION;
-END
+        INSERT INTO dbo.SALES_INVOICES
+        (
+            Customer_ID,
+            Employee_ID,
+            Date_Time,
+            Total_Amount,
+            Discount,
+            Paid_Amount,
+            Payment_Status_ID,
+            Created_At
+        )
+        VALUES
+        (
+            @CustomerID,
+            @EmployeeID,
+            @DateTime,
+            @TotalAmount,
+            @Discount,
+            @PaidAmount,
+            @PaymentStatusID,
+            GETDATE()
+        );
+
+        SET @NewInvoiceID = CAST(SCOPE_IDENTITY() AS INT);
+
+        /*
+          IMPORTANT:
+          Unit_Cost is captured from Inventory at the exact sale transaction.
+        */
+        INSERT INTO dbo.INVOICE_DETAILS
+        (
+            Invoice_ID,
+            Part_ID,
+            Quantity,
+            Unit_Price,
+            Unit_Cost
+        )
+        SELECT
+            @NewInvoiceID,
+            d.Part_ID,
+            d.Quantity,
+            d.Unit_Price,
+            i.Purchase_Price
+        FROM @Details d
+        INNER JOIN dbo.INVENTORY i WITH (ROWLOCK, UPDLOCK)
+            ON i.Part_ID = d.Part_ID;
+
+        UPDATE i
+        SET
+            i.Current_Stock = i.Current_Stock - d.Quantity,
+            i.Updated_At    = GETDATE()
+        FROM dbo.INVENTORY i
+        INNER JOIN @Details d
+            ON d.Part_ID = i.Part_ID;
+
+        INSERT INTO dbo.AUDIT_LOG
+        (
+            Part_ID,
+            Movement_Type_ID,
+            Quantity_Change,
+            User_ID,
+            Action_Date,
+            Remarks
+        )
+        SELECT
+            Part_ID,
+            @SaleMovementTypeID,
+            -Quantity,
+            @UserID,
+            GETDATE(),
+            N'بيع - فاتورة رقم ' + CAST(@NewInvoiceID AS NVARCHAR(20))
+        FROM @Details;
+
+        IF @CustomerID IS NOT NULL
+           AND (@TotalAmount - @Discount - @PaidAmount) <> 0
+        BEGIN
+            UPDATE dbo.CUSTOMERS WITH (ROWLOCK, UPDLOCK)
+            SET Total_Balance =
+                Total_Balance + (@TotalAmount - @Discount - @PaidAmount)
+            WHERE Customer_ID = @CustomerID;
+        END;
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG
+        (
+            Entity_Type,
+            Entity_ID,
+            Action_Type,
+            User_ID,
+            Action_Date,
+            Remarks,
+            New_Value
+        )
+        VALUES
+        (
+            N'SalesInvoice',
+            @NewInvoiceID,
+            N'Create',
+            @UserID,
+            GETDATE(),
+            N'إنشاء فاتورة بيع جديدة',
+            CAST(@TotalAmount - @Discount AS NVARCHAR(50))
+        );
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
 GO
-/****** Object:  StoredProcedure [dbo].[sp_SalesInvoice_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_SalesInvoice_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4152,7 +5150,7 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_SalesInvoice_GetByID]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_SalesInvoice_GetByID]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4178,44 +5176,153 @@ BEGIN
     WHERE id.Invoice_ID = @InvoiceID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_SalesInvoice_UpdatePayment]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_SalesInvoice_UpdatePayment]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_SalesInvoice_UpdatePayment]
-    @InvoiceID      INT,
-    @AdditionalPaid DECIMAL(18,2),
-    @NewStatusID    INT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE dbo.SALES_INVOICES SET
-        Paid_Amount       = Paid_Amount + @AdditionalPaid,
-        Payment_Status_ID = @NewStatusID
-    WHERE Invoice_ID = @InvoiceID;
-END
-GO
-/****** Object:  StoredProcedure [dbo].[sp_StaffWallet_AdjustBalance]    Script Date: 9/17/2026 5:11:05 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[sp_StaffWallet_AdjustBalance]
-    @EmployeeID INT,
-    @Delta      DECIMAL(18,2)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE dbo.STAFF_WALLETS WITH (ROWLOCK, UPDLOCK)
-    SET Current_Balance = Current_Balance + @Delta, Last_Update = GETDATE()
-    WHERE Employee_ID = @EmployeeID;
 
-    IF @@ROWCOUNT = 0
-        RAISERROR(N'لا توجد محفظة لهذا الموظف.', 16, 1);
+-------------------------------------------------------------------------------------
+-- 2.3  sp_SalesInvoice_UpdatePayment : كانت من غير Transaction ولا تحديث لرصيد
+--      العميل ولا تسجيل في الخزينة. دلوقتي بقت العملية الكاملة atomic:
+--        (1) تتأكد إن الفاتورة موجودة والمبلغ الجديد منطقي
+--        (2) تحدّث الفاتورة
+--        (3) تخصم من رصيد العميل (لو الفاتورة عليه)
+--        (4) تسجل تحصيل نقدي في الخزينة تلقائيًا
+--        (5) تسجل في سجل التدقيق المالي
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_SalesInvoice_UpdatePayment]
+    @InvoiceID                   INT,
+    @AdditionalPaid              DECIMAL(18,2),
+    @NewStatusID                 INT,
+    @PaymentMethodID             INT,
+    @CollectionTransactionTypeID INT,   -- الـ ID بتاع "تحصيل فاتورة" في TRANSACTION_TYPES
+    @UserID                      INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    IF @AdditionalPaid <= 0
+    BEGIN
+        RAISERROR(N'قيمة الدفعة يجب أن تكون أكبر من صفر.', 16, 1);
+        RETURN;
+    END
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        DECLARE @CustomerID INT, @FinalAmount DECIMAL(18,2), @CurrentPaid DECIMAL(18,2);
+
+        SELECT @CustomerID  = Customer_ID,
+               @FinalAmount = Final_Amount,
+               @CurrentPaid = Paid_Amount
+        FROM dbo.SALES_INVOICES WITH (UPDLOCK, ROWLOCK)
+        WHERE Invoice_ID = @InvoiceID;
+
+        IF @@ROWCOUNT = 0
+        BEGIN
+            RAISERROR(N'الفاتورة غير موجودة.', 16, 1);
+        END
+
+        IF (@CurrentPaid + @AdditionalPaid) > @FinalAmount
+        BEGIN
+            RAISERROR(N'المبلغ المدفوع يتجاوز المتبقي على الفاتورة.', 16, 1);
+        END
+
+        UPDATE dbo.SALES_INVOICES SET
+            Paid_Amount       = Paid_Amount + @AdditionalPaid,
+            Payment_Status_ID = @NewStatusID
+        WHERE Invoice_ID = @InvoiceID;
+
+        IF @CustomerID IS NOT NULL
+        BEGIN
+            UPDATE dbo.CUSTOMERS WITH (UPDLOCK)
+            SET Total_Balance = Total_Balance - @AdditionalPaid
+            WHERE Customer_ID = @CustomerID;
+        END
+
+        -- FIX: Store concatenated string in a variable prior to EXEC
+        DECLARE @Notes NVARCHAR(200) = N'تحصيل دفعة على فاتورة بيع رقم ' + CAST(@InvoiceID AS NVARCHAR(20));
+        DECLARE @NewTxnID INT, @NewBalance DECIMAL(18,2);
+
+        EXEC dbo.sp_Treasury_Add
+             @TransactionTypeID = @CollectionTransactionTypeID,
+             @PaymentMethodID   = @PaymentMethodID,
+             @SignedAmount      = @AdditionalPaid,
+             @InvoiceID         = @InvoiceID,
+             @CreatedBy         = @UserID,
+             @Notes             = @Notes,
+             @NewTransactionID  = @NewTxnID OUTPUT,
+             @NewBalance        = @NewBalance OUTPUT;
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks, New_Value)
+        VALUES (N'SalesInvoice', @InvoiceID, N'PaymentUpdate', @UserID, GETDATE(),
+                N'تسجيل دفعة إضافية', CAST(@AdditionalPaid AS NVARCHAR(50)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_StaffWallet_Create]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_StaffWallet_AdjustBalance]    Script Date: 9/17/2026 7:01:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-------------------------------------------------------------------------------------
+-- 2.15 sp_StaffWallet_AdjustBalance : إضافة Transaction ومنع الرصيد السالب
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_StaffWallet_AdjustBalance]
+    @EmployeeID INT,
+    @Delta      DECIMAL(18,2),
+    @UserID     INT,
+    @Reason     NVARCHAR(500) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        DECLARE @CurrentBalance DECIMAL(18,2);
+
+        SELECT @CurrentBalance = Current_Balance
+        FROM dbo.STAFF_WALLETS WITH (ROWLOCK, UPDLOCK)
+        WHERE Employee_ID = @EmployeeID;
+
+        IF @@ROWCOUNT = 0
+        BEGIN
+            RAISERROR(N'لا توجد محفظة لهذا الموظف.', 16, 1);
+        END
+
+        IF (@CurrentBalance + @Delta) < 0
+        BEGIN
+            RAISERROR(N'الرصيد غير كافٍ في محفظة الموظف.', 16, 1);
+        END
+
+        UPDATE dbo.STAFF_WALLETS
+        SET Current_Balance = Current_Balance + @Delta, Last_Update = GETDATE()
+        WHERE Employee_ID = @EmployeeID;
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks, Old_Value, New_Value)
+        VALUES (N'StaffWallet', @EmployeeID, N'BalanceAdjust', @UserID, GETDATE(), @Reason,
+                CAST(@CurrentBalance AS NVARCHAR(50)), CAST(@CurrentBalance + @Delta AS NVARCHAR(50)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_StaffWallet_Create]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4235,7 +5342,7 @@ BEGIN
     VALUES (@EmployeeID, @WalletNumber, 0, GETDATE());
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_StaffWallet_GetByEmployee]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_StaffWallet_GetByEmployee]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4251,7 +5358,7 @@ BEGIN
     WHERE sw.Employee_ID = @EmployeeID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Supplier_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Supplier_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4271,26 +5378,54 @@ BEGIN
     SET @NewSupplierID = CAST(SCOPE_IDENTITY() AS INT);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Supplier_AdjustBalance]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Supplier_AdjustBalance]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Supplier_AdjustBalance]
+
+-------------------------------------------------------------------------------------
+-- 2.14 sp_Supplier_AdjustBalance : نفس فكرة العميل - Transaction + تدقيق
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_Supplier_AdjustBalance]
     @SupplierID INT,
-    @Delta      DECIMAL(18,2)
+    @Delta      DECIMAL(18,2),
+    @UserID     INT,
+    @Reason     NVARCHAR(500) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
-    UPDATE dbo.SUPPLIERS WITH (ROWLOCK, UPDLOCK)
-    SET Supplier_Balance = Supplier_Balance + @Delta
-    WHERE Supplier_ID = @SupplierID;
+    SET XACT_ABORT ON;
 
-    IF @@ROWCOUNT = 0
-        RAISERROR(N'The Supplier Is not Exists.', 16, 1);
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        DECLARE @CurrentBalance DECIMAL(18,2);
+
+        SELECT @CurrentBalance = Supplier_Balance
+        FROM dbo.SUPPLIERS WITH (ROWLOCK, UPDLOCK)
+        WHERE Supplier_ID = @SupplierID;
+
+        IF @@ROWCOUNT = 0
+        BEGIN
+            RAISERROR(N'The Supplier Is not Exists.', 16, 1);
+        END
+
+        UPDATE dbo.SUPPLIERS SET Supplier_Balance = Supplier_Balance + @Delta WHERE Supplier_ID = @SupplierID;
+
+        INSERT INTO dbo.FINANCIAL_AUDIT_LOG (Entity_Type, Entity_ID, Action_Type, User_ID, Action_Date, Remarks, Old_Value, New_Value)
+        VALUES (N'Supplier', @SupplierID, N'ManualBalanceAdjust', @UserID, GETDATE(), @Reason,
+                CAST(@CurrentBalance AS NVARCHAR(50)), CAST(@CurrentBalance + @Delta AS NVARCHAR(50)));
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Supplier_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Supplier_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4302,7 +5437,7 @@ BEGIN
     SELECT * FROM dbo.SUPPLIERS ORDER BY Supplier_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Supplier_GetByID]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Supplier_GetByID]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4315,7 +5450,7 @@ BEGIN
     SELECT * FROM dbo.SUPPLIERS WHERE Supplier_ID = @SupplierID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Supplier_Search]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Supplier_Search]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4331,7 +5466,7 @@ BEGIN
     ORDER BY Supplier_Name;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Supplier_Update]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Supplier_Update]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4353,21 +5488,26 @@ BEGIN
     WHERE Supplier_ID = @SupplierID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Treasury_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Treasury_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[sp_Treasury_Add]
+
+-------------------------------------------------------------------------------------
+-- 2.1  sp_Treasury_Add : إضافة باراميتر Created_By لتسجيل مين دخل الحركة
+-------------------------------------------------------------------------------------
+CREATE   PROCEDURE [dbo].[sp_Treasury_Add]
     @TransactionTypeID INT,
     @PaymentMethodID   INT,
-    @SignedAmount      DECIMAL(18,2),   -- موجب = وارد للخزينة، سالب = منصرف منها
+    @SignedAmount      DECIMAL(18,2),
     @InvoiceID         INT = NULL,
     @POID              INT = NULL,
     @ExpenseID         INT = NULL,
     @PayrollID         INT = NULL,
     @AdvanceID         INT = NULL,
     @EmployeeID        INT = NULL,
+    @CreatedBy         INT = NULL,
     @Notes             NVARCHAR(500) = NULL,
     @NewTransactionID  INT OUTPUT,
     @NewBalance        DECIMAL(18,2) OUTPUT
@@ -4376,12 +5516,15 @@ BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
+    IF @SignedAmount = 0
+    BEGIN
+        RAISERROR(N'قيمة الحركة لا يمكن أن تكون صفرًا.', 16, 1);
+        RETURN;
+    END
+
     BEGIN TRANSACTION;
 
     DECLARE @lockResult INT;
-    -- قفل منطقي اسمه "TreasuryBalance" يضمن إن أي عمليتين على الخزينة
-    -- في نفس اللحظة يتنفذوا واحدة ورا التانية، مش متوازيين، عشان
-    -- حساب الرصيد الجديد يكون صحيح 100% حتى تحت ضغط عالي.
     EXEC @lockResult = sp_getapplock
          @Resource    = 'TreasuryBalance',
          @LockMode    = 'Exclusive',
@@ -4400,18 +5543,18 @@ BEGIN
 
     IF @NewBalance < 0
     BEGIN
-        ROLLBACK TRANSACTION;  -- بيفك الـ applock تلقائيًا
+        ROLLBACK TRANSACTION;
         RAISERROR(N'الرصيد غير كافٍ لإتمام هذه العملية.', 16, 1);
         RETURN;
     END
 
     INSERT INTO dbo.TREASURY_LOG
         (Transaction_Type_ID, Payment_Method_ID, Amount,
-         Invoice_ID, PO_ID, Expense_ID, Payroll_ID, Advance_ID, Employee_ID,
+         Invoice_ID, PO_ID, Expense_ID, Payroll_ID, Advance_ID, Employee_ID, Created_By,
          Action_Date, Balance_After, Notes)
     VALUES
         (@TransactionTypeID, @PaymentMethodID, @SignedAmount,
-         @InvoiceID, @POID, @ExpenseID, @PayrollID, @AdvanceID, @EmployeeID,
+         @InvoiceID, @POID, @ExpenseID, @PayrollID, @AdvanceID, @EmployeeID, @CreatedBy,
          GETDATE(), @NewBalance, @Notes);
 
     SET @NewTransactionID = CAST(SCOPE_IDENTITY() AS INT);
@@ -4419,7 +5562,7 @@ BEGIN
     COMMIT TRANSACTION;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_Treasury_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_Treasury_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4444,7 +5587,7 @@ BEGIN
     OPTION (RECOMPILE);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_User_Add]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_User_Add]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4493,7 +5636,7 @@ BEGIN
     SET @NewUserID = CAST(SCOPE_IDENTITY() AS INT);
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_User_GetAll]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_User_GetAll]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4508,7 +5651,7 @@ BEGIN
     ORDER BY u.Username;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_User_GetByEmployeeID]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_User_GetByEmployeeID]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4524,7 +5667,7 @@ BEGIN
     WHERE u.Employee_ID = @EmployeeID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_User_GetByID]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_User_GetByID]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4540,7 +5683,7 @@ BEGIN
     WHERE u.User_ID = @UserID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_User_GetByUsername]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_User_GetByUsername]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4556,7 +5699,7 @@ BEGIN
     WHERE u.Username = @Username AND u.Is_Active = 1;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_User_SetActive]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_User_SetActive]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4570,7 +5713,7 @@ BEGIN
     UPDATE dbo.USERS SET Is_Active = @IsActive WHERE User_ID = @UserID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_User_UpdatePassword]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_User_UpdatePassword]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4584,7 +5727,7 @@ BEGIN
     UPDATE dbo.USERS SET Password_Hash = @NewHash WHERE User_ID = @UserID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_User_UpdatePermissions]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_User_UpdatePermissions]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4602,7 +5745,7 @@ BEGIN
     WHERE User_ID = @UserID;
 END
 GO
-/****** Object:  StoredProcedure [dbo].[sp_User_UsernameExists]    Script Date: 9/17/2026 5:11:05 PM ******/
+/****** Object:  StoredProcedure [dbo].[sp_User_UsernameExists]    Script Date: 9/17/2026 7:01:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
