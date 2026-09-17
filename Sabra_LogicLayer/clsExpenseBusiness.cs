@@ -425,21 +425,6 @@ namespace Sabra.LogicLayer
             }
 
 
-            /*
-             * لا يوجد GetByID في clsExpenseDAL الحالي،
-             * لذلك لا نحاول قراءة المصروف قبل الحذف.
-             *
-             * كذلك لا يوجد في clsTreasuryLogDAL هنا
-             * method واضحة لعكس حركة المصروف.
-             *
-             * لذلك عملية الحذف الحالية تعتمد على
-             * Stored Procedure sp_Expense_Delete.
-             *
-             * إذا كانت الـ SP نفسها تحذف/تعالج TreasuryLog
-             * المرتبط بالمصروف، فالأمر صحيح.
-             */
-
-
             bool deleted =
                 _expenseDAL.Delete(expenseID);
 

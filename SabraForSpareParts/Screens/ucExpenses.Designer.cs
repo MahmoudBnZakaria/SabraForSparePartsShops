@@ -57,7 +57,7 @@
             iconPictureBox1 = new FontAwesome.Sharp.IconPictureBox();
             pnlNetProfit = new SabraPanel();
             sabraLabel2 = new SabraLabel();
-            lblElectricity = new SabraLabel();
+            lblElectricityAndWater = new SabraLabel();
             iconPictureBox3 = new FontAwesome.Sharp.IconPictureBox();
             sabraPanel2 = new SabraPanel();
             sabraLabel1 = new SabraLabel();
@@ -65,6 +65,10 @@
             iconPictureBox2 = new FontAwesome.Sharp.IconPictureBox();
             tableLayoutPanel1 = new TableLayoutPanel();
             dgvExpenses = new SabraDataGridView();
+            sabraContextMenu1 = new SabraForSpareParts.Controls.SabraContextMenu();
+            Edit = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            Delete = new ToolStripMenuItem();
             sabraPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)icnDecreasedParts).BeginInit();
             spnlDataGridViewOPtions.SuspendLayout();
@@ -78,6 +82,7 @@
             ((System.ComponentModel.ISupportInitialize)iconPictureBox2).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvExpenses).BeginInit();
+            sabraContextMenu1.SuspendLayout();
             SuspendLayout();
             // 
             // sabraPanel1
@@ -558,7 +563,7 @@
             pnlNetProfit.BorderRadius = 15;
             pnlNetProfit.BorderSize = 1;
             pnlNetProfit.Controls.Add(sabraLabel2);
-            pnlNetProfit.Controls.Add(lblElectricity);
+            pnlNetProfit.Controls.Add(lblElectricityAndWater);
             pnlNetProfit.Controls.Add(iconPictureBox3);
             pnlNetProfit.EnableHover = true;
             pnlNetProfit.ForeColor = Color.Black;
@@ -581,31 +586,31 @@
             sabraLabel2.BackColor = Color.Transparent;
             sabraLabel2.Font = new Font("Cairo Black", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             sabraLabel2.ForeColor = Color.DimGray;
-            sabraLabel2.Location = new Point(153, 46);
+            sabraLabel2.Location = new Point(112, 47);
             sabraLabel2.Margin = new Padding(0);
             sabraLabel2.Name = "sabraLabel2";
             sabraLabel2.RightToLeft = RightToLeft.Yes;
-            sabraLabel2.Size = new Size(67, 32);
+            sabraLabel2.Size = new Size(108, 32);
             sabraLabel2.TabIndex = 5;
-            sabraLabel2.Text = "كهرباء";
+            sabraLabel2.Text = "كهرباء وماء";
             sabraLabel2.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // lblElectricity
+            // lblElectricityAndWater
             // 
-            lblElectricity.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblElectricity.BackColor = Color.Transparent;
-            lblElectricity.Font = new Font("Cairo", 12F, FontStyle.Bold);
-            lblElectricity.ForeColor = Color.DimGray;
-            lblElectricity.IsTitle = true;
-            lblElectricity.Location = new Point(63, 14);
-            lblElectricity.Margin = new Padding(0);
-            lblElectricity.Name = "lblElectricity";
-            lblElectricity.RightToLeft = RightToLeft.Yes;
-            lblElectricity.Size = new Size(157, 37);
-            lblElectricity.TabIndex = 4;
-            lblElectricity.Text = "22";
-            lblElectricity.TextAlign = ContentAlignment.MiddleRight;
-            lblElectricity.Click += lblElectricity_Click;
+            lblElectricityAndWater.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblElectricityAndWater.BackColor = Color.Transparent;
+            lblElectricityAndWater.Font = new Font("Cairo", 12F, FontStyle.Bold);
+            lblElectricityAndWater.ForeColor = Color.DimGray;
+            lblElectricityAndWater.IsTitle = true;
+            lblElectricityAndWater.Location = new Point(63, 14);
+            lblElectricityAndWater.Margin = new Padding(0);
+            lblElectricityAndWater.Name = "lblElectricityAndWater";
+            lblElectricityAndWater.RightToLeft = RightToLeft.Yes;
+            lblElectricityAndWater.Size = new Size(157, 37);
+            lblElectricityAndWater.TabIndex = 4;
+            lblElectricityAndWater.Text = "22";
+            lblElectricityAndWater.TextAlign = ContentAlignment.MiddleRight;
+            lblElectricityAndWater.Click += lblElectricity_Click;
             // 
             // iconPictureBox3
             // 
@@ -792,7 +797,44 @@
             dgvExpenses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvExpenses.Size = new Size(1608, 603);
             dgvExpenses.TabIndex = 15;
-            dgvExpenses.CellContentClick += dgvExpenses_CellContentClick;
+            dgvExpenses.CellMouseDown += dgvExpenses_CellMouseDown;
+            // 
+            // sabraContextMenu1
+            // 
+            sabraContextMenu1.AccentColor = Color.FromArgb(35, 105, 170);
+            sabraContextMenu1.BackColor = Color.White;
+            sabraContextMenu1.BorderColor = Color.FromArgb(225, 228, 233);
+            sabraContextMenu1.Font = new Font("Cairo", 10F);
+            sabraContextMenu1.ForeColor = Color.FromArgb(45, 45, 45);
+            sabraContextMenu1.HoverColor = Color.FromArgb(235, 242, 250);
+            sabraContextMenu1.ImageScalingSize = new Size(20, 20);
+            sabraContextMenu1.Items.AddRange(new ToolStripItem[] { Edit, toolStripSeparator1, Delete });
+            sabraContextMenu1.MenuBackColor = Color.White;
+            sabraContextMenu1.MenuTextColor = Color.FromArgb(45, 45, 45);
+            sabraContextMenu1.Name = "sabraContextMenu1";
+            sabraContextMenu1.PressedColor = Color.FromArgb(225, 235, 245);
+            sabraContextMenu1.RightToLeft = RightToLeft.Yes;
+            sabraContextMenu1.ShowCheckMargin = true;
+            sabraContextMenu1.Size = new Size(153, 82);
+            // 
+            // Edit
+            // 
+            Edit.Name = "Edit";
+            Edit.Size = new Size(152, 36);
+            Edit.Text = "تعديل";
+            Edit.Click += Edit_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(149, 6);
+            // 
+            // Delete
+            // 
+            Delete.Name = "Delete";
+            Delete.Size = new Size(152, 36);
+            Delete.Text = "حذف";
+            Delete.Click += Delete_Click;
             // 
             // ucExpenses
             // 
@@ -823,6 +865,7 @@
             ((System.ComponentModel.ISupportInitialize)iconPictureBox2).EndInit();
             tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvExpenses).EndInit();
+            sabraContextMenu1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -854,12 +897,16 @@
         private TableLayoutPanel tableLayoutPanel1;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox4;
         private SabraLabel sabraLabel2;
-        private SabraLabel lblElectricity;
+        private SabraLabel lblElectricityAndWater;
         private FontAwesome.Sharp.IconPictureBox iconPictureBox3;
         private SabraDateTimePicker dtpTo;
         private SabraComboBox cmbClassification;
         private SabraLabel sabraLabel4;
         private SabraLabel sabraLabel3;
         private SabraDataGridView dgvExpenses;
+        private Controls.SabraContextMenu sabraContextMenu1;
+        private ToolStripMenuItem Edit;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem Delete;
     }
 }

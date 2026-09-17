@@ -64,6 +64,9 @@
     <Compile Update="Screens\frmAddEmployee.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Screens\frmAddExpense.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Screens\frmAddPosition.cs">
       <SubType>Form</SubType>
     </Compile>

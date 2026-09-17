@@ -11,10 +11,10 @@ namespace SabraForSpareParts.Screens
 {
     public partial class ucExpenses : SabraUserControl
     {
-#region Fields
+        #region Fields
 
-    private readonly clsExpenseBusiness _expenseBusiness =
-        new clsExpenseBusiness();
+        private readonly clsExpenseBusiness _expenseBusiness =
+            new clsExpenseBusiness();
 
         private readonly clsEmployeeBusiness _employeeBusiness =
             new clsEmployeeBusiness();
@@ -384,38 +384,11 @@ namespace SabraForSpareParts.Screens
                 "Notes");
 
 
-            DataGridViewButtonColumn actions =
-                new DataGridViewButtonColumn
-                {
-                    Name =
-                        "colActions",
+            dgvExpenses.CellMouseDown -=
+                dgvExpenses_CellMouseDown;
 
-                    HeaderText =
-                        "الإجراءات",
-
-                    Text =
-                        "إجراءات",
-
-                    UseColumnTextForButtonValue =
-                        true,
-
-                    ReadOnly =
-                        true,
-
-                    FillWeight =
-                        100
-                };
-
-
-            dgvExpenses.Columns.Add(
-                actions);
-
-
-            dgvExpenses.CellContentClick -=
-                dgvExpenses_CellContentClick;
-
-            dgvExpenses.CellContentClick +=
-                dgvExpenses_CellContentClick;
+            dgvExpenses.CellMouseDown +=
+                dgvExpenses_CellMouseDown;
         }
 
 
@@ -593,7 +566,7 @@ namespace SabraForSpareParts.Screens
                 " ج";
 
 
-            lblElectricity.Text =
+            lblElectricityAndWater.Text =
                 electricity.ToString("N2") +
                 " ج";
 
@@ -709,591 +682,12 @@ namespace SabraForSpareParts.Screens
         private void ShowExpenseForm(
             Expense expense)
         {
-            bool isEdit =
-                expense != null;
-
-
-            using Form form =
-                new Form();
-
-
-            form.Text =
-                isEdit
-                    ? "تعديل المصروف"
-                    : "إضافة مصروف جديد";
-
-
-            form.StartPosition =
-                FormStartPosition.CenterParent;
-
-
-            form.FormBorderStyle =
-                FormBorderStyle.FixedDialog;
-
-
-            form.MaximizeBox =
-                false;
-
-            form.MinimizeBox =
-                false;
-
-
-            form.Size =
-                new Size(
-                    520,
-                    600);
-
-
-            form.RightToLeft =
-                RightToLeft.Yes;
-
-            form.RightToLeftLayout =
-                true;
-
-
-            // =====================================================
-            // Category
-            // =====================================================
-
-            Label lblCategory =
-                CreateLabel(
-                    "تصنيف المصروف");
-
-
-            lblCategory.Location =
-                new Point(
-                    30,
-                    25);
-
-
-            ComboBox cmbCategory =
-                new ComboBox
-                {
-                    Location =
-                        new Point(
-                            30,
-                            60),
-
-                    Width =
-                        440,
-
-                    DropDownStyle =
-                        ComboBoxStyle.DropDownList,
-
-                    Font =
-                        new Font(
-                            "Cairo",
-                            10),
-
-                    DisplayMember =
-                        "CategoryName",
-
-                    ValueMember =
-                        "CategoryID"
-                };
-
-
-            cmbCategory.DataSource =
-                new List<ExpenseCategory>(
-                    _categories);
-
-
-            if (isEdit)
+            using (var frm = new frmAddExpense(expense, _categories, _employees, _paymentMethods, _expenseBusiness))
             {
-                cmbCategory.SelectedValue =
-                    expense.CategoryID;
-            }
-
-
-            // =====================================================
-            // Date
-            // =====================================================
-
-            Label lblDate =
-                CreateLabel(
-                    "التاريخ");
-
-
-            lblDate.Location =
-                new Point(
-                    30,
-                    110);
-
-
-            DateTimePicker dtpDate =
-                new DateTimePicker
+                if (frm.ShowDialog(this) == DialogResult.OK)
                 {
-                    Location =
-                        new Point(
-                            30,
-                            145),
-
-                    Width =
-                        440,
-
-                    Format =
-                        DateTimePickerFormat.Short,
-
-                    MaxDate =
-                        DateTime.Today,
-
-                    Value =
-                        isEdit
-                            ? expense.ExpenseDate
-                            : DateTime.Today
-                };
-
-
-            // =====================================================
-            // Amount
-            // =====================================================
-
-            Label lblAmount =
-                CreateLabel(
-                    "المبلغ");
-
-
-            lblAmount.Location =
-                new Point(
-                    30,
-                    195);
-
-
-            TextBox txtAmount =
-                CreateTextBox();
-
-
-            txtAmount.Location =
-                new Point(
-                    30,
-                    230);
-
-
-            txtAmount.Width =
-                440;
-
-
-            if (isEdit)
-            {
-                txtAmount.Text =
-                    expense.Amount
-                        .ToString("0.##");
-            }
-
-
-            // =====================================================
-            // Paid By
-            // =====================================================
-
-            Label lblPaidBy =
-                CreateLabel(
-                    "دفع بواسطة");
-
-
-            lblPaidBy.Location =
-                new Point(
-                    30,
-                    280);
-
-
-            ComboBox cmbPaidBy =
-                new ComboBox
-                {
-                    Location =
-                        new Point(
-                            30,
-                            315),
-
-                    Width =
-                        440,
-
-                    DropDownStyle =
-                        ComboBoxStyle.DropDownList,
-
-                    Font =
-                        new Font(
-                            "Cairo",
-                            10),
-
-                    DisplayMember =
-                        "FullName",
-
-                    ValueMember =
-                        "EmployeeID"
-                };
-
-
-            cmbPaidBy.DataSource =
-                new List<Employee>(
-                    _employees);
-
-
-            if (isEdit &&
-                expense.PaidBy.HasValue)
-            {
-                cmbPaidBy.SelectedValue =
-                    expense.PaidBy.Value;
-            }
-
-
-            // =====================================================
-            // Payment Method
-            // =====================================================
-
-            Label lblPaymentMethod =
-                CreateLabel(
-                    "طريقة الدفع");
-
-
-            lblPaymentMethod.Location =
-                new Point(
-                    30,
-                    365);
-
-
-            ComboBox cmbPaymentMethod =
-                new ComboBox
-                {
-                    Location =
-                        new Point(
-                            30,
-                            400),
-
-                    Width =
-                        440,
-
-                    DropDownStyle =
-                        ComboBoxStyle.DropDownList,
-
-                    Font =
-                        new Font(
-                            "Cairo",
-                            10),
-
-                    DisplayMember =
-                        "MethodName",
-
-                    ValueMember =
-                        "PaymentMethodID"
-                };
-
-
-            cmbPaymentMethod.DataSource =
-                new List<PaymentMethod>(
-                    _paymentMethods);
-
-
-            // =====================================================
-            // Notes
-            // =====================================================
-
-            Label lblNotes =
-                CreateLabel(
-                    "ملاحظات");
-
-
-            lblNotes.Location =
-                new Point(
-                    30,
-                    450);
-
-
-            TextBox txtNotes =
-                CreateTextBox();
-
-
-            txtNotes.Location =
-                new Point(
-                    30,
-                    485);
-
-
-            txtNotes.Width =
-                440;
-
-
-            if (isEdit)
-            {
-                txtNotes.Text =
-                    expense.Notes;
-            }
-
-
-            // =====================================================
-            // Save
-            // =====================================================
-
-            Button btnSave =
-                new Button
-                {
-                    Text =
-                        isEdit
-                            ? "حفظ التعديل"
-                            : "حفظ",
-
-                    Width =
-                        130,
-
-                    Height =
-                        40,
-
-                    Location =
-                        new Point(
-                            340,
-                            525),
-
-                    BackColor =
-                        Color.RoyalBlue,
-
-                    ForeColor =
-                        Color.White,
-
-                    FlatStyle =
-                        FlatStyle.Flat,
-
-                    Font =
-                        new Font(
-                            "Cairo",
-                            9,
-                            FontStyle.Bold)
-                };
-
-
-            btnSave.Click +=
-                (s, e) =>
-                {
-                    // =================================================
-                    // Validation
-                    // =================================================
-
-                    if (cmbCategory.SelectedValue == null)
-                    {
-                        ShowWarning(
-                            "يجب اختيار تصنيف المصروف.");
-
-                        return;
-                    }
-
-
-                    if (!decimal.TryParse(
-                        txtAmount.Text.Trim(),
-                        out decimal amount))
-                    {
-                        ShowWarning(
-                            "أدخل مبلغًا صحيحًا.");
-
-                        txtAmount.Focus();
-
-                        return;
-                    }
-
-
-                    if (amount <= 0)
-                    {
-                        ShowWarning(
-                            "المبلغ يجب أن يكون أكبر من صفر.");
-
-                        txtAmount.Focus();
-
-                        return;
-                    }
-
-
-                    if (cmbPaidBy.SelectedValue == null)
-                    {
-                        ShowWarning(
-                            "يجب اختيار الموظف الذي قام بالدفع.");
-
-                        return;
-                    }
-
-
-                    // =================================================
-                    // ADD
-                    // =================================================
-
-                    if (!isEdit)
-                    {
-                        if (cmbPaymentMethod.SelectedValue == null)
-                        {
-                            ShowWarning(
-                                "يجب اختيار طريقة الدفع.");
-
-                            return;
-                        }
-
-
-                        Expense newExpense =
-                            new Expense
-                            {
-                                CategoryID =
-                                    Convert.ToInt32(
-                                        cmbCategory.SelectedValue),
-
-                                Amount =
-                                    amount,
-
-                                ExpenseDate =
-                                    dtpDate.Value.Date,
-
-                                PaidBy =
-                                    Convert.ToInt32(
-                                        cmbPaidBy.SelectedValue),
-
-                                Notes =
-                                    txtNotes.Text.Trim()
-                            };
-
-
-                        int paymentMethodID =
-                            Convert.ToInt32(
-                                cmbPaymentMethod.SelectedValue);
-
-
-                        var result =
-                            _expenseBusiness.Add(
-                                newExpense,
-                                paymentMethodID);
-
-
-                        if (!result.Success)
-                        {
-                            ShowError(
-                                result.Message);
-
-                            return;
-                        }
-
-
-                        MessageBox.Show(
-                            result.Message,
-                            "المصروفات",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
-
-
-                        form.DialogResult =
-                            DialogResult.OK;
-
-
-                        form.Close();
-
-                        return;
-                    }
-
-
-                    // =================================================
-                    // UPDATE
-                    // =================================================
-
-                    Expense updatedExpense =
-                        new Expense
-                        {
-                            ExpenseID =
-                                expense.ExpenseID,
-
-                            CategoryID =
-                                Convert.ToInt32(
-                                    cmbCategory.SelectedValue),
-
-                            Amount =
-                                amount,
-
-                            ExpenseDate =
-                                dtpDate.Value.Date,
-
-                            PaidBy =
-                                Convert.ToInt32(
-                                    cmbPaidBy.SelectedValue),
-
-                            Notes =
-                                txtNotes.Text.Trim()
-                        };
-
-
-                    var updateResult =
-                        _expenseBusiness.Update(
-                            updatedExpense);
-
-
-                    if (!updateResult.Success)
-                    {
-                        ShowError(
-                            updateResult.Message);
-
-                        return;
-                    }
-
-
-                    MessageBox.Show(
-                        updateResult.Message,
-                        "المصروفات",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-
-
-                    form.DialogResult =
-                        DialogResult.OK;
-
-
-                    form.Close();
-                };
-
-
-            // =====================================================
-            // Add Controls
-            // =====================================================
-
-            form.Controls.Add(
-                lblCategory);
-
-            form.Controls.Add(
-                cmbCategory);
-
-
-            form.Controls.Add(
-                lblDate);
-
-            form.Controls.Add(
-                dtpDate);
-
-
-            form.Controls.Add(
-                lblAmount);
-
-            form.Controls.Add(
-                txtAmount);
-
-
-            form.Controls.Add(
-                lblPaidBy);
-
-            form.Controls.Add(
-                cmbPaidBy);
-
-
-            form.Controls.Add(
-                lblPaymentMethod);
-
-            form.Controls.Add(
-                cmbPaymentMethod);
-
-
-            form.Controls.Add(
-                lblNotes);
-
-            form.Controls.Add(
-                txtNotes);
-
-
-            form.Controls.Add(
-                btnSave);
-
-
-            if (form.ShowDialog(this) ==
-                DialogResult.OK)
-            {
-                LoadExpenses();
+                    LoadExpenses();
+                }
             }
         }
 
@@ -1302,128 +696,72 @@ namespace SabraForSpareParts.Screens
 
         #region Grid Actions
 
-        private void dgvExpenses_CellContentClick(
-            object sender,
-            DataGridViewCellEventArgs e)
+
+        private void dgvExpenses_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.RowIndex < 0)
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
                 return;
 
-
-            if (e.ColumnIndex < 0)
-                return;
-
-
-            if (dgvExpenses
-                    .Columns[e.ColumnIndex]
-                    .Name !=
-                "colActions")
+            if (Control.MouseButtons == MouseButtons.Right)
             {
-                return;
+                dgvExpenses.Rows[e.RowIndex].Selected = true;
+                sabraContextMenu1.Show(dgvExpenses, dgvExpenses.PointToClient(Cursor.Position));
             }
-
-
-            Expense expense =
-                dgvExpenses
-                    .Rows[e.RowIndex]
-                    .DataBoundItem
-                    as Expense;
-
-
-            if (expense == null)
-                return;
-
-
-            ShowExpenseActions(
-                expense);
         }
 
-
-        private void ShowExpenseActions(
-            Expense expense)
+        private void Edit_Click(object sender, EventArgs e)
         {
-            using ContextMenuStrip menu =
-                new ContextMenuStrip();
+            Expense expense = GetSelectedExpense();
+            if (expense == null) return;
 
+            EditExpense(expense);
+        }
 
-            ToolStripMenuItem edit =
-                new ToolStripMenuItem(
-                    "تعديل");
+        private void Delete_Click(object sender, EventArgs e)
+        {
+            Expense expense = GetSelectedExpense();
+            if (expense == null) return;
 
+            DeleteExpense(expense);
+        }
 
-            ToolStripMenuItem delete =
-                new ToolStripMenuItem(
-                    "حذف");
+        private Expense GetSelectedExpense()
+        {
+            if (dgvExpenses.CurrentRow == null)
+                return null;
 
-
-            edit.Click +=
-                (s, e) =>
-                {
-                    EditExpense(
-                        expense);
-                };
-
-
-            delete.Click +=
-                (s, e) =>
-                {
-                    DeleteExpense(
-                        expense);
-                };
-
-
-            menu.Items.Add(
-                edit);
-
-            menu.Items.Add(
-                delete);
-
-
-            menu.Show(
-                dgvExpenses,
-                dgvExpenses.PointToClient(
-                    Cursor.Position));
+            return dgvExpenses.CurrentRow.DataBoundItem as Expense;
         }
 
         #endregion
 
-
         #region Delete
 
-        private void DeleteExpense(
-            Expense expense)
+        private void DeleteExpense(Expense expense)
         {
-            DialogResult result =
-                MessageBox.Show(
-                    $"هل أنت متأكد من حذف المصروف؟\n\n" +
-                    $"التصنيف: {expense.CategoryName}\n" +
-                    $"المبلغ: {expense.Amount:N2} ج\n" +
-                    $"التاريخ: {expense.ExpenseDate:dd/MM/yyyy}",
-                    "تأكيد الحذف",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+            if (expense == null) return;
 
+            string confirmMessage = $"هل أنت متأكد من حذف المصروف؟\n\n" +
+                                   $"التصنيف: {expense.CategoryName}\n" +
+                                   $"المبلغ: {expense.Amount:N2} ج\n" +
+                                   $"التاريخ: {expense.ExpenseDate:dd/MM/yyyy}";
 
-            if (result !=
-                DialogResult.Yes)
-            {
+            DialogResult result = MessageBox.Show(
+                confirmMessage,
+                "تأكيد الحذف",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (result != DialogResult.Yes)
                 return;
-            }
 
-
-            var deleteResult =
-                _expenseBusiness.Delete(
-                    expense.ExpenseID);
-
+            var deleteResult = _expenseBusiness.Delete(expense.ExpenseID);
 
             if (!deleteResult.Success)
             {
-                ShowError(
-                    deleteResult.Message);
-
+                ShowError(deleteResult.Message);
                 return;
             }
-
 
             MessageBox.Show(
                 deleteResult.Message,
@@ -1431,156 +769,7 @@ namespace SabraForSpareParts.Screens
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
 
-
             LoadExpenses();
-        }
-
-        #endregion
-
-
-        #region Add Category
-
-        private void AddCategory()
-        {
-            using Form form =
-                new Form();
-
-
-            form.Text =
-                "إضافة تصنيف مصروف";
-
-
-            form.StartPosition =
-                FormStartPosition.CenterParent;
-
-
-            form.FormBorderStyle =
-                FormBorderStyle.FixedDialog;
-
-
-            form.MaximizeBox =
-                false;
-
-            form.MinimizeBox =
-                false;
-
-
-            form.Size =
-                new Size(
-                    420,
-                    230);
-
-
-            form.RightToLeft =
-                RightToLeft.Yes;
-
-            form.RightToLeftLayout =
-                true;
-
-
-            Label label =
-                CreateLabel(
-                    "اسم التصنيف");
-
-
-            label.Location =
-                new Point(
-                    30,
-                    30);
-
-
-            TextBox textBox =
-                CreateTextBox();
-
-
-            textBox.Location =
-                new Point(
-                    30,
-                    65);
-
-
-            textBox.Width =
-                340;
-
-
-            Button save =
-                new Button
-                {
-                    Text =
-                        "حفظ",
-
-                    Width =
-                        100,
-
-                    Height =
-                        35,
-
-                    Location =
-                        new Point(
-                            270,
-                            120),
-
-                    BackColor =
-                        Color.RoyalBlue,
-
-                    ForeColor =
-                        Color.White,
-
-                    FlatStyle =
-                        FlatStyle.Flat
-                };
-
-
-            save.Click +=
-                (s, e) =>
-                {
-                    var result =
-                        _expenseBusiness
-                            .AddCategory(
-                                textBox.Text);
-
-
-                    if (!result.Success)
-                    {
-                        ShowError(
-                            result.Message);
-
-                        return;
-                    }
-
-
-                    MessageBox.Show(
-                        result.Message,
-                        "المصروفات",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-
-
-                    form.DialogResult =
-                        DialogResult.OK;
-
-
-                    form.Close();
-                };
-
-
-            form.Controls.Add(
-                label);
-
-            form.Controls.Add(
-                textBox);
-
-            form.Controls.Add(
-                save);
-
-
-            if (form.ShowDialog(this) ==
-                DialogResult.OK)
-            {
-                LoadCategories();
-
-                LoadExpenses();
-            }
         }
 
         #endregion
@@ -1758,6 +947,9 @@ namespace SabraForSpareParts.Screens
         }
 
         #endregion
+
+
+
     }
 
 }

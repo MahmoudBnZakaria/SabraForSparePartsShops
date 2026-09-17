@@ -72,16 +72,21 @@ namespace Sabra.DataLayer
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
-
-        public bool Delete(int expenseID)
+        public bool Delete(int expenseID, int userID, string remarks = null)
         {
             using (var conn = clsConnectionManager.GetConnection())
             using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Expense_Delete"))
             {
                 clsDBHelper.AddParam(cmd, "@ExpenseID", expenseID);
+                clsDBHelper.AddParam(cmd, "@UserID", userID);
+                clsDBHelper.AddParam(cmd, "@Remarks",
+                    string.IsNullOrWhiteSpace(remarks) ? DBNull.Value : remarks);
+
                 conn.Open();
+
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
+
     }
 }
