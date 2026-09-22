@@ -1,29 +1,32 @@
 ﻿using Microsoft.Data.SqlClient;
+using Sabra.DataLayer.DataAccess;
 using Sabra.DataLayer.Models;
+using Sabra.DataLayer.ModelsAndSP;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
 namespace Sabra.DataLayer
 {
+
     public class clsUserDAL
     {
         private User MapUser(SqlDataReader r) => new User
         {
-            UserID = (int)r["User_ID"],
-            EmployeeID = (int)r["Employee_ID"],
-            EmployeeName = r["Full_Name"].ToString(),
-            Username = r["Username"].ToString(),
-            PasswordHash = r["Password_Hash"].ToString(),
-            IsActive = (bool)r["Is_Active"],
-            CreatedAt = (DateTime)r["Created_At"],
-            Permissions = r["Permissions"] != DBNull.Value ? (int)r["Permissions"] : 0
+            UserID = r.GetInt("User_ID"),
+            EmployeeID = r.GetInt("Employee_ID"),
+            EmployeeName = r.GetStr("Full_Name", "Employee_Name"),
+            Username = r.GetStr("Username"),
+            PasswordHash = r.GetStr("Password_Hash"),
+            IsActive = r.GetBool("Is_Active"),
+            CreatedAt = r.GetDate("Created_At"),
+            Permissions = r.GetInt("Permissions")
         };
 
         public User GetByUsername(string username)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_User_GetByUsername"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.User_GetByUsername))
             {
                 clsDBHelper.AddParam(cmd, "@Username", username);
                 conn.Open();
@@ -35,7 +38,7 @@ namespace Sabra.DataLayer
         public User GetByID(int userID)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_User_GetByID"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.User_GetByID))
             {
                 clsDBHelper.AddParam(cmd, "@UserID", userID);
                 conn.Open();
@@ -47,7 +50,7 @@ namespace Sabra.DataLayer
         public User GetByEmployeeID(int employeeID)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_User_GetByEmployeeID"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.User_GetByEmployeeID))
             {
                 clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
                 conn.Open();
@@ -60,7 +63,7 @@ namespace Sabra.DataLayer
         {
             var list = new List<User>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_User_GetAll"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.User_GetAll))
             {
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
@@ -70,52 +73,66 @@ namespace Sabra.DataLayer
             return list;
         }
 
-        /// <summary>بترجع الـ User_ID الجديد.</summary>
+        /// <summary>بترجع الـ User_ID الجديد. الصلاحيات بتتبعت كـ Bitwise Int.</summary>
         public int Add(User user)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_User_Add"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.User_Add))
             {
                 clsDBHelper.AddParam(cmd, "@EmployeeID", user.EmployeeID);
                 clsDBHelper.AddParam(cmd, "@Username", user.Username);
                 clsDBHelper.AddParam(cmd, "@PasswordHash", user.PasswordHash);
                 clsDBHelper.AddParam(cmd, "@IsActive", user.IsActive);
+                clsDBHelper.AddParam(cmd, "@Permissions", user.Permissions);
                 var outId = clsDBHelper.AddOutputParam(cmd, "@NewUserID", SqlDbType.Int);
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
-                return Convert.ToInt32(outId.Value);
+                return clsDBHelper.GetInt(outId);
             }
         }
 
         public bool UpdatePassword(int userID, string newHash)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_User_UpdatePassword"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.User_UpdatePassword))
             {
                 clsDBHelper.AddParam(cmd, "@UserID", userID);
                 clsDBHelper.AddParam(cmd, "@NewHash", newHash);
                 conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
+                return clsDBHelper.ExecuteBool(cmd);
+            }
+        }
+
+        /// <summary>تعديل صلاحيات المستخدم (Bitwise) — كانت ناقصة.</summary>
+        public bool UpdatePermissions(int userID, int permissions)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.User_UpdatePermissions))
+            {
+                clsDBHelper.AddParam(cmd, "@UserID", userID);
+                clsDBHelper.AddParam(cmd, "@Permissions", permissions);
+                conn.Open();
+                return clsDBHelper.ExecuteBool(cmd);
             }
         }
 
         public bool SetActive(int userID, bool isActive)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_User_SetActive"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.User_SetActive))
             {
                 clsDBHelper.AddParam(cmd, "@UserID", userID);
                 clsDBHelper.AddParam(cmd, "@IsActive", isActive);
                 conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
+                return clsDBHelper.ExecuteBool(cmd);
             }
         }
 
         public bool UsernameExists(string username, int? excludeUserID = null)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_User_UsernameExists"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.User_UsernameExists))
             {
                 clsDBHelper.AddParam(cmd, "@Username", username);
                 clsDBHelper.AddParam(cmd, "@ExcludeUserID", excludeUserID);
@@ -127,4 +144,5 @@ namespace Sabra.DataLayer
             }
         }
     }
+
 }

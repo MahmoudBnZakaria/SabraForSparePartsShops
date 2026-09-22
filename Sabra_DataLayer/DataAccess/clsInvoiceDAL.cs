@@ -1,39 +1,66 @@
 ﻿using Microsoft.Data.SqlClient;
+using Sabra.DataLayer.DataAccess;
 using Sabra.DataLayer.Models;
+using Sabra.DataLayer.ModelsAndSP;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
 namespace Sabra.DataLayer
 {
+
     public class clsInvoiceDAL
     {
-        private SalesInvoice MapInvoice(SqlDataReader r) => new SalesInvoice
+        private SalesInvoice MapInvoice(SqlDataReader r)
         {
-            InvoiceID = (int)r["Invoice_ID"],
-            CustomerID = r["Customer_ID"] == DBNull.Value ? (int?)null : (int)r["Customer_ID"],
-            CustomerName = r["Customer_Name"] == DBNull.Value ? "عميل نقدي" : r["Customer_Name"].ToString(),
-            EmployeeID = (int)r["Employee_ID"],
-            EmployeeName = r["Employee_Name"].ToString(),
-            DateTime = (DateTime)r["Date_Time"],
-            TotalAmount = (decimal)r["Total_Amount"],
-            Discount = (decimal)r["Discount"],
-            FinalAmount = (decimal)r["Final_Amount"],
-            PaidAmount = (decimal)r["Paid_Amount"],
-            RemainingBalance = (decimal)r["Remaining_Balance"],
-            PaymentStatusID = (int)r["Payment_Status_ID"],
-            PaymentStatus = r["Status_Name"].ToString(),
-            CreatedAt = (DateTime)r["Created_At"]
-        };
+            var inv = new SalesInvoice
+            {
+                InvoiceID = r.GetInt("Invoice_ID"),
+                CustomerID = r.GetIntOrNull("Customer_ID"),
+                CustomerName = r.GetStr("Customer_Name") ?? "عميل نقدي",
+                EmployeeID = r.GetInt("Employee_ID"),
+                EmployeeName = r.GetStr("Employee_Name", "Full_Name"),
+                DateTime = r.GetDate("Date_Time"),
+                TotalAmount = r.GetDec("Total_Amount"),
+                Discount = r.GetDec("Discount"),
+                PaidAmount = r.GetDec("Paid_Amount"),
+                PaymentStatusID = r.GetInt("Payment_Status_ID"),
+                PaymentStatus = r.GetStr("Status_Name", "Payment_Status"),
+                CreatedAt = r.GetDate("Created_At")
+            };
 
-        public List<SalesInvoice> GetAll(DateTime? from = null, DateTime? to = null, int? customerID = null, int? employeeID = null, int? statusID = null)
+            if (r.HasColumn("Final_Amount")) inv.FinalAmount = r.GetDec("Final_Amount");
+            if (r.HasColumn("Remaining_Balance")) inv.RemainingBalance = r.GetDec("Remaining_Balance");
+
+            return inv;
+        }
+
+        private InvoiceDetail MapDetail(SqlDataReader r)
+        {
+            var d = new InvoiceDetail
+            {
+                DetailID = r.GetInt("Detail_ID"),
+                InvoiceID = r.GetInt("Invoice_ID"),
+                PartID = r.GetInt("Part_ID"),
+                PartName = r.GetStr("Part_Name"),
+                Quantity = r.GetInt("Quantity"),
+                UnitPrice = r.GetDec("Unit_Price"),
+                UnitCost = r.GetDec("Unit_Cost")
+            };
+            if (r.HasColumn("Line_Total")) d.LineTotal = r.GetDec("Line_Total");
+            return d;
+        }
+
+        public List<SalesInvoice> GetAll(DateTime? from = null, DateTime? to = null,
+                                         int? customerID = null, int? employeeID = null, int? statusID = null)
         {
             var list = new List<SalesInvoice>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_SalesInvoice_GetAll"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.SalesInvoice_GetAll))
             {
-                clsDBHelper.AddParam(cmd, "@From", from);
-                clsDBHelper.AddParam(cmd, "@To", to?.Date.AddDays(1).AddSeconds(-1));
+                clsDBHelper.AddParam(cmd, "@From", from?.Date);
+                // لآخر اليوم بالكامل عشان فواتير اليوم نفسه متضيعش
+                clsDBHelper.AddParam(cmd, "@To", to?.Date.AddDays(1).AddTicks(-1));
                 clsDBHelper.AddParam(cmd, "@CustomerID", customerID);
                 clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
                 clsDBHelper.AddParam(cmd, "@StatusID", statusID);
@@ -45,59 +72,52 @@ namespace Sabra.DataLayer
             return list;
         }
 
+        /// <summary>
+        /// بترجع الفاتورة بالتفاصيل. لو الـ SP بترجع Result Set تاني للتفاصيل
+        /// بيتقرا تلقائيًا، ولو لأ بترجع الهيدر بس و Details تفضل فاضية.
+        /// </summary>
         public SalesInvoice GetByID(int invoiceID)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_SalesInvoice_GetByID"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.SalesInvoice_GetByID))
             {
                 clsDBHelper.AddParam(cmd, "@InvoiceID", invoiceID);
                 conn.Open();
-                using (var r = cmd.ExecuteReader())
-                    return r.Read() ? MapInvoice(r) : null;
-            }
-        }
-
-
-        public List<InvoiceDetail> GetDetails(int invoiceID)
-        {
-            var list = new List<InvoiceDetail>();
-
-            using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("sp_SalesInvoice_GetDetails", conn))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                clsDBHelper.AddParam(cmd, "@InvoiceID", invoiceID);
-
-                conn.Open();
-
                 using (var r = cmd.ExecuteReader())
                 {
-                    while (r.Read())
-                    {
-                        list.Add(new InvoiceDetail
-                        {
-                            DetailID = (int)r["Detail_ID"],
-                            InvoiceID = (int)r["Invoice_ID"],
-                            PartID = (int)r["Part_ID"],
-                            PartName = r["Part_Name"].ToString(),
-                            Quantity = (int)r["Quantity"],
-                            UnitPrice = (decimal)r["Unit_Price"],
-                            LineTotal = (decimal)r["Line_Total"]
-                        });
-                    }
+                    SalesInvoice invoice = null;
+                    if (r.Read()) invoice = MapInvoice(r);
+                    if (invoice == null) return null;
+
+                    if (r.NextResult())
+                        while (r.Read())
+                            invoice.Details.Add(MapDetail(r));
+
+                    return invoice;
                 }
             }
-
-            return list;
         }
 
+        /// <summary>
+        /// مفيش SP اسمها sp_SalesInvoice_GetDetails في عقد الداتابيز،
+        /// فالتفاصيل بتتجاب من نفس sp_SalesInvoice_GetByID.
+        /// </summary>
+        public List<InvoiceDetail> GetDetails(int invoiceID)
+        {
+            var invoice = GetByID(invoiceID);
+            return invoice == null ? new List<InvoiceDetail>() : invoice.Details;
+        }
 
-
-        public int Add(SalesInvoice invoice, int saleMovementTypeID, int userID)
+        /// <summary>
+        /// بتنشئ الفاتورة + التفاصيل + خصم المخزون + رصيد العميل + تحصيل الخزنة،
+        /// كل ده في Transaction واحدة جوه الـ SP. بترجع الـ Invoice_ID الجديد.
+        /// saleTransactionTypeID = الـ ID بتاع "تحصيل فاتورة" في TRANSACTION_TYPES.
+        /// </summary>
+        public int Add(SalesInvoice invoice, int saleMovementTypeID, int userID,
+                       int paymentMethodID, int saleTransactionTypeID, bool enforceCreditLimit = true)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_SalesInvoice_Add"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.SalesInvoice_Add))
             {
                 clsDBHelper.AddParam(cmd, "@CustomerID", invoice.CustomerID);
                 clsDBHelper.AddParam(cmd, "@EmployeeID", invoice.EmployeeID);
@@ -107,29 +127,41 @@ namespace Sabra.DataLayer
                 clsDBHelper.AddParam(cmd, "@PaymentStatusID", invoice.PaymentStatusID);
                 clsDBHelper.AddParam(cmd, "@SaleMovementTypeID", saleMovementTypeID);
                 clsDBHelper.AddParam(cmd, "@UserID", userID);
+                clsDBHelper.AddParam(cmd, "@PaymentMethodID", paymentMethodID);
+                clsDBHelper.AddParam(cmd, "@SaleTransactionTypeID", saleTransactionTypeID);
+                clsDBHelper.AddParam(cmd, "@EnforceCreditLimit", enforceCreditLimit);
 
                 var detailsTable = clsDBHelper.BuildInvoiceDetailTable(invoice.Details);
-                clsDBHelper.AddTableValuedParam(cmd, "@Details", "dbo.InvoiceDetailTableType", detailsTable);
+                clsDBHelper.AddTableValuedParam(cmd, "@Details", SP.Type_InvoiceDetail, detailsTable);
 
                 var outId = clsDBHelper.AddOutputParam(cmd, "@NewInvoiceID", SqlDbType.Int);
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
-                return Convert.ToInt32(outId.Value);
+                return clsDBHelper.GetInt(outId);
             }
         }
 
-        public bool UpdatePayment(int invoiceID, decimal additionalPaid, int newStatusID)
+        /// <summary>
+        /// تحصيل دفعة على فاتورة + تسجيلها في الخزنة.
+        /// collectionTransactionTypeID = الـ ID بتاع "تحصيل فاتورة" في TRANSACTION_TYPES.
+        /// </summary>
+        public bool UpdatePayment(int invoiceID, decimal additionalPaid, int newStatusID,
+                                  int paymentMethodID, int collectionTransactionTypeID, int userID)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_SalesInvoice_UpdatePayment"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.SalesInvoice_UpdatePayment))
             {
                 clsDBHelper.AddParam(cmd, "@InvoiceID", invoiceID);
                 clsDBHelper.AddParam(cmd, "@AdditionalPaid", additionalPaid);
                 clsDBHelper.AddParam(cmd, "@NewStatusID", newStatusID);
+                clsDBHelper.AddParam(cmd, "@PaymentMethodID", paymentMethodID);
+                clsDBHelper.AddParam(cmd, "@CollectionTransactionTypeID", collectionTransactionTypeID);
+                clsDBHelper.AddParam(cmd, "@UserID", userID);
                 conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
+                return clsDBHelper.ExecuteBool(cmd);
             }
         }
     }
+
 }

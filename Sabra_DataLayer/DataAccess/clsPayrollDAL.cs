@@ -1,32 +1,35 @@
 ﻿using Microsoft.Data.SqlClient;
+using Sabra.DataLayer.DataAccess;
 using Sabra.DataLayer.Models;
+using Sabra.DataLayer.ModelsAndSP;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
 namespace Sabra.DataLayer
 {
+
     public class clsPayrollDAL
     {
         private Payroll MapPayroll(SqlDataReader r) => new Payroll
         {
-            PayrollID = (int)r["Payroll_ID"],
-            EmployeeID = (int)r["Employee_ID"],
-            EmployeeName = r["Full_Name"].ToString(),
-            AmountPaid = (decimal)r["Amount_Paid"],
-            Deductions = (decimal)r["Deductions"],
-            Bonuses = (decimal)r["Bonuses"],
-            PaymentDate = (DateTime)r["Payment_Date"],
-            MonthYear = r["Month_Year"].ToString(),
-            Notes = r["Notes"] == DBNull.Value ? null : r["Notes"].ToString(),
-            CreatedAt = (DateTime)r["Created_At"]
+            PayrollID = r.GetInt("Payroll_ID"),
+            EmployeeID = r.GetInt("Employee_ID"),
+            EmployeeName = r.GetStr("Full_Name", "Employee_Name"),
+            AmountPaid = r.GetDec("Amount_Paid"),
+            Deductions = r.GetDec("Deductions"),
+            Bonuses = r.GetDec("Bonuses"),
+            PaymentDate = r.GetDate("Payment_Date"),
+            MonthYear = r.GetStr("Month_Year"),
+            Notes = r.GetStr("Notes"),
+            CreatedAt = r.GetDate("Created_At")
         };
 
         public List<Payroll> GetAll(string monthYear = null, int? employeeID = null)
         {
             var list = new List<Payroll>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Payroll_GetAll"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Payroll_GetAll))
             {
                 clsDBHelper.AddParam(cmd, "@MonthYear", monthYear);
                 clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
@@ -41,7 +44,7 @@ namespace Sabra.DataLayer
         public bool MonthYearExists(int employeeID, string monthYear)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Payroll_MonthYearExists"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Payroll_MonthYearExists))
             {
                 clsDBHelper.AddParam(cmd, "@EmployeeID", employeeID);
                 clsDBHelper.AddParam(cmd, "@MonthYear", monthYear);
@@ -53,10 +56,14 @@ namespace Sabra.DataLayer
             }
         }
 
-        public int Add(Payroll payroll)
+        /// <summary>
+        /// صرف مرتب + تسجيله في الخزنة. payrollTransactionTypeID = الـ ID بتاع
+        /// "صرف مرتبات" في TRANSACTION_TYPES. بترجع الـ Payroll_ID الجديد.
+        /// </summary>
+        public int Add(Payroll payroll, int paymentMethodID, int payrollTransactionTypeID, int userID)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Payroll_Add"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Payroll_Add))
             {
                 clsDBHelper.AddParam(cmd, "@EmployeeID", payroll.EmployeeID);
                 clsDBHelper.AddParam(cmd, "@AmountPaid", payroll.AmountPaid);
@@ -64,24 +71,30 @@ namespace Sabra.DataLayer
                 clsDBHelper.AddParam(cmd, "@Bonuses", payroll.Bonuses);
                 clsDBHelper.AddParam(cmd, "@PaymentDate", payroll.PaymentDate);
                 clsDBHelper.AddParam(cmd, "@MonthYear", payroll.MonthYear);
+                clsDBHelper.AddParam(cmd, "@PaymentMethodID", paymentMethodID);
+                clsDBHelper.AddParam(cmd, "@PayrollTransactionTypeID", payrollTransactionTypeID);
+                clsDBHelper.AddParam(cmd, "@UserID", userID);
                 clsDBHelper.AddParam(cmd, "@Notes", payroll.Notes);
                 var outId = clsDBHelper.AddOutputParam(cmd, "@NewPayrollID", SqlDbType.Int);
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
-                return Convert.ToInt32(outId.Value);
+                return clsDBHelper.GetInt(outId);
             }
         }
 
+        /// <summary>بتستخدم الـ Scalar Function عشان صيغة الشهر تبقى زي اللي في الداتابيز.</summary>
         public string FormatMonthYear(DateTime date)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("SELECT dbo.fn_FormatMonthYear(@Date)", conn))
+            using (var cmd = clsDBHelper.CreateTextCommand(conn, SP.Fn_FormatMonthYear))
             {
                 clsDBHelper.AddParam(cmd, "@Date", date.Date);
                 conn.Open();
-                return cmd.ExecuteScalar().ToString();
+                var result = cmd.ExecuteScalar();
+                return result == null || result == DBNull.Value ? null : result.ToString();
             }
         }
     }
+
 }

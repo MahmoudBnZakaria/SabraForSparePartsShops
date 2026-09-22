@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
+using Sabra.DataLayer.DataAccess;
 using Sabra.DataLayer.Models;
+using Sabra.DataLayer.ModelsAndSP;
 using System;
 using System.Collections.Generic;
 
@@ -11,7 +13,7 @@ namespace Sabra.DataLayer
         {
             var list = new List<PriceHistory>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_PriceHistory_GetByPart"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.PriceHistory_GetByPart))
             {
                 clsDBHelper.AddParam(cmd, "@PartID", partID);
                 conn.Open();
@@ -19,29 +21,50 @@ namespace Sabra.DataLayer
                     while (r.Read())
                         list.Add(new PriceHistory
                         {
-                            PriceID = (int)r["Price_ID"],
-                            PartID = (int)r["Part_ID"],
-                            PartName = r["Part_Name"].ToString(),
-                            Price = (decimal)r["Price"],
-                            StartDate = (DateTime)r["Start_Date"],
-                            EndDate = r["End_Date"] == DBNull.Value ? (DateTime?)null : (DateTime)r["End_Date"]
+                            PriceID = r.GetInt("Price_ID"),
+                            PartID = r.GetInt("Part_ID"),
+                            PartName = r.GetStr("Part_Name"),
+                            Price = r.GetDec("Price"),
+                            StartDate = r.GetDate("Start_Date"),
+                            EndDate = r.GetDateOrNull("End_Date")
                         });
             }
             return list;
         }
 
-        public bool UpdatePrice(int partID, decimal newPrice)
+        /// <summary>بتفتح سجل سعر جديد (استخدمها بعد CloseCurrent).</summary>
+        public bool AddRecord(int partID, decimal price, DateTime startDate)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_UpdatePrice"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.PriceHistory_AddRecord))
             {
                 clsDBHelper.AddParam(cmd, "@PartID", partID);
-                clsDBHelper.AddParam(cmd, "@NewSellingPrice", newPrice);
-
+                clsDBHelper.AddParam(cmd, "@Price", price);
+                clsDBHelper.AddParam(cmd, "@StartDate", startDate);
                 conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
+                return clsDBHelper.ExecuteBool(cmd);
             }
         }
 
+        /// <summary>بتقفل السجل المفتوح الحالي بتاريخ نهاية.</summary>
+        public bool CloseCurrent(int partID, DateTime endDate)
+        {
+            using (var conn = clsConnectionManager.GetConnection())
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.PriceHistory_CloseCurrent))
+            {
+                clsDBHelper.AddParam(cmd, "@PartID", partID);
+                clsDBHelper.AddParam(cmd, "@EndDate", endDate);
+                conn.Open();
+                return clsDBHelper.ExecuteBool(cmd);
+            }
+        }
+
+        /// <summary>
+        /// تغيير السعر الرسمي (بيقفل السجل القديم ويفتح جديد جوه SP واحدة).
+        /// موجودة هنا للتسهيل بس، والتنفيذ في clsInventoryDAL.
+        /// </summary>
+        public bool UpdatePrice(int partID, decimal newPrice, int userID)
+            => new clsInventoryDAL().UpdatePrice(partID, newPrice, userID);
     }
+
 }

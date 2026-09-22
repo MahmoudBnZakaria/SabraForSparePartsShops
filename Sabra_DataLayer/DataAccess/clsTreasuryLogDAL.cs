@@ -1,48 +1,60 @@
 ﻿using Microsoft.Data.SqlClient;
+using Sabra.DataLayer.DataAccess;
 using Sabra.DataLayer.Models;
+using Sabra.DataLayer.ModelsAndSP;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
 namespace Sabra.DataLayer
 {
+
     public class clsTreasuryLogDAL
     {
         private TreasuryLog MapLog(SqlDataReader r) => new TreasuryLog
         {
-            TransactionID = (int)r["Transaction_ID"],
-            TransactionTypeID = (int)r["Transaction_Type_ID"],
-            TransactionType = r["Type_Name"].ToString(),
-            PaymentMethodID = (int)r["Payment_Method_ID"],
-            PaymentMethod = r["Method_Name"].ToString(),
-            Amount = (decimal)r["Amount"],
-            InvoiceID = r["Invoice_ID"] == DBNull.Value ? (int?)null : (int)r["Invoice_ID"],
-            POID = r["PO_ID"] == DBNull.Value ? (int?)null : (int)r["PO_ID"],
-            ExpenseID = r["Expense_ID"] == DBNull.Value ? (int?)null : (int)r["Expense_ID"],
-            PayrollID = r["Payroll_ID"] == DBNull.Value ? (int?)null : (int)r["Payroll_ID"],
-            AdvanceID = r["Advance_ID"] == DBNull.Value ? (int?)null : (int)r["Advance_ID"],
-            EmployeeID = r["Employee_ID"] == DBNull.Value ? (int?)null : (int)r["Employee_ID"],
-            ActionDate = (DateTime)r["Action_Date"],
-            BalanceAfter = (decimal)r["Balance_After"],
-            Notes = r["Notes"] == DBNull.Value ? null : r["Notes"].ToString()
+            TransactionID = r.GetInt("Transaction_ID", "Transation_ID"),
+            TransactionTypeID = r.GetInt("Transaction_Type_ID"),
+            TransactionType = r.GetStr("Type_Name", "Transaction_Type"),
+            PaymentMethodID = r.GetInt("Payment_Method_ID"),
+            PaymentMethod = r.GetStr("Method_Name", "Payment_Method"),
+            Amount = r.GetDec("Amount"),
+            InvoiceID = r.GetIntOrNull("Invoice_ID"),
+            POID = r.GetIntOrNull("PO_ID"),
+            ExpenseID = r.GetIntOrNull("Expense_ID"),
+            PayrollID = r.GetIntOrNull("Payroll_ID"),
+            AdvanceID = r.GetIntOrNull("Advance_ID"),
+            EmployeeID = r.GetIntOrNull("Employee_ID"),
+            ActionDate = r.GetDate("Action_Date"),
+            BalanceAfter = r.GetDec("Balance_After"),
+            Notes = r.GetStr("Notes"),
+            ReversalOfTransactionID = r.GetIntOrNull("Reversal_Of_Transaction_ID"),
+            CreatedBy = r.GetIntOrNull("Created_By"),
+            CreatedByName = r.GetStr("Created_By_Name"),
+            RelatedCustomer = r.GetStr("Related_Customer", "Customer_Name"),
+            RelatedSupplier = r.GetStr("Related_Supplier", "Supplier_Name"),
+            RelatedEmployee = r.GetStr("Related_Employee", "Full_Name"),
+            TransactionSource = r.GetStr("Transaction_Source")
         };
 
+        /// <summary>رصيد الخزنة الحالي من الـ Scalar Function.</summary>
         public decimal GetCurrentBalance()
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("SELECT dbo.fn_Treasury_GetCurrentBalance()", conn))
+            using (var cmd = clsDBHelper.CreateTextCommand(conn, SP.Fn_TreasuryBalance))
             {
                 conn.Open();
                 var result = cmd.ExecuteScalar();
-                return result == null || result == DBNull.Value ? 0m : (decimal)result;
+                return result == null || result == DBNull.Value ? 0m : Convert.ToDecimal(result);
             }
         }
 
-        public List<TreasuryLog> GetAll(DateTime? from = null, DateTime? to = null, int? typeID = null, int? methodID = null)
+        public List<TreasuryLog> GetAll(DateTime? from = null, DateTime? to = null,
+                                        int? typeID = null, int? methodID = null)
         {
             var list = new List<TreasuryLog>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Treasury_GetAll"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Treasury_GetAll))
             {
                 clsDBHelper.AddParam(cmd, "@From", from);
                 clsDBHelper.AddParam(cmd, "@To", to);
@@ -56,10 +68,15 @@ namespace Sabra.DataLayer
             return list;
         }
 
+        /// <summary>
+        /// حركة خزنة يدوية. مهم: log.Amount لازم تكون بالإشارة الصح
+        /// (موجب = دخل / سالب = صرف) لأنها بتتبعت لـ @SignedAmount.
+        /// بترجع رقم الحركة والرصيد بعدها.
+        /// </summary>
         public (int NewTransactionID, decimal NewBalance) Add(TreasuryLog log)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Treasury_Add"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Treasury_Add))
             {
                 clsDBHelper.AddParam(cmd, "@TransactionTypeID", log.TransactionTypeID);
                 clsDBHelper.AddParam(cmd, "@PaymentMethodID", log.PaymentMethodID);
@@ -70,14 +87,17 @@ namespace Sabra.DataLayer
                 clsDBHelper.AddParam(cmd, "@PayrollID", log.PayrollID);
                 clsDBHelper.AddParam(cmd, "@AdvanceID", log.AdvanceID);
                 clsDBHelper.AddParam(cmd, "@EmployeeID", log.EmployeeID);
+                clsDBHelper.AddParam(cmd, "@CreatedBy", log.CreatedBy);
                 clsDBHelper.AddParam(cmd, "@Notes", log.Notes);
+                clsDBHelper.AddParam(cmd, "@ReversalOfTransactionID", log.ReversalOfTransactionID);
                 var outTranId = clsDBHelper.AddOutputParam(cmd, "@NewTransactionID", SqlDbType.Int);
                 var outBalance = clsDBHelper.AddDecimalOutputParam(cmd, "@NewBalance", 18, 2);
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
-                return (Convert.ToInt32(outTranId.Value), Convert.ToDecimal(outBalance.Value));
+                return (clsDBHelper.GetInt(outTranId), clsDBHelper.GetDecimal(outBalance));
             }
         }
     }
+
 }

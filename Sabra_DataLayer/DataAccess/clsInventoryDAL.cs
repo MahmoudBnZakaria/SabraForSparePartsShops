@@ -1,43 +1,47 @@
 ﻿using Microsoft.Data.SqlClient;
+using Sabra.DataLayer.DataAccess;
 using Sabra.DataLayer.Models;
+using Sabra.DataLayer.ModelsAndSP;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
 namespace Sabra.DataLayer
 {
+
     public class clsInventoryDAL
     {
         private InventoryItem MapItem(SqlDataReader r) => new InventoryItem
         {
-            PartID = (int)r["Part_ID"],
-            Barcode = r["Barcode"] == DBNull.Value ? null : r["Barcode"].ToString(),
-            TechnicalNumber = r["Technical_Number"] == DBNull.Value ? null : r["Technical_Number"].ToString(),
-            PartName = r["Part_Name"].ToString(),
-            CategoryID = r["Category_ID"] == DBNull.Value ? (int?)null : (int)r["Category_ID"],
-            CategoryName = r["Category_Name"] == DBNull.Value ? null : r["Category_Name"].ToString(),
-            BrandID = r["Brand_ID"] == DBNull.Value ? (int?)null : (int)r["Brand_ID"],
-            BrandName = r["Brand_Name"] == DBNull.Value ? null : r["Brand_Name"].ToString(),
-            UnitID = r["Unit_ID"] == DBNull.Value ? (int?)null : (int)r["Unit_ID"],
-            UnitName = r["Unit_Name"] == DBNull.Value ? null : r["Unit_Name"].ToString(),
-            PurchasePrice = (decimal)r["Purchase_Price"],
-            MarkupPercent = (decimal)r["Markup_Percent"],
-            SellingPrice = (decimal)r["Selling_Price"],
-            CurrentStock = (int)r["Current_Stock"],
-            MinLimit = (int)r["Min_Limit"],
-            CrossRefID = r["Cross_Ref_ID"] == DBNull.Value ? (int?)null : (int)r["Cross_Ref_ID"],
-            SupplierID = r["Supplier_ID"] == DBNull.Value ? (int?)null : (int)r["Supplier_ID"],
-            SupplierName = r["Supplier_Name"] == DBNull.Value ? null : r["Supplier_Name"].ToString(),
-            IsDeleted = (bool)r["Is_Deleted"],
-            CreatedAt = (DateTime)r["Created_At"],
-            UpdatedAt = (DateTime)r["Updated_At"]
+            PartID = r.GetInt("Part_ID"),
+            Barcode = r.GetStr("Barcode"),
+            TechnicalNumber = r.GetStr("Technical_Number"),
+            PartName = r.GetStr("Part_Name"),
+            CategoryID = r.GetIntOrNull("Category_ID"),
+            CategoryName = r.GetStr("Category_Name"),
+            BrandID = r.GetIntOrNull("Brand_ID"),
+            BrandName = r.GetStr("Brand_Name"),
+            UnitID = r.GetIntOrNull("Unit_ID"),
+            UnitName = r.GetStr("Unit_Name"),
+            PurchasePrice = r.GetDec("Purchase_Price"),
+            MarkupPercent = r.GetDec("Markup_Percent"),
+            SellingPrice = r.GetDec("Selling_Price"),
+            CurrentStock = r.GetInt("Current_Stock"),
+            MinLimit = r.GetInt("Min_Limit"),
+            CrossRefID = r.GetIntOrNull("Cross_Ref_ID"),
+            SupplierID = r.GetIntOrNull("Supplier_ID"),
+            SupplierName = r.GetStr("Supplier_Name"),
+            IsDeleted = r.GetBool("Is_Deleted"),
+            CreatedAt = r.GetDate("Created_At"),
+            UpdatedAt = r.GetDate("Updated_At"),
+            Notes = r.GetStr("Notes")
         };
 
         public List<InventoryItem> GetAll()
         {
             var list = new List<InventoryItem>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_GetAll"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Inventory_GetAll))
             {
                 conn.Open();
                 using (var r = cmd.ExecuteReader())
@@ -50,7 +54,7 @@ namespace Sabra.DataLayer
         public InventoryItem GetByID(int partID)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_GetByID"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Inventory_GetByID))
             {
                 clsDBHelper.AddParam(cmd, "@PartID", partID);
                 conn.Open();
@@ -62,7 +66,7 @@ namespace Sabra.DataLayer
         public InventoryItem GetByBarcode(string barcode)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_GetByBarcode"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Inventory_GetByBarcode))
             {
                 clsDBHelper.AddParam(cmd, "@Barcode", barcode);
                 conn.Open();
@@ -71,11 +75,13 @@ namespace Sabra.DataLayer
             }
         }
 
-        public List<InventoryItem> Search(string keyword = null, int? categoryID = null, int? brandID = null, string stockFilter = null)
+        /// <summary>stockFilter: "low" أو "zero" أو null.</summary>
+        public List<InventoryItem> Search(string keyword = null, int? categoryID = null,
+                                          int? brandID = null, string stockFilter = null)
         {
             var list = new List<InventoryItem>();
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_Search"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Inventory_Search))
             {
                 clsDBHelper.AddParam(cmd, "@Keyword", keyword);
                 clsDBHelper.AddParam(cmd, "@CategoryID", categoryID);
@@ -89,10 +95,11 @@ namespace Sabra.DataLayer
             return list;
         }
 
+        /// <summary>بترجع الـ Part_ID الجديد.</summary>
         public int Add(InventoryItem item)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_Add"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Inventory_Add))
             {
                 clsDBHelper.AddParam(cmd, "@Barcode", item.Barcode);
                 clsDBHelper.AddParam(cmd, "@TechnicalNumber", item.TechnicalNumber);
@@ -111,14 +118,15 @@ namespace Sabra.DataLayer
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
-                return Convert.ToInt32(outId.Value);
+                return clsDBHelper.GetInt(outId);
             }
         }
 
+        /// <summary>ملاحظة: الـ SP مش بتعدّل الرصيد (Current_Stock) — استخدم AdjustStock.</summary>
         public bool Update(InventoryItem item)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_Update"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Inventory_Update))
             {
                 clsDBHelper.AddParam(cmd, "@PartID", item.PartID);
                 clsDBHelper.AddParam(cmd, "@Barcode", item.Barcode);
@@ -134,26 +142,26 @@ namespace Sabra.DataLayer
                 clsDBHelper.AddParam(cmd, "@CrossRefID", item.CrossRefID);
                 clsDBHelper.AddParam(cmd, "@SupplierID", item.SupplierID);
                 conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
+                return clsDBHelper.ExecuteBool(cmd);
             }
         }
 
         public bool SoftDelete(int partID)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_SoftDelete"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Inventory_SoftDelete))
             {
                 clsDBHelper.AddParam(cmd, "@PartID", partID);
                 conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
+                return clsDBHelper.ExecuteBool(cmd);
             }
         }
 
-
+        /// <summary>delta موجب = إضافة للمخزون، سالب = خصم. بيتسجل في Audit_Log تلقائيًا.</summary>
         public bool AdjustStock(int partID, int delta, int movementTypeID, int userID, string remarks = null)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_AdjustStock"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Inventory_AdjustStock))
             {
                 clsDBHelper.AddParam(cmd, "@PartID", partID);
                 clsDBHelper.AddParam(cmd, "@Delta", delta);
@@ -161,26 +169,28 @@ namespace Sabra.DataLayer
                 clsDBHelper.AddParam(cmd, "@UserID", userID);
                 clsDBHelper.AddParam(cmd, "@Remarks", remarks);
                 conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
+                return clsDBHelper.ExecuteBool(cmd);
             }
         }
 
-        public bool UpdatePrice(int partID, decimal newSellingPrice)
+        /// <summary>بتغيّر سعر البيع وبتقفل سجل السعر القديم في Price_History. @UserID مطلوب.</summary>
+        public bool UpdatePrice(int partID, decimal newSellingPrice, int userID)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_UpdatePrice"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Inventory_UpdatePrice))
             {
                 clsDBHelper.AddParam(cmd, "@PartID", partID);
                 clsDBHelper.AddParam(cmd, "@NewSellingPrice", newSellingPrice);
+                clsDBHelper.AddParam(cmd, "@UserID", userID);
                 conn.Open();
-                return cmd.ExecuteNonQuery() > 0;
+                return clsDBHelper.ExecuteBool(cmd);
             }
         }
 
         public bool BarcodeExists(string barcode, int? excludePartID = null)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = clsDBHelper.CreateSpCommand(conn, "sp_Inventory_BarcodeExists"))
+            using (var cmd = clsDBHelper.CreateSpCommand(conn, SP.Inventory_BarcodeExists))
             {
                 clsDBHelper.AddParam(cmd, "@Barcode", barcode);
                 clsDBHelper.AddParam(cmd, "@ExcludePartID", excludePartID);
@@ -195,13 +205,15 @@ namespace Sabra.DataLayer
         public decimal CalculateSellingPrice(decimal purchasePrice, decimal markupPercent)
         {
             using (var conn = clsConnectionManager.GetConnection())
-            using (var cmd = new SqlCommand("SELECT dbo.fn_CalculateSellingPrice(@PurchasePrice, @MarkupPercent)", conn))
+            using (var cmd = clsDBHelper.CreateTextCommand(conn, SP.Fn_CalculateSellingPrice))
             {
                 clsDBHelper.AddParam(cmd, "@PurchasePrice", purchasePrice);
                 clsDBHelper.AddParam(cmd, "@MarkupPercent", markupPercent);
                 conn.Open();
-                return Convert.ToDecimal(cmd.ExecuteScalar());
+                var result = cmd.ExecuteScalar();
+                return result == null || result == DBNull.Value ? 0m : Convert.ToDecimal(result);
             }
         }
     }
+
 }
