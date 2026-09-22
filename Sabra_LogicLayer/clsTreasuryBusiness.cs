@@ -9,86 +9,95 @@ using System.Threading.Tasks;
 
 namespace Sabra.LogicLayer
 {
-    public class clsTreasuryBusiness
+
+
+    public class clsTreasuryBusiness : clsBusinessBase
     {
         private readonly clsTreasuryLogDAL _treasuryDAL = new clsTreasuryLogDAL();
-        private readonly clsLookupDAL _lookupDAL = new clsLookupDAL();
+        private readonly clsReportsDAL _reportsDAL = new clsReportsDAL();
 
-        private const string InTransactionType = "وارد";
-        private const string OutTransactionType = "صادر";
+        public OperationResult<decimal> GetCurrentBalance() => Execute(()
+            => OperationResult<decimal>.Ok(_treasuryDAL.GetCurrentBalance()));
 
-        public OperationResult<decimal> GetCurrentBalance()
-            => OperationResult<decimal>.Ok(_treasuryDAL.GetCurrentBalance());
+        public OperationResult<List<TreasuryLog>> GetAll(DateTime? from = null, DateTime? to = null,
+                                                         int? typeID = null, int? methodID = null) => Execute(() =>
+                                                         {
+                                                             if (from.HasValue && to.HasValue && from.Value.Date > to.Value.Date)
+                                                                 return OperationResult<List<TreasuryLog>>.Fail("تاريخ البداية بعد تاريخ النهاية.");
 
-        public OperationResult<List<TreasuryLog>> GetAll(
-            DateTime? from = null, DateTime? to = null,
-            int? typeID = null, int? methodID = null)
-            => OperationResult<List<TreasuryLog>>.Ok(
-                _treasuryDAL.GetAll(from, to, typeID, methodID));
+                                                             return OperationResult<List<TreasuryLog>>.Ok(_treasuryDAL.GetAll(from, to, typeID, methodID));
+                                                         });
+
+        public OperationResult<List<PaymentMethod>> GetPaymentMethods() => Execute(()
+            => OperationResult<List<PaymentMethod>>.Ok(clsLookupCache.PaymentMethods));
+
+        public OperationResult<List<TransactionType>> GetTransactionTypes() => Execute(()
+            => OperationResult<List<TransactionType>>.Ok(clsLookupCache.TransactionTypes));
 
         /// <summary>إيداع يدوي في الخزنة (وارد بدون مستند).</summary>
-        public OperationResult ManualDeposit(decimal amount, int paymentMethodID, string notes)
+        public OperationResult ManualDeposit(decimal amount, int paymentMethodID, string notes) => Execute(() =>
         {
-            if (amount <= 0)
-                return OperationResult.Fail("المبلغ يجب أن يكون أكبر من صفر.");
-            if (paymentMethodID <= 0)
-                return OperationResult.Fail("يجب اختيار طريقة الدفع.");
-            if (string.IsNullOrWhiteSpace(notes))
-                return OperationResult.Fail("ملاحظات الإيداع مطلوبة.");
+            var guard = RequirePermission(Permission.Treasury, "الإيداع اليدوي");
+            if (guard != null) return guard;
 
-            var txTypes = _lookupDAL.GetAllTransactionTypes();
-            var inType = txTypes.FirstOrDefault(t => t.TypeName == InTransactionType);
-            if (inType == null)
-                return OperationResult.Fail($"نوع الحركة ({InTransactionType}) غير معرّف في النظام.");
+            if (amount <= 0) return OperationResult.Fail("المبلغ يجب أن يكون أكبر من صفر.");
+            if (!clsLookupCache.PaymentMethodExists(paymentMethodID))
+                return OperationResult.Fail("يجب اختيار طريقة دفع صحيحة.");
+            if (string.IsNullOrWhiteSpace(notes)) return OperationResult.Fail("سبب الإيداع مطلوب.");
 
-            decimal bal = _treasuryDAL.GetCurrentBalance();
-            _treasuryDAL.Add(new TreasuryLog
+            var result = _treasuryDAL.Add(new TreasuryLog
             {
-                TransactionTypeID = inType.TransactionTypeID,
+                TransactionTypeID = clsLookupCache.TransactionTypeID(clsSystemNames.TxManualDeposit),
                 PaymentMethodID = paymentMethodID,
-                Amount = amount,
-                ActionDate = DateTime.Now,
-                BalanceAfter = bal + amount,
-                Notes = notes
+                Amount = amount,                 // موجب = وارد
+                CreatedBy = clsAppSession.UserID,
+                EmployeeID = clsAppSession.EmployeeID,
+                Notes = notes.Trim()
             });
 
-            return OperationResult.Ok($"تم إيداع {amount:N2} جنيه بنجاح.");
-        }
+            return OperationResult.Ok($"تم إيداع {amount:N2} جنيه. الرصيد الحالي: {result.NewBalance:N2}.",
+                                      result.NewTransactionID);
+        });
 
         /// <summary>سحب يدوي من الخزنة (صادر بدون مستند).</summary>
-        public OperationResult ManualWithdraw(decimal amount, int paymentMethodID, string notes)
+        public OperationResult ManualWithdraw(decimal amount, int paymentMethodID, string notes) => Execute(() =>
         {
-            if (amount <= 0)
-                return OperationResult.Fail("المبلغ يجب أن يكون أكبر من صفر.");
-            if (paymentMethodID <= 0)
-                return OperationResult.Fail("يجب اختيار طريقة الدفع.");
-            if (string.IsNullOrWhiteSpace(notes))
-                return OperationResult.Fail("ملاحظات السحب مطلوبة.");
+            var guard = RequirePermission(Permission.Treasury, "السحب اليدوي");
+            if (guard != null) return guard;
 
-            decimal bal = _treasuryDAL.GetCurrentBalance();
-            if (amount > bal)
-                return OperationResult.Fail($"المبلغ أكبر من الرصيد الحالي ({bal:N2} جنيه).");
+            if (amount <= 0) return OperationResult.Fail("المبلغ يجب أن يكون أكبر من صفر.");
+            if (!clsLookupCache.PaymentMethodExists(paymentMethodID))
+                return OperationResult.Fail("يجب اختيار طريقة دفع صحيحة.");
+            if (string.IsNullOrWhiteSpace(notes)) return OperationResult.Fail("سبب السحب مطلوب.");
 
-            var txTypes = _lookupDAL.GetAllTransactionTypes();
-            var outType = txTypes.FirstOrDefault(t => t.TypeName == OutTransactionType);
-            if (outType == null)
-                return OperationResult.Fail($"نوع الحركة ({OutTransactionType}) غير معرّف في النظام.");
+            decimal balance = _treasuryDAL.GetCurrentBalance();
+            if (amount > balance)
+                return OperationResult.Fail($"المبلغ أكبر من الرصيد الحالي ({balance:N2} جنيه).");
 
-            _treasuryDAL.Add(new TreasuryLog
+            var result = _treasuryDAL.Add(new TreasuryLog
             {
-                TransactionTypeID = outType.TransactionTypeID,
+                TransactionTypeID = clsLookupCache.TransactionTypeID(clsSystemNames.TxManualWithdraw),
                 PaymentMethodID = paymentMethodID,
-                Amount = amount,
-                ActionDate = DateTime.Now,
-                BalanceAfter = bal - amount,
-                Notes = notes
+                Amount = -amount,                // سالب = صادر
+                CreatedBy = clsAppSession.UserID,
+                EmployeeID = clsAppSession.EmployeeID,
+                Notes = notes.Trim()
             });
 
-            return OperationResult.Ok($"تم سحب {amount:N2} جنيه بنجاح.");
-        }
+            return OperationResult.Ok($"تم سحب {amount:N2} جنيه. الرصيد الحالي: {result.NewBalance:N2}.",
+                                      result.NewTransactionID);
+        });
 
-        public OperationResult<List<PaymentMethod>> GetPaymentMethods()
-            => OperationResult<List<PaymentMethod>>.Ok(_lookupDAL.GetAllPaymentMethods());
+        public OperationResult<TreasuryBalanceView> GetBalanceDetails() => Execute(() =>
+        {
+            var balance = _reportsDAL.GetCurrentTreasuryBalance();
+            return balance == null
+                ? OperationResult<TreasuryBalanceView>.Fail("لا توجد حركات في الخزنة بعد.")
+                : OperationResult<TreasuryBalanceView>.Ok(balance);
+        });
+
+        public OperationResult<List<DailyCashFlowView>> GetCashFlow(DateTime? from = null, DateTime? to = null) => Execute(()
+            => OperationResult<List<DailyCashFlowView>>.Ok(_reportsDAL.GetDailyCashFlow(from, to)));
     }
 
 }

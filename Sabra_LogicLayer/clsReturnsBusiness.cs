@@ -10,74 +10,100 @@ using System.Threading.Tasks;
 
 namespace Sabra.LogicLayer
 {
-    public class clsReturnsBusiness
+
+    public class clsReturnsBusiness : clsBusinessBase
     {
         private readonly clsReturnsDAL _returnsDAL = new clsReturnsDAL();
         private readonly clsInvoiceDAL _invoiceDAL = new clsInvoiceDAL();
         private readonly clsCustomerDAL _customerDAL = new clsCustomerDAL();
-        private readonly clsLookupDAL _lookupDAL = new clsLookupDAL();
+        private readonly clsTreasuryLogDAL _treasuryDAL = new clsTreasuryLogDAL();
 
-        private const string ReturnToStockStatus = "سليمة ترجع للمخزون";
-        private const string ReturnMovement = "مرتجع بيع";
+        public OperationResult<List<Return>> GetAll(DateTime? from = null, DateTime? to = null) => Execute(()
+            => OperationResult<List<Return>>.Ok(_returnsDAL.GetAll(from, to)));
 
-        public OperationResult<List<Return>> GetAll(DateTime? from = null, DateTime? to = null)
-            => OperationResult<List<Return>>.Ok(_returnsDAL.GetAll(from, to));
+        public OperationResult<List<ItemStatus>> GetItemStatuses() => Execute(()
+            => OperationResult<List<ItemStatus>>.Ok(clsLookupCache.ItemStatuses));
 
-        public OperationResult ProcessReturn(Return ret)
+        /// <summary>
+        /// تسجيل مرتجع. الـ SP بتتحقق من الكمية المباعة فعليًا وبترجّع القطعة للمخزون
+        /// لو الحالة "سليمة ترجع للمخزون". بعدها بنسوّي أثر المرتجع ماليًا:
+        ///   - لو الفاتورة عليها مديونية → بنقلل المديونية بقيمة المرتجع.
+        ///   - لو العميل دفع كاش وطلب فلوسه → refundCash = true بتصرف من الخزنة.
+        /// </summary>
+        public OperationResult ProcessReturn(Return ret, bool refundCash = false, int? paymentMethodID = null) => Execute(() =>
         {
-            if (!clsAppSession.IsLoggedIn)
-                return OperationResult.Fail("يجب تسجيل الدخول أولاً.");
+            var guard = RequirePermission(Permission.Sales, "تسجيل المرتجعات");
+            if (guard != null) return guard;
 
-            if (ret.Quantity <= 0)
-                return OperationResult.Fail("الكمية المرتجعة يجب أن تكون أكبر من صفر.");
+            if (ret == null) return OperationResult.Fail("بيانات المرتجع غير صحيحة.");
+            if (ret.Quantity <= 0) return OperationResult.Fail("الكمية المرتجعة يجب أن تكون أكبر من صفر.");
+            if (string.IsNullOrWhiteSpace(ret.Reason)) return OperationResult.Fail("سبب الإرجاع مطلوب.");
+            if (ret.StatusID <= 0) return OperationResult.Fail("يجب تحديد حالة الصنف المرتجع.");
 
-            if (string.IsNullOrWhiteSpace(ret.Reason))
-                return OperationResult.Fail("سبب الإرجاع مطلوب.");
+            var invoice = _invoiceDAL.GetByID(ret.InvoiceID);
+            if (invoice == null) return OperationResult.Fail("الفاتورة الأصلية غير موجودة.");
 
-            var details = _invoiceDAL.GetDetails(ret.InvoiceID);
-            var original = details.FirstOrDefault(d => d.PartID == ret.PartID);
-            if (original == null)
-                return OperationResult.Fail("هذه القطعة غير موجودة في الفاتورة الأصلية");
+            var original = invoice.Details.FirstOrDefault(d => d.PartID == ret.PartID);
+            if (original == null) return OperationResult.Fail("القطعة دي مش موجودة في الفاتورة الأصلية.");
 
             if (ret.Quantity > original.Quantity)
                 return OperationResult.Fail(
                     $"الكمية المرتجعة ({ret.Quantity}) أكبر من الكمية في الفاتورة ({original.Quantity}).");
 
-            // الإجراء المخزن (sp_Returns_Add) هو من يعيد القطعة فعلياً للمخزون ويسجل
-            // حركتها تلقائياً، بشرط تمرير حالة القبول ونوع حركة الإرجاع ومطابقة StatusID لها.
-            var statuses = _lookupDAL.GetAllItemStatuses();
-            var returnToStock = statuses.FirstOrDefault(s => s.StatusName == ReturnToStockStatus);
+            if (refundCash)
+            {
+                if (!paymentMethodID.HasValue || !clsLookupCache.PaymentMethodExists(paymentMethodID.Value))
+                    return OperationResult.Fail("يجب اختيار طريقة دفع صحيحة لرد المبلغ.");
+                if (invoice.PaidAmount <= 0)
+                    return OperationResult.Fail("الفاتورة دي مادفعش فيها العميل حاجة كاش.");
+            }
 
-            var movTypes = _lookupDAL.GetAllMovementTypes();
-            var returnType = movTypes.FirstOrDefault(m => m.TypeName == ReturnMovement);
+            int acceptedStatusID = clsLookupCache.ItemStatusID(clsSystemNames.ItemBackToStock);
+            int restockMovementID = clsLookupCache.MovementTypeID(clsSystemNames.MovSaleReturn);
 
-            ret.ReturnDate = DateTime.Today;
+            ret.ReturnDate = ret.ReturnDate == default ? DateTime.Today : ret.ReturnDate;
+            ret.Reason = ret.Reason.Trim();
 
             int returnID = _returnsDAL.Add(
                 ret,
-                restockOnAccept: returnToStock != null && returnType != null,
-                acceptedStatusID: returnToStock?.StatusID,
-                restockMovementTypeID: returnType?.MovementTypeID,
-                userID: clsAppSession.CurrentUser.UserID);
+                clsAppSession.UserID,
+                restockOnAccept: true,
+                acceptedStatusID: acceptedStatusID,
+                restockMovementTypeID: restockMovementID);
 
-            // تحديث رصيد العميل لو الفاتورة كانت آجلة وعليه مديونية بالفعل
-            var invoice = _invoiceDAL.GetByID(ret.InvoiceID);
-            if (invoice?.CustomerID.HasValue == true)
+            decimal returnValue = Math.Round(ret.Quantity * original.UnitPrice, 2);
+            string note = $"مرتجع رقم {returnID} على فاتورة {ret.InvoiceID}";
+
+            // (1) تخفيض مديونية العميل بقيمة المرتجع (في حدود المديونية الموجودة)
+            if (invoice.CustomerID.HasValue)
             {
-                decimal returnValue = ret.Quantity * original.UnitPrice;
                 var customer = _customerDAL.GetByID(invoice.CustomerID.Value);
-
                 if (customer != null && customer.TotalBalance > 0)
                 {
                     decimal delta = -Math.Min(returnValue, customer.TotalBalance);
-                    _customerDAL.AdjustBalance(invoice.CustomerID.Value, delta, isPayment: false, enforceCreditLimit: false);
+                    _customerDAL.AdjustBalance(invoice.CustomerID.Value, delta, clsAppSession.UserID,
+                                               isPayment: false, enforceCreditLimit: false, reason: note);
                 }
             }
 
-            return OperationResult.Ok("تم تسجيل المرتجع بنجاح.", returnID);
-        }
+            // (2) رد نقدي من الخزنة (اختياري)
+            if (refundCash)
+            {
+                decimal refund = Math.Min(returnValue, invoice.PaidAmount);
+                _treasuryDAL.Add(new TreasuryLog
+                {
+                    TransactionTypeID = clsLookupCache.TransactionTypeID(clsSystemNames.TxOut),
+                    PaymentMethodID = paymentMethodID.Value,
+                    Amount = -refund,                       // سالب = صرف من الخزنة
+                    InvoiceID = ret.InvoiceID,
+                    CreatedBy = clsAppSession.UserID,
+                    Notes = "رد نقدي - " + note
+                });
 
-        public OperationResult<List<ItemStatus>> GetItemStatuses()
-            => OperationResult<List<ItemStatus>>.Ok(_lookupDAL.GetAllItemStatuses());
+                return OperationResult.Ok($"تم تسجيل المرتجع ورد {refund:N2} جنيه للعميل.", returnID);
+            }
+
+            return OperationResult.Ok("تم تسجيل المرتجع بنجاح.", returnID);
+        });
     }
 }

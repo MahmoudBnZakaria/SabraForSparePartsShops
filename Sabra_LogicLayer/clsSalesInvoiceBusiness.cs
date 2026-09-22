@@ -9,150 +9,157 @@ using System.Threading.Tasks;
 
 namespace Sabra.LogicLayer
 {
-    public class clsSalesInvoiceBusiness
+
+    public class clsSalesInvoiceBusiness : clsBusinessBase
     {
         private readonly clsInvoiceDAL _invoiceDAL = new clsInvoiceDAL();
         private readonly clsInventoryDAL _inventoryDAL = new clsInventoryDAL();
         private readonly clsCustomerDAL _customerDAL = new clsCustomerDAL();
-        private readonly clsTreasuryLogDAL _treasuryDAL = new clsTreasuryLogDAL();
-        private readonly clsLookupDAL _lookupDAL = new clsLookupDAL();
 
-        private const string SaleMovement = "بيع";
-        private const string InTransactionType = "وارد";
-        private const string FullyPaidStatus = "مدفوع بالكامل";
-        private const string PartiallyPaidStatus = "مدفوع جزئياً";
-        private const string DeferredStatus = "آجل";
+        public OperationResult<List<SalesInvoice>> GetAll(DateTime? from = null, DateTime? to = null,
+                                                          int? customerID = null, int? employeeID = null,
+                                                          int? statusID = null) => Execute(() =>
+                                                          {
+                                                              if (from.HasValue && to.HasValue && from.Value.Date > to.Value.Date)
+                                                                  return OperationResult<List<SalesInvoice>>.Fail("تاريخ البداية بعد تاريخ النهاية.");
 
-        public OperationResult<List<SalesInvoice>> GetAll(
-                DateTime? from = null, DateTime? to = null,
-                int? customerID = null, int? employeeID = null, int? statusID = null)
-            => OperationResult<List<SalesInvoice>>.Ok(
-                   _invoiceDAL.GetAll(from, to, customerID, employeeID, statusID));
+                                                              return OperationResult<List<SalesInvoice>>.Ok(
+                                                                  _invoiceDAL.GetAll(from, to, customerID, employeeID, statusID));
+                                                          });
 
-        public OperationResult<SalesInvoice> GetByID(int invoiceID)
+        /// <summary>بترجع الفاتورة بتفاصيلها (الـ SP بترجع الاتنين مع بعض).</summary>
+        public OperationResult<SalesInvoice> GetByID(int invoiceID) => Execute(() =>
         {
             var inv = _invoiceDAL.GetByID(invoiceID);
-            if (inv == null) return OperationResult<SalesInvoice>.Fail("الفاتورة غير موجودة");
-            inv.Details = _invoiceDAL.GetDetails(invoiceID);
-            return OperationResult<SalesInvoice>.Ok(inv);
-        }
+            return inv == null
+                ? OperationResult<SalesInvoice>.Fail("الفاتورة غير موجودة.")
+                : OperationResult<SalesInvoice>.Ok(inv);
+        });
 
-        public OperationResult<List<InvoiceDetail>> GetDetails(int invoiceID)
-            => OperationResult<List<InvoiceDetail>>.Ok(_invoiceDAL.GetDetails(invoiceID));
+        public OperationResult<List<InvoiceDetail>> GetDetails(int invoiceID) => Execute(()
+            => OperationResult<List<InvoiceDetail>>.Ok(_invoiceDAL.GetDetails(invoiceID)));
 
-        public OperationResult CreateInvoice(SalesInvoice invoice, int paymentMethodID)
+        /// <summary>
+        /// إنشاء فاتورة بيع. كل حاجة بتحصل جوه Stored Procedure واحدة:
+        /// الفاتورة + التفاصيل بتكلفتها + خصم المخزون + حركة المخزون +
+        /// مديونية العميل + تحصيل الخزنة. الكود هنا بيتحقق بس ويجهز البيانات.
+        /// </summary>
+        public OperationResult CreateInvoice(SalesInvoice invoice, int paymentMethodID) => Execute(() =>
         {
-            // --- 1. التحقق من صلاحية الجلسة والبيانات الأساسية ---
-            if (!clsAppSession.IsLoggedIn)
-                return OperationResult.Fail("يجب تسجيل الدخول أولاً");
+            var guard = RequirePermission(Permission.Sales, "إصدار فواتير");
+            if (guard != null) return guard;
 
+            if (invoice == null) return OperationResult.Fail("بيانات الفاتورة غير صحيحة.");
             if (invoice.Details == null || invoice.Details.Count == 0)
-                return OperationResult.Fail("الفاتورة لا تحتوي على أي قطع");
+                return OperationResult.Fail("الفاتورة لا تحتوي على أي قطع.");
+            if (!clsLookupCache.PaymentMethodExists(paymentMethodID))
+                return OperationResult.Fail("يجب اختيار طريقة دفع صحيحة.");
 
-            if (invoice.EmployeeID <= 0)
-                invoice.EmployeeID = clsAppSession.CurrentEmployee.EmployeeID;
+            // دمج الأسطر المكررة لنفس القطعة (الـ TVP مفتاحه Part_ID فبيرفض التكرار)
+            invoice.Details = invoice.Details
+                .Where(d => d != null)
+                .GroupBy(d => d.PartID)
+                .Select(g => new InvoiceDetail
+                {
+                    PartID = g.Key,
+                    Quantity = g.Sum(x => x.Quantity),
+                    UnitPrice = g.First().UnitPrice,
+                    PartName = g.First().PartName
+                })
+                .ToList();
 
-            // --- 2. فحص المخزون ---
-            foreach (var detail in invoice.Details)
+            foreach (var d in invoice.Details)
             {
-                if (detail.Quantity <= 0)
-                    return OperationResult.Fail("الكمية يجب أن تكون أكبر من صفر لكل قطعة");
+                if (d.Quantity <= 0) return OperationResult.Fail("الكمية يجب أن تكون أكبر من صفر لكل قطعة.");
+                if (d.UnitPrice < 0) return OperationResult.Fail("سعر البيع لا يمكن أن يكون سالباً.");
 
-                var part = _inventoryDAL.GetByID(detail.PartID);
-                if (part == null)
-                    return OperationResult.Fail($"القطعة رقم {detail.PartID} غير موجودة");
-
-                if (part.CurrentStock < detail.Quantity)
+                var part = _inventoryDAL.GetByID(d.PartID);
+                if (part == null) return OperationResult.Fail($"القطعة رقم {d.PartID} غير موجودة.");
+                if (part.CurrentStock < d.Quantity)
                     return OperationResult.Fail(
-                        $"الكمية المطلوبة من [{part.PartName}] هي ({detail.Quantity})، لكن المتاح في المخزن ({part.CurrentStock}) فقط.");
+                        $"الكمية المطلوبة من [{part.PartName}] هي ({d.Quantity}) والمتاح ({part.CurrentStock}) فقط.");
+
+                if (string.IsNullOrWhiteSpace(d.PartName)) d.PartName = part.PartName;
             }
 
-            // --- 3. فحص الحد الائتماني للعميل ---
-            Customer customer = null;
-            decimal remainingAfterPayment;
-
-            if (invoice.CustomerID.HasValue)
-            {
-                customer = _customerDAL.GetByID(invoice.CustomerID.Value);
-                if (customer == null)
-                    return OperationResult.Fail("العميل غير موجود");
-            }
-
-            // --- 4. الحسابات النهائية وحالة الدفع ---
-            invoice.TotalAmount = invoice.Details.Sum(d => d.Quantity * d.UnitPrice);
-
+            if (invoice.EmployeeID <= 0) invoice.EmployeeID = clsAppSession.EmployeeID;
             if (invoice.Discount < 0) invoice.Discount = 0;
             if (invoice.PaidAmount < 0) invoice.PaidAmount = 0;
 
-            decimal finalAmount = invoice.TotalAmount - invoice.Discount;
-            remainingAfterPayment = Math.Max(0, finalAmount - invoice.PaidAmount);
+            decimal total = invoice.Details.Sum(d => d.Quantity * d.UnitPrice);
+            decimal final = total - invoice.Discount;
 
-            if (customer != null && remainingAfterPayment > 0 &&
-                customer.CreditLimit > 0 &&
-                (customer.TotalBalance + remainingAfterPayment) > customer.CreditLimit)
+            if (invoice.Discount > total) return OperationResult.Fail("قيمة الخصم أكبر من إجمالي الفاتورة.");
+            if (invoice.PaidAmount > final) return OperationResult.Fail("المبلغ المدفوع أكبر من صافي الفاتورة.");
+
+            decimal remaining = final - invoice.PaidAmount;
+
+            if (remaining > 0 && !invoice.CustomerID.HasValue)
+                return OperationResult.Fail("البيع الآجل لازم يكون على عميل مسجّل.");
+
+            if (invoice.CustomerID.HasValue)
             {
-                return OperationResult.Fail(
-                    $"تجاوز العميل الحد الائتماني المسموح به. " +
-                    $"المتبقي من حده: {customer.CreditLimit - customer.TotalBalance:N2} جنيه، " +
-                    $"بينما المطلوب دفعه آجلاً في هذه الفاتورة: {remainingAfterPayment:N2} جنيه.");
-            }
+                var customer = _customerDAL.GetByID(invoice.CustomerID.Value);
+                if (customer == null) return OperationResult.Fail("العميل غير موجود.");
 
-            var statuses = _lookupDAL.GetAllPaymentStatuses();
-            var fullyPaidSt = statuses.FirstOrDefault(s => s.StatusName == FullyPaidStatus);
-            var partiallyPaidSt = statuses.FirstOrDefault(s => s.StatusName == PartiallyPaidStatus);
-            var deferredSt = statuses.FirstOrDefault(s => s.StatusName == DeferredStatus);
-
-            if (fullyPaidSt == null || partiallyPaidSt == null || deferredSt == null)
-                return OperationResult.Fail("حالات الدفع غير معرّفة بالكامل في النظام.");
-
-            if (remainingAfterPayment <= 0)
-                invoice.PaymentStatusID = fullyPaidSt.StatusID;
-            else if (invoice.PaidAmount > 0)
-                invoice.PaymentStatusID = partiallyPaidSt.StatusID;
-            else
-                invoice.PaymentStatusID = deferredSt.StatusID;
-
-            invoice.DateTime = DateTime.Now;
-
-            // --- 5. تحديد نوع حركة "بيع" (الإجراء المخزن يستخدمه لخصم المخزون وتسجيل الحركة تلقائياً) ---
-            var movTypes = _lookupDAL.GetAllMovementTypes();
-            var saleType = movTypes.FirstOrDefault(m => m.TypeName == SaleMovement);
-            if (saleType == null)
-                return OperationResult.Fail($"نوع الحركة ({SaleMovement}) غير معرّف في النظام.");
-
-            // --- 6. حفظ الفاتورة (تتم داخل معاملة واحدة بالخادم: إضافة الفاتورة + التفاصيل
-            //         + خصم المخزون + تسجيل حركة المخزون لكل صنف) ---
-            int invoiceID = _invoiceDAL.Add(invoice, saleType.MovementTypeID, clsAppSession.CurrentUser.UserID);
-
-            // --- 7. تسجيل حركة الخزينة إذا دفع العميل مبلغاً ---
-            if (invoice.PaidAmount > 0)
-            {
-                var txTypes = _lookupDAL.GetAllTransactionTypes();
-                var inType = txTypes.FirstOrDefault(t => t.TypeName == InTransactionType);
-                if (inType == null)
-                    return OperationResult.Ok(
-                        $"تم حفظ الفاتورة بنجاح، لكن نوع الحركة ({InTransactionType}) غير معرّف فلم يتم تسجيل التحصيل بالخزنة.",
-                        invoiceID);
-
-                decimal currentBalance = _treasuryDAL.GetCurrentBalance();
-                _treasuryDAL.Add(new TreasuryLog
+                if (remaining > 0 && customer.CreditLimit > 0 &&
+                    (customer.TotalBalance + remaining) > customer.CreditLimit)
                 {
-                    TransactionTypeID = inType.TransactionTypeID,
-                    PaymentMethodID = paymentMethodID,
-                    Amount = invoice.PaidAmount,
-                    InvoiceID = invoiceID,
-                    ActionDate = DateTime.Now,
-                    BalanceAfter = currentBalance + invoice.PaidAmount,
-                    Notes = $"تحصيل فاتورة بيع رقم {invoiceID}"
-                });
+                    return OperationResult.Fail(
+                        $"العميل تجاوز الحد الائتماني. المتاح له: {(customer.CreditLimit - customer.TotalBalance):N2} جنيه، " +
+                        $"والمطلوب آجلاً: {remaining:N2} جنيه.");
+                }
             }
 
-            // --- 8. تحديث مديونية العميل بمقدار المتبقي (delta وليس قيمة مطلقة) ---
-            if (invoice.CustomerID.HasValue && remainingAfterPayment > 0)
-                _customerDAL.AdjustBalance(invoice.CustomerID.Value, remainingAfterPayment, isPayment: false);
+            invoice.TotalAmount = total;
+            invoice.DateTime = invoice.DateTime == default ? DateTime.Now : invoice.DateTime;
+            invoice.PaymentStatusID = ResolveStatusID(invoice.PaidAmount, remaining);
+
+            int invoiceID = _invoiceDAL.Add(
+                invoice,
+                clsLookupCache.MovementTypeID(clsSystemNames.MovSale),
+                clsAppSession.UserID,
+                paymentMethodID,
+                clsLookupCache.TransactionTypeID(clsSystemNames.TxInvoiceCollection));
 
             return OperationResult.Ok("تم حفظ الفاتورة بنجاح.", invoiceID);
-        }
+        });
+
+        /// <summary>تحصيل دفعة على فاتورة آجلة (بتحدّث الفاتورة + رصيد العميل + الخزنة).</summary>
+        public OperationResult CollectPayment(int invoiceID, decimal amount, int paymentMethodID) => Execute(() =>
+        {
+            var guard = RequirePermission(Permission.Sales, "تحصيل الفواتير");
+            if (guard != null) return guard;
+
+            if (amount <= 0) return OperationResult.Fail("قيمة الدفعة يجب أن تكون أكبر من صفر.");
+            if (!clsLookupCache.PaymentMethodExists(paymentMethodID))
+                return OperationResult.Fail("يجب اختيار طريقة دفع صحيحة.");
+
+            var invoice = _invoiceDAL.GetByID(invoiceID);
+            if (invoice == null) return OperationResult.Fail("الفاتورة غير موجودة.");
+
+            if (invoice.RemainingBalance <= 0)
+                return OperationResult.Fail("الفاتورة دي مسددة بالكامل.");
+
+            if (amount > invoice.RemainingBalance)
+                return OperationResult.Fail($"المبلغ أكبر من المتبقي على الفاتورة ({invoice.RemainingBalance:N2} جنيه).");
+
+            decimal newPaid = invoice.PaidAmount + amount;
+            decimal newRemaining = invoice.FinalAmount - newPaid;
+
+            bool ok = _invoiceDAL.UpdatePayment(
+                invoiceID, amount,
+                ResolveStatusID(newPaid, newRemaining),
+                paymentMethodID,
+                clsLookupCache.TransactionTypeID(clsSystemNames.TxInvoiceCollection),
+                clsAppSession.UserID);
+
+            return ok ? OperationResult.Ok($"تم تحصيل {amount:N2} جنيه.")
+                      : OperationResult.Fail("لم يتم تسجيل الدفعة.");
+        });
+
+        public OperationResult<List<PaymentStatus>> GetPaymentStatuses() => Execute(()
+            => OperationResult<List<PaymentStatus>>.Ok(clsLookupCache.PaymentStatuses));
 
         public decimal CalcTotal(List<InvoiceDetail> details)
             => details?.Sum(d => d.Quantity * d.UnitPrice) ?? 0;
@@ -162,6 +169,13 @@ namespace Sabra.LogicLayer
 
         public decimal CalcRemaining(decimal finalAmount, decimal paid)
             => Math.Max(0, finalAmount - paid);
-    }
 
+        private static int ResolveStatusID(decimal paid, decimal remaining)
+        {
+            if (remaining <= 0) return clsLookupCache.PaymentStatusID(clsSystemNames.PaidFull);
+            return paid > 0
+                ? clsLookupCache.PaymentStatusID(clsSystemNames.PaidPartial)
+                : clsLookupCache.PaymentStatusID(clsSystemNames.PaidDeferred);
+        }
+    }
 }

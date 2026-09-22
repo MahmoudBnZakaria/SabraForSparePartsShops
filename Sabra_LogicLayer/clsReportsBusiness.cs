@@ -1,4 +1,5 @@
 ﻿using Sabra.DataLayer;
+using Sabra.DataLayer.DataAccess;
 using Sabra.DataLayer.Models;
 using System;
 using System.Collections.Generic;
@@ -8,83 +9,78 @@ using System.Threading.Tasks;
 
 namespace Sabra.LogicLayer
 {
-    public class clsReportsBusiness
+
+    public class clsReportsBusiness : clsBusinessBase
     {
         private readonly clsReportsDAL _reportsDAL = new clsReportsDAL();
+        private readonly clsDashboardDAL _dashboardDAL = new clsDashboardDAL();
 
-        // ── المالية ─────────────────────────────────────────────
-        public OperationResult<List<InvoiceProfitView>> GetInvoiceProfits(DateTime? from = null, DateTime? to = null)
-            => OperationResult<List<InvoiceProfitView>>.Ok(_reportsDAL.GetInvoiceProfits(from, to));
+        // ── الأرباح ─────────────────────────────────────────────
+        public OperationResult<List<InvoiceProfitView>> GetInvoiceProfits(DateTime? from = null, DateTime? to = null) => Execute(()
+            => OperationResult<List<InvoiceProfitView>>.Ok(_reportsDAL.GetInvoiceProfits(from, to)));
 
-        public OperationResult<List<DailyProfitView>> GetDailyProfits(DateTime? from = null, DateTime? to = null)
-            => OperationResult<List<DailyProfitView>>.Ok(_reportsDAL.GetDailyProfits(from, to));
+        public OperationResult<List<DailyProfitView>> GetDailyProfits(DateTime? from = null, DateTime? to = null) => Execute(()
+            => OperationResult<List<DailyProfitView>>.Ok(_reportsDAL.GetDailyProfits(from, to)));
 
-        public OperationResult<List<MonthlyProfitView>> GetMonthlyProfits(int? year = null)
-            => OperationResult<List<MonthlyProfitView>>.Ok(_reportsDAL.GetMonthlyProfits(year));
+        public OperationResult<List<MonthlyProfitView>> GetMonthlyProfits(int? year = null) => Execute(()
+            => OperationResult<List<MonthlyProfitView>>.Ok(_reportsDAL.GetMonthlyProfits(year)));
 
-        public OperationResult<List<DailyCashFlowView>> GetDailyCashFlow(DateTime? from = null, DateTime? to = null)
-            => OperationResult<List<DailyCashFlowView>>.Ok(_reportsDAL.GetDailyCashFlow(from, to));
+        public OperationResult<List<ProfitLossSummaryView>> GetProfitLoss(int? year = null) => Execute(()
+            => OperationResult<List<ProfitLossSummaryView>>.Ok(_reportsDAL.GetProfitLoss(year)));
 
-        public OperationResult<TreasuryBalanceView> GetCurrentTreasuryBalance()
+        // ── الخزنة ──────────────────────────────────────────────
+        public OperationResult<List<DailyCashFlowView>> GetDailyCashFlow(DateTime? from = null, DateTime? to = null) => Execute(()
+            => OperationResult<List<DailyCashFlowView>>.Ok(_reportsDAL.GetDailyCashFlow(from, to)));
+
+        public OperationResult<TreasuryBalanceView> GetCurrentTreasuryBalance() => Execute(() =>
         {
-            var bal = _reportsDAL.GetCurrentTreasuryBalance();
-            if (bal == null) return OperationResult<TreasuryBalanceView>.Fail("لا توجد حركات في الخزنة بعد.");
-            return OperationResult<TreasuryBalanceView>.Ok(bal);
-        }
+            var balance = _reportsDAL.GetCurrentTreasuryBalance();
+            return balance == null
+                ? OperationResult<TreasuryBalanceView>.Fail("لا توجد حركات في الخزنة بعد.")
+                : OperationResult<TreasuryBalanceView>.Ok(balance);
+        });
 
         // ── المخزون ─────────────────────────────────────────────
-        public OperationResult<List<LowStockView>> GetLowStockSuggestions()
-            => OperationResult<List<LowStockView>>.Ok(_reportsDAL.GetLowStockSuggestions());
+        public OperationResult<List<LowStockView>> GetLowStockSuggestions() => Execute(()
+            => OperationResult<List<LowStockView>>.Ok(_reportsDAL.GetLowStockSuggestions()));
 
-        public OperationResult<List<TopSellingPartView>> GetTopSellingParts(int top = 10)
-        {
-            if (top <= 0) top = 10;
-            return OperationResult<List<TopSellingPartView>>.Ok(_reportsDAL.GetTopSellingParts(top));
-        }
+        public OperationResult<List<TopSellingPartView>> GetTopSellingParts(int top = 10) => Execute(()
+            => OperationResult<List<TopSellingPartView>>.Ok(_reportsDAL.GetTopSellingParts(top <= 0 ? 10 : top)));
 
-        public OperationResult<List<InventoryValuationView>> GetInventoryValuation()
-            => OperationResult<List<InventoryValuationView>>.Ok(_reportsDAL.GetInventoryValuation());
+        public OperationResult<List<InventoryValuationView>> GetInventoryValuation() => Execute(()
+            => OperationResult<List<InventoryValuationView>>.Ok(_reportsDAL.GetInventoryValuation()));
 
-        // ── العملاء ─────────────────────────────────────────────
-        public OperationResult<List<TopCustomerView>> GetTopCustomers(int top = 20)
-        {
-            if (top <= 0) top = 20;
-            return OperationResult<List<TopCustomerView>>.Ok(_reportsDAL.GetTopCustomers(top));
-        }
+        public OperationResult<List<DeadStockView>> GetDeadStock(int minDays = 90) => Execute(()
+            => OperationResult<List<DeadStockView>>.Ok(_reportsDAL.GetDeadStock(minDays <= 0 ? 90 : minDays)));
 
-        // ── الموظفون ─────────────────────────────────────────────
-        public OperationResult<List<EmployeePerformanceView>> GetEmployeePerformance()
-            => OperationResult<List<EmployeePerformanceView>>.Ok(_reportsDAL.GetEmployeePerformance());
+        public OperationResult<List<FastMovingStockView>> GetFastMovingStock() => Execute(()
+            => OperationResult<List<FastMovingStockView>>.Ok(_reportsDAL.GetFastMovingStock()));
 
-        // ── ملخص لوحة التحكم اليومية ────────────────────────────
-        public OperationResult<DashboardSummary> GetDashboardSummary()
-        {
-            var today = DateTime.Today;
-            var tomorrow = today.AddDays(1);
+        // ── العملاء والموردون ───────────────────────────────────
+        public OperationResult<List<TopCustomerView>> GetTopCustomers(int top = 20) => Execute(()
+            => OperationResult<List<TopCustomerView>>.Ok(_reportsDAL.GetTopCustomers(top <= 0 ? 20 : top)));
 
-            var dailyProfit = _reportsDAL.GetDailyProfits(today, tomorrow);
-            var lowStock = _reportsDAL.GetLowStockSuggestions();
-            var treasuryBal = _reportsDAL.GetCurrentTreasuryBalance();
-            var topParts = _reportsDAL.GetTopSellingParts(5);
-            var cashFlow = _reportsDAL.GetDailyCashFlow(today, tomorrow);
+        public OperationResult<List<CustomersWithDebtView>> GetCustomersWithDebt() => Execute(()
+            => OperationResult<List<CustomersWithDebtView>>.Ok(_reportsDAL.GetCustomersWithDebt()));
 
-            var todayFlow = cashFlow.FirstOrDefault();
-            var todayProfit = dailyProfit.FirstOrDefault();
+        public OperationResult<List<CustomerStatementView>> GetCustomerStatement(int customerID, DateTime? from = null, DateTime? to = null) => Execute(()
+            => OperationResult<List<CustomerStatementView>>.Ok(_reportsDAL.GetCustomerStatement(customerID, from, to)));
 
-            var summary = new DashboardSummary
-            {
-                TodaySales = todayProfit?.TotalRevenue ?? 0,
-                TodayNetProfit = todayProfit?.NetProfit ?? 0,
-                TodayInvoiceCount = todayProfit?.InvoiceCount ?? 0,
-                TodayCashIn = todayFlow?.TotalIn ?? 0,
-                TodayCashOut = todayFlow?.TotalOut ?? 0,
-                CurrentBalance = treasuryBal?.CurrentBalance ?? 0,
-                LowStockCount = lowStock.Count,
-                ZeroStockCount = lowStock.Count(l => l.CurrentStock == 0),
-                TopParts = topParts
-            };
+        public OperationResult<List<SupplierStatementView>> GetSupplierStatement(int supplierID) => Execute(()
+            => OperationResult<List<SupplierStatementView>>.Ok(_reportsDAL.GetSupplierStatement(supplierID)));
 
-            return OperationResult<DashboardSummary>.Ok(summary);
-        }
+        public OperationResult<List<SupplierPerformanceView>> GetSupplierPerformance() => Execute(()
+            => OperationResult<List<SupplierPerformanceView>>.Ok(_reportsDAL.GetSupplierPerformance()));
+
+        // ── الموظفون ────────────────────────────────────────────
+        public OperationResult<List<EmployeePerformanceView>> GetEmployeePerformance() => Execute(()
+            => OperationResult<List<EmployeePerformanceView>>.Ok(_reportsDAL.GetEmployeePerformance()));
+
+        public OperationResult<List<EmployeeFinancialSummaryView>> GetEmployeeFinancialSummary(int? employeeID = null) => Execute(()
+            => OperationResult<List<EmployeeFinancialSummaryView>>.Ok(_reportsDAL.GetEmployeeFinancialSummary(employeeID)));
+
+        // ── لوحة التحكم ─────────────────────────────────────────
+        public OperationResult<DashboardSummary> GetDashboardSummary(int topPartsCount = 5) => Execute(()
+            => OperationResult<DashboardSummary>.Ok(_dashboardDAL.GetSummary(topPartsCount <= 0 ? 5 : topPartsCount)));
     }
 }
